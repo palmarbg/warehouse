@@ -86,7 +86,7 @@ namespace Robotok.View.Grid {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Robotok;component/view/grid/mapgridcontainer.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Robotok;V1.0.0.0;component/view/grid/mapgridcontainer.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\View\Grid\MapGridContainer.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

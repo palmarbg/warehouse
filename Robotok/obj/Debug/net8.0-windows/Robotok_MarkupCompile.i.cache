@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\palma\Desktop\sztech\Robotok\Robotok\obj\Debug\net8.0-windows\
+C:\Users\Boblet\Documents\SzofTech\Robotok\obj\Debug\net8.0-windows\
 Robotok
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-C:\Users\palma\Desktop\sztech\Robotok\Robotok\App.xaml
+C:\Users\Boblet\Documents\SzofTech\Robotok\App.xaml
 8446798799
 1372204085
 20-349915029
-1981451641563
+199471417139
 View\Grid\HorizontalNumberStrip.xaml;View\Grid\MapGrid.xaml;View\Grid\MapGridContainer.xaml;View\Grid\VerticalNumberStrip.xaml;View\Grid\ZoomSlider.xaml;View\MainWindow.xaml;View\UserControls\Menubar.xaml;View\UserControls\MenuIcon.xaml;
 
-True
+False
 

@@ -9,6 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\**" />
+    <Compile Remove="Persistence\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <EmbeddedResource Remove="Persistence\**" />
+    <None Remove="Model\**" />
+    <None Remove="Persistence\**" />
+    <Page Remove="Model\**" />
+    <Page Remove="Persistence\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="View\UserControls\Icons\play-button.png" />
   </ItemGroup>
 
@@ -19,8 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Persistence\" />
+    <ProjectReference Include="..\RobotokModel\RobotokModel.csproj" />
   </ItemGroup>
 
 </Project>

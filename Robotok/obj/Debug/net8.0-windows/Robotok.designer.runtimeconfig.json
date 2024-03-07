@@ -12,9 +12,8 @@
       }
     ],
     "additionalProbingPaths": [
-      "C:\\Users\\palma\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\palma\\.nuget\\packages",
-      "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      "C:\\Users\\Boblet\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Boblet\\.nuget\\packages"
     ],
     "configProperties": {
       "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": true,

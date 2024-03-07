@@ -78,7 +78,7 @@ namespace Robotok.View.Grid {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Robotok;component/view/grid/verticalnumberstrip.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Robotok;V1.0.0.0;component/view/grid/verticalnumberstrip.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\View\Grid\VerticalNumberStrip.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

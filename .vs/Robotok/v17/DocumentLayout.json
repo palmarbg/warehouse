@@ -1,46 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\",
+  "WorkspaceRootPath": "C:\\Users\\Boblet\\Documents\\SzofTech\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\zoomslider.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\zoomslider.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{295A9F7E-08F9-4269-AA77-59C0DB51F44B}|RobotokModel\\RobotokModel.csproj|c:\\users\\boblet\\documents\\szoftech\\robotokmodel\\persistence\\persistence.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{295A9F7E-08F9-4269-AA77-59C0DB51F44B}|RobotokModel\\RobotokModel.csproj|solutionrelative:robotokmodel\\persistence\\persistence.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\mapgrid.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\mapgrid.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\mapgridcontainer.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\mapgridcontainer.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\horizontalnumberstrip.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\horizontalnumberstrip.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\viewmodel\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\viewmodel\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\horizontalnumberstrip.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\horizontalnumberstrip.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\verticalnumberstrip.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\verticalnumberstrip.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|c:\\users\\palma\\desktop\\sztech\\robotok\\robotok\\view\\grid\\gridconverterfunctions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{46C69904-6336-49A0-B9A5-B5EEE88A8B03}|Robotok\\Robotok.csproj|solutionrelative:robotok\\view\\grid\\gridconverterfunctions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{295A9F7E-08F9-4269-AA77-59C0DB51F44B}|RobotokModel\\RobotokModel.csproj|c:\\users\\boblet\\documents\\szoftech\\robotokmodel\\model\\simulation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{295A9F7E-08F9-4269-AA77-59C0DB51F44B}|RobotokModel\\RobotokModel.csproj|solutionrelative:robotokmodel\\model\\simulation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -55,118 +23,28 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ZoomSlider.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\ZoomSlider.xaml",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\ZoomSlider.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\ZoomSlider.xaml",
-              "RelativeToolTip": "Robotok\\View\\Grid\\ZoomSlider.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T23:33:39.427Z",
+              "Title": "Persistence.cs",
+              "DocumentMoniker": "C:\\Users\\Boblet\\Documents\\SzofTech\\RobotokModel\\Persistence\\Persistence.cs",
+              "RelativeDocumentMoniker": "RobotokModel\\Persistence\\Persistence.cs",
+              "ToolTip": "C:\\Users\\Boblet\\Documents\\SzofTech\\RobotokModel\\Persistence\\Persistence.cs",
+              "RelativeToolTip": "RobotokModel\\Persistence\\Persistence.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-07T14:28:06.685Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "MapGrid.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\MapGrid.xaml",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\MapGrid.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\MapGrid.xaml",
-              "RelativeToolTip": "Robotok\\View\\Grid\\MapGrid.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T23:32:51.301Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MapGridContainer.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\MapGridContainer.xaml",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\MapGridContainer.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\MapGridContainer.xaml",
-              "RelativeToolTip": "Robotok\\View\\Grid\\MapGridContainer.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T23:32:46.451Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\App.xaml.cs",
-              "RelativeDocumentMoniker": "Robotok\\App.xaml.cs",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\App.xaml.cs",
-              "RelativeToolTip": "Robotok\\App.xaml.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAAAAAA",
+              "Title": "Simulation.cs",
+              "DocumentMoniker": "C:\\Users\\Boblet\\Documents\\SzofTech\\RobotokModel\\Model\\Simulation.cs",
+              "RelativeDocumentMoniker": "RobotokModel\\Model\\Simulation.cs",
+              "ToolTip": "C:\\Users\\Boblet\\Documents\\SzofTech\\RobotokModel\\Model\\Simulation.cs",
+              "RelativeToolTip": "RobotokModel\\Model\\Simulation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-05T23:11:23.788Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "App.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\App.xaml",
-              "RelativeDocumentMoniker": "Robotok\\App.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\App.xaml",
-              "RelativeToolTip": "Robotok\\App.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T23:11:21.546Z",
+              "WhenOpened": "2024-03-07T14:27:57.229Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "VerticalNumberStrip.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\VerticalNumberStrip.xaml",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\VerticalNumberStrip.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\VerticalNumberStrip.xaml",
-              "RelativeToolTip": "Robotok\\View\\Grid\\VerticalNumberStrip.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T23:03:03.194Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "HorizontalNumberStrip.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\HorizontalNumberStrip.xaml.cs",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\HorizontalNumberStrip.xaml.cs",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\HorizontalNumberStrip.xaml.cs",
-              "RelativeToolTip": "Robotok\\View\\Grid\\HorizontalNumberStrip.xaml.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-05T22:51:58.036Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HorizontalNumberStrip.xaml",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\HorizontalNumberStrip.xaml",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\HorizontalNumberStrip.xaml",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\HorizontalNumberStrip.xaml",
-              "RelativeToolTip": "Robotok\\View\\Grid\\HorizontalNumberStrip.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-05T22:49:26.938Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "GridConverterFunctions.cs",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\GridConverterFunctions.cs",
-              "RelativeDocumentMoniker": "Robotok\\View\\Grid\\GridConverterFunctions.cs",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\View\\Grid\\GridConverterFunctions.cs",
-              "RelativeToolTip": "Robotok\\View\\Grid\\GridConverterFunctions.cs",
-              "ViewState": "AQIAAAQAAAAAAAAAAAAAAFcAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-05T22:44:32.104Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MainWindowViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\ViewModel\\MainWindowViewModel.cs",
-              "RelativeDocumentMoniker": "Robotok\\ViewModel\\MainWindowViewModel.cs",
-              "ToolTip": "C:\\Users\\palma\\Desktop\\sztech\\Robotok\\Robotok\\ViewModel\\MainWindowViewModel.cs",
-              "RelativeToolTip": "Robotok\\ViewModel\\MainWindowViewModel.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAAwFwAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-05T22:43:19.509Z"
             }
           ]
         }
