@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Robotok.View.UserControls.Menubar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Robotok.View.UserControls"
+             mc:Ignorable="d" d:DesignWidth="1200" Height="50">
+    <UserControl.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Fájl">
+                <MenuItem Header="" />
+            </MenuItem>
+            <MenuItem Header="Szimuláció">
+                <MenuItem Header="" />
+            </MenuItem>
+            <MenuItem Header="Nézet">
+                <MenuItem Header="" />
+            </MenuItem>
+            <MenuItem Header="Beállítások">
+                <MenuItem Header="" />
+            </MenuItem>
+        </Menu>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <local:MenuIcon IconSrc="Icons/play-button.png"/>
+            <local:MenuIcon LabelText="Play" IconSrc="Icons/play-button.png"/>
+            <local:MenuIcon LabelText="Play"/>
+        </StackPanel>
+       
+        
+
+    </Grid>
+</UserControl>

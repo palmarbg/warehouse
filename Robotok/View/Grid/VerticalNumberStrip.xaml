@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="Robotok.View.Grid.VerticalNumberStrip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Robotok.View.Grid"
+             xmlns:converters="clr-namespace:Robotok.View.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="25"
+             Name="ParentElement">
+    <UserControl.Resources>
+        <local:SizeToStringObservableCollection x:Key="SizeToStringObservableCollection" />
+        <local:StripSizeConverter x:Key="StripSizeConverter" />
+        <local:VerticalMarginConverter x:Key="VerticalMarginConverter" />
+        <Style TargetType="Border" x:Key="BindMe">
+            <Setter Property="Height">
+                <Setter.Value>
+                    <Binding Converter="{StaticResource StripSizeConverter}"
+                             Path="DataContext.Zoom"
+                             RelativeSource="{RelativeSource AncestorType={x:Type Window}}"
+                             Mode="OneWay"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource VerticalMarginConverter}">
+                        <Binding Path="DataContext.YOffset"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type Window}}"
+                                 Mode="OneWay" 
+                                 />
+                        <Binding Path="DataContext.Zoom"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type Window}}"
+                                 Mode="OneWay" 
+                                 />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Width" Value="25"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Hidden"
+              HorizontalScrollBarVisibility="Hidden"
+              Name="_ScrollViewer">
+        <Viewbox Stretch="Uniform"
+             StretchDirection="Both"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top">
+            <ItemsControl Name="ItemsControl"
+                          Width="25"
+                          >
+                <ItemsControl.ItemsSource>
+                    <MultiBinding Converter="{StaticResource SizeToStringObservableCollection}" Mode="OneWay">
+                        <Binding Path="Zoom" Mode="OneWay"/>
+                        <Binding Path="RowCount" Mode="OneWay"/>
+                        <Binding Path="YOffset" Mode="OneWay"/>
+                    </MultiBinding>
+                </ItemsControl.ItemsSource>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" Width="25"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="0,0,0,1"
+                                BorderBrush="Black"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource BindMe}">
+                            <TextBlock FontSize="16"
+                                       Text="{Binding}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Viewbox>
+
+    </ScrollViewer>
+</UserControl>
