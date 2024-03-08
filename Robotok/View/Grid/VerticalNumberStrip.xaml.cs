@@ -30,8 +30,12 @@ namespace Robotok.View.Grid
         public double Zoom { get; set; }
         public int YOffset { get; set; }
         public int Thickness { get; set; }
+
+        public ObservableCollection<string> LabelTexts { get; set; }
+
         public VerticalNumberStrip()
         {
+            LabelTexts = new ObservableCollection<string>();
             InitializeComponent();
         }
 

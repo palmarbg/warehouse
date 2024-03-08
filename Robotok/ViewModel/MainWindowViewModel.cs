@@ -89,8 +89,8 @@ namespace Robotok.ViewModel
         public MainWindowViewModel()
         {
             _zoom=1.0;
-            _row=4000;
-            _column=4000;
+            _row=20;
+            _column=20;
             _xoffset = 0;
             _yoffset = 0;
         }

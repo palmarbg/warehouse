@@ -18,8 +18,11 @@ namespace Robotok.View.Grid
         public double Zoom { get; set; }
         public int XOffset { get; set; }
         public int Thickness { get; set; }
+
+        public ObservableCollection<string> LabelTexts { get; set; }
         public HorizontalNumberStrip()
         {
+            LabelTexts = new ObservableCollection<string>();
             InitializeComponent();
         }
 
@@ -35,35 +38,39 @@ namespace Robotok.View.Grid
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             //zoom count offset
-            var labelTexts = new ObservableCollection<string>();
+            var labelTexts = (ObservableCollection<string>)values[3];
 
-            if(!GridConverterFunctions.ValidateArray(values, 3))
+            if(!GridConverterFunctions.ValidateArray(values, 4))
                 return labelTexts;
 
             double zoom = (double)values[0];
             int count = (int)values[1];
             int offset = (int)values[2];
 
+            for (int i = 0; i < labelTexts.Count; i++)
+                labelTexts[i] = string.Empty;
+
+            while (GridConverterFunctions.NumberOfLabelsOnScreen(zoom) > labelTexts.Count)
+                labelTexts.Add(string.Empty);
+                
 
             var groupedAmountInOneBlock = GridConverterFunctions.AmountOfNumbersInOneLabel(zoom);
 
-            Debug.WriteLine(GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
-
             int start = GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom);
-            int end = Math.Min(start+100, count);
+            int end = Math.Min(start+ GridConverterFunctions.NumberOfLabelsOnScreen(zoom), count);
 
 
             if (groupedAmountInOneBlock == 1)
             {
                 for (int i = start+1; i <= end; i++)
-                    labelTexts.Add(i.ToString());
+                    labelTexts[i-1-start] = i.ToString();
                 return labelTexts;
             }
             int numberOfBlocks = GridConverterFunctions.NumberOfLabels(count, zoom);
-            end = Math.Min(start + 100, numberOfBlocks);
+            end = Math.Min(start + GridConverterFunctions.NumberOfLabelsOnScreen(zoom), numberOfBlocks);
 
             for (int i = start; i < end; i++)
-                labelTexts.Add($"{groupedAmountInOneBlock * i + 1}:");//-{groupedAmountInOneBlock * (i + 1)}
+                labelTexts[i-start] = ($"{groupedAmountInOneBlock * i + 1}:");//-{groupedAmountInOneBlock * (i + 1)}
             return labelTexts;
 
         }

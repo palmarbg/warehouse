@@ -22,8 +22,6 @@ namespace Robotok.View.Grid
         /// </returns>
         public static double AmountOfNumbersInOneLabel(double zoom)
         {
-            if (zoom == 0)
-                Debug.WriteLine("***************");
             double fun = Math.Floor((2.4 / zoom)) - 1;
             var groupedAmountInOneBlock = (fun - 1 <= 0.5) ? 1.0 : (fun - 2 <= 0.5) ? 2.0 : (fun - 5 <= 0.5) ? 5.0 : 10.0;
             return groupedAmountInOneBlock;
@@ -36,14 +34,18 @@ namespace Robotok.View.Grid
         /// </returns>
         public static int NumberOfLabels(int count, double zoom)
         {
-            if (AmountOfNumbersInOneLabel(zoom) == 0)
-                Debug.WriteLine("***************");
             return System.Convert.ToInt32(Math.Ceiling(count / AmountOfNumbersInOneLabel(zoom)));
         }
 
         public static double LabelLength(double zoom)
         {
             return unit * zoom * AmountOfNumbersInOneLabel(zoom);
+        }
+
+        public static int NumberOfLabelsOnScreen(double zoom)
+        {
+            double size = Math.Max(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
+            return (int)Math.Ceiling(size / LabelLength(zoom));
         }
 
         public static double MapLength(int count)
@@ -65,8 +67,6 @@ namespace Robotok.View.Grid
         public static int NumberOfLines(int count1, int count2)
         {
             int scale = AmountOfCellsInOneBlock(count1, count2);
-            if (scale == 0)
-                Debug.WriteLine("***************");
             return System.Convert.ToInt32(Math.Ceiling((double)count1 / scale));
         }
 
@@ -76,8 +76,6 @@ namespace Robotok.View.Grid
         /// <returns>Returns the number of grouped labels not displayed at the start</returns>
         public static int NumberOfLabelsToOmit(int offset, double zoom)
         {
-            if (GridConverterFunctions.LabelLength(zoom) == 0)
-                Debug.WriteLine("***************");
             return (int)Math.Floor(offset / GridConverterFunctions.LabelLength(zoom));
         }
 

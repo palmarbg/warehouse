@@ -54,6 +54,7 @@
                         <Binding Path="Zoom" Mode="OneWay"/>
                         <Binding Path="RowCount" Mode="OneWay"/>
                         <Binding Path="YOffset" Mode="OneWay"/>
+                        <Binding Path="LabelTexts" ElementName="ParentElement"/>
                     </MultiBinding>
                 </ItemsControl.ItemsSource>
                 <ItemsControl.ItemsPanel>
