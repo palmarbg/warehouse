@@ -53,6 +53,7 @@ namespace Robotok.View.Grid
         public void SetDataContext(INotifyPropertyChanged viewModel)
         {
             this.DataContext = viewModel;
+            RobotLayer.SetDataContext(viewModel);
         }
     }
 

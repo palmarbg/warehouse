@@ -58,7 +58,7 @@ namespace Robotok.View.Grid
         /// <returns>Returns the number of cells displayed as one block</returns>
         public static int AmountOfCellsInOneBlock(int rowCount, int columnCount)
         {
-            return Math.Max(rowCount / 400, columnCount / 400);
+            return Math.Max(rowCount / 500, columnCount / 500);
         }
 
         /// <param name="count1"></param>

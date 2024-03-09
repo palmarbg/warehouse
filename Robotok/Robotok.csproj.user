@@ -16,6 +16,9 @@
     <Compile Update="View\Grid\HorizontalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\Grid\MapRobot.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\Grid\VerticalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -40,6 +43,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="View\Grid\HorizontalNumberStrip.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Grid\MapRobot.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="View\Grid\VerticalNumberStrip.xaml">

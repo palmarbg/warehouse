@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobotokModel.Model
 {
-    internal class Simulation
+    public class Simulation
     {
     }
 }

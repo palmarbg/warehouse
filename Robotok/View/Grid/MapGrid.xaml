@@ -42,40 +42,44 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  >
-            <ItemsControl>
-                <ItemsControl.ItemsSource>
-                    <MultiBinding Converter="{StaticResource SizeToLineObservableCollection}" Mode="OneWay">
-                        <Binding Path="RowCount" Mode="OneWay"/>
-                        <Binding Path="ColumnCount" Mode="OneWay"/>
-                    </MultiBinding>
-                </ItemsControl.ItemsSource>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Name="MapCanvas"
+            <Grid>
+                <ItemsControl>
+                    <ItemsControl.ItemsSource>
+                        <MultiBinding Converter="{StaticResource SizeToLineObservableCollection}" Mode="OneWay">
+                            <Binding Path="RowCount" Mode="OneWay"/>
+                            <Binding Path="ColumnCount" Mode="OneWay"/>
+                        </MultiBinding>
+                    </ItemsControl.ItemsSource>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Name="MapCanvas"
                                 Style="{StaticResource BindMe}"
                                 ClipToBounds="True"
                                 >
-                            <Canvas.LayoutTransform>
-                                <TransformGroup>
-                                    <ScaleTransform ScaleX="{Binding Zoom}"/>
-                                    <ScaleTransform ScaleY="{Binding Zoom}"/>
-                                </TransformGroup>
-                            </Canvas.LayoutTransform>
-                        </Canvas>
+                                <Canvas.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="{Binding Zoom}"/>
+                                        <ScaleTransform ScaleY="{Binding Zoom}"/>
+                                    </TransformGroup>
+                                </Canvas.LayoutTransform>
+                            </Canvas>
 
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Line X1="{Binding X1}"
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Line X1="{Binding X1}"
                               X2="{Binding X2}"
                               Y1="{Binding Y1}"
                               Y2="{Binding Y2}"
                               Stroke="Black"
                               StrokeThickness="1"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <local:MapRobot x:Name="RobotLayer"/>
+            </Grid>
         </Viewbox>
         
     </ScrollViewer>

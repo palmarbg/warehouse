@@ -1,8 +1,10 @@
 ﻿using Robotok.View;
 using Robotok.ViewModel;
+using RobotokModel.Model;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 
