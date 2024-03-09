@@ -58,7 +58,7 @@ namespace Robotok.View.Grid
             
             Direction dir = (Direction)value;
 
-            int val = GridConverterFunctions.unit / 2 + 2;
+            int val = (int)(GridConverterFunctions.unit * 0.7) + 2;
 
             switch (dir)
             {

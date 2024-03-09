@@ -59,7 +59,11 @@
             <DataTemplate>
                 <Grid
                     Width="{Binding Id, Converter={StaticResource UnitCanvasLengthConverter}}"
-                    Height="{Binding Id, Converter={StaticResource UnitCanvasLengthConverter}}">
+                    Height="{Binding Id, Converter={StaticResource UnitCanvasLengthConverter}}"
+                    ToolTip="{Binding Id}"
+                    ToolTipService.InitialShowDelay="0" 
+                    ToolTipService.ShowDuration="9999999" 
+                    ToolTipService.BetweenShowDelay="0">
                     <Grid.Margin>
                         <MultiBinding Converter="{StaticResource CoordinateToCanvasMarginConverter}">
                             <Binding Path="Position.X" Mode="OneWay"/>
@@ -69,15 +73,16 @@
                     <Ellipse 
                              Fill="#09c2f8"
                              Margin="2"
+                             
                              />
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               FontSize="16"
+                               FontSize="12"
                                Text="{Binding Id}"/>
                     <Ellipse
                         Fill="Black"
-                        Width="4"
-                        Height="4"
+                        Width="6"
+                        Height="6"
                         Margin="{Binding Rotation, Converter={StaticResource DirectionToDotMarginConverter}}"
                         />
                 </Grid>
