@@ -54,6 +54,8 @@ namespace Robotok.View.Grid
         {
             this.DataContext = viewModel;
             RobotLayer.SetDataContext(viewModel);
+            GoalLayer.SetDataContext(viewModel);
+            BlockLayer.SetDataContext(viewModel);
         }
     }
 

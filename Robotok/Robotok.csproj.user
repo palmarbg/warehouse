@@ -7,6 +7,12 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="View\Grid\MapBlock.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Grid\MapGoal.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\Grid\MapGrid.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -36,6 +42,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="View\Grid\MapBlock.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Grid\MapGoal.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="View\Grid\MapGrid.xaml">
       <SubType>Designer</SubType>
     </Page>

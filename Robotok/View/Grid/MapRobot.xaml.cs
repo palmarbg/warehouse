@@ -28,8 +28,6 @@ namespace Robotok.View.Grid
         public double Zoom { get; set; }
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
-        public double XOffset { get; set; }
-        public double YOffset { get; set; }
 
         public ObservableCollection<Robot> Robots { get; set; }
 

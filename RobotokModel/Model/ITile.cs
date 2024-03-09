@@ -28,7 +28,7 @@ namespace RobotokModel.Model
         private static int id = 0;
 
         public static List<Robot> Robots = new();
-        public bool IsPassable => true;
+        public bool IsPassable => false;
         public Direction Rotation { get; set; }
         public Position CurrentGoal { get; set; }
         public RobotOperation NextOperation { get; set; }

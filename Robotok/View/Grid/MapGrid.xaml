@@ -77,7 +77,9 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
+
+                <local:MapBlock x:Name="BlockLayer"/>
+                <local:MapGoal x:Name="GoalLayer"/>
                 <local:MapRobot x:Name="RobotLayer"/>
             </Grid>
         </Viewbox>

@@ -18,7 +18,7 @@ namespace RobotokModel.Model
 
     public struct Position
     {
-        public int X {  get; set; }
+        public int X { get; set; }
         public int Y { get; set; }
     }
 
@@ -30,7 +30,19 @@ namespace RobotokModel.Model
 
     public struct SimulationData
     {
-        public ITile[][] Map;
+        public ITile[,] Map;
+        public List<Goal> Goals;
+    }
+
+    public struct Goal
+    {
+        private static int id = 0;
+        public int Id { get; }
+        public Position Position { get; set; }
+        public Goal()
+        {
+            Id = id++;
+        }
     }
 
 }
