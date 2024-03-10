@@ -37,7 +37,7 @@
     </UserControl.Resources>
     <ItemsControl>
         <ItemsControl.ItemsSource>
-            <Binding Path="Blocks" Mode="OneWay"/>
+            <Binding Path="ObservableBlocks" Mode="OneWay"/>
         </ItemsControl.ItemsSource>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

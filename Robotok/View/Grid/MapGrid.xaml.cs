@@ -1,4 +1,5 @@
-﻿using Robotok.ViewModel;
+﻿using Robotok.MVVM;
+using Robotok.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -65,8 +66,11 @@ namespace Robotok.View.Grid
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            
             // rowcount columncount
-            var lines = new ObservableCollection<ObservableLine>();
+            var lines = new SuppressNotifyObservableCollection<ObservableLine>();
+            lines.SuppressNotify = true;
+
             if(!GridConverterFunctions.ValidateArray(values, 2))
                 return lines;
 

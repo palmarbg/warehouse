@@ -1,4 +1,5 @@
-﻿using RobotokModel.Model;
+﻿using Robotok.MVVM;
+using RobotokModel.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,12 +28,12 @@ namespace Robotok.View.Grid
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
 
-        public ObservableCollection<Goal> Goals { get; set; }
+        public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
 
         public MapGoal()
         {
             DataContext = this;
-            Goals = new ObservableCollection<Goal>();
+            ObservableGoals = new (new List<Goal>());
             InitializeComponent();
 
         }

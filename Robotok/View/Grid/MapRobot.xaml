@@ -37,7 +37,7 @@
     </UserControl.Resources>
     <ItemsControl>
         <ItemsControl.ItemsSource>
-            <Binding Path="Robots" Mode="OneWay"/>
+            <Binding Path="ObservableRobots" Mode="OneWay"/>
         </ItemsControl.ItemsSource>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

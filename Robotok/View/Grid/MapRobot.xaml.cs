@@ -1,9 +1,11 @@
-﻿using Robotok.ViewModel;
+﻿using Robotok.MVVM;
+using Robotok.ViewModel;
 using RobotokModel.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -29,12 +31,12 @@ namespace Robotok.View.Grid
         public int RowCount { get; set; }
         public int ColumnCount { get; set; }
 
-        public ObservableCollection<Robot> Robots { get; set; }
+        public ObservableCollectionWrapper<Robot> ObservableRobots { get; set; }
 
         public MapRobot()
         {
             DataContext = this;
-            Robots = new ObservableCollection<Robot>();
+            ObservableRobots = new (new List<Robot>());
             InitializeComponent();
 
         }
@@ -51,6 +53,7 @@ namespace Robotok.View.Grid
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            
             if(value == null || value == DependencyProperty.UnsetValue)
                 return new Thickness(0, 0, 0, 0);
             

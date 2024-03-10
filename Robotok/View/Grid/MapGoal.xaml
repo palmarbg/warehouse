@@ -37,7 +37,7 @@
     </UserControl.Resources>
     <ItemsControl>
         <ItemsControl.ItemsSource>
-            <Binding Path="Goals" Mode="OneWay"/>
+            <Binding Path="ObservableGoals" Mode="OneWay"/>
         </ItemsControl.ItemsSource>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

@@ -31,11 +31,11 @@ namespace Robotok.View.Grid
         public int YOffset { get; set; }
         public int Thickness { get; set; }
 
-        public ObservableCollection<string> LabelTexts { get; set; }
+        public SuppressNotifyObservableCollection<string> LabelTexts { get; set; }
 
         public VerticalNumberStrip()
         {
-            LabelTexts = new ObservableCollection<string>();
+            LabelTexts = new SuppressNotifyObservableCollection<string>();
             InitializeComponent();
         }
 

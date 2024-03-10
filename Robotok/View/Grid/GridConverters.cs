@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows;
+using Robotok.MVVM;
 
 namespace Robotok.View.Grid
 {
@@ -14,8 +15,8 @@ namespace Robotok.View.Grid
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            //zoom count offset
-            var labelTexts = (ObservableCollection<string>)values[3];
+            //zoom count offset observablecollection
+            var labelTexts = (SuppressNotifyObservableCollection<string>)values[3];
 
             if (!GridConverterFunctions.ValidateArray(values, 4))
                 return labelTexts;
@@ -27,8 +28,10 @@ namespace Robotok.View.Grid
             for (int i = 0; i < labelTexts.Count; i++)
                 labelTexts[i] = string.Empty;
 
+            labelTexts.SuppressNotify = true;
             while (GridConverterFunctions.NumberOfLabelsOnScreen(zoom) > labelTexts.Count)
                 labelTexts.Add(string.Empty);
+            labelTexts.SuppressNotify = false;
 
 
             var groupedAmountInOneBlock = GridConverterFunctions.AmountOfNumbersInOneLabel(zoom);

@@ -91,9 +91,13 @@ namespace Robotok.ViewModel
             }
         }
 
-        public ObservableCollection<Robot> Robots { get; set; }
-        public ObservableCollection<Goal> Goals { get; set; }
-        public ObservableCollection<ObservableBlock> Blocks { get; set; }
+        public ObservableCollectionWrapper<Robot> ObservableRobots { get; set; }
+        public List<Robot> Robots { get; set; }
+        public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
+
+        public List<Goal> Goals { get; set; }
+        public ObservableCollectionWrapper<ObservableBlock> ObservableBlocks { get; set; }
+        public List<ObservableBlock> Blocks { get; set; }
 
         public bool[,] Map;
 
@@ -102,29 +106,29 @@ namespace Robotok.ViewModel
         public MainWindowViewModel()
         {
             _zoom=1.0;
-            _row=500;
-            _column=500;
+            _row=300;
+            _column=300;
             _xoffset = 0;
             _yoffset = 0;
             
             Random random = new Random();
 
-            Robots = new ObservableCollection<Robot>();
-            Goals = new ObservableCollection<Goal>();
-            Blocks = new ObservableCollection<ObservableBlock>();
+            Robots = new List<Robot>();
+            Goals = new List<Goal>();
+            Blocks = new List<ObservableBlock>();
 
             Map = new bool[ColumnCount, RowCount];
 
-            for (int i = 0; i < RowCount; i++)
+            for (int i = 0; i < Map.GetLength(0); i++)
             {
-                for (int j = 0; j < ColumnCount; j++)
+                for (int j = 0; j < Map.GetLength(1); j++)
                 {
                     Map[i, j] = random.Next(100) < 95;
                 }
             }
 
             var values = Enum.GetValues(typeof(Direction));
-            for(int i = 0; i < 500; i++)
+            for(int i = 0; i < 200; i++)
             {
                 Robots.Add(new Robot {  Rotation = (Direction)values.GetValue(random.Next(values.Length)),
                                         Position = new Position {
@@ -138,10 +142,14 @@ namespace Robotok.ViewModel
             }
 
             CalculateBlocks();
+            ObservableBlocks = new(Blocks);
+            ObservableGoals = new(Goals);
+            ObservableRobots = new(Robots);
         }
 
         public void CalculateBlocks()
         {
+            Blocks.Clear();
             int j = 0;
             int start=0, end=0;
             for(int i = 0; i < Map.GetLength(0); i++)

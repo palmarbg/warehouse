@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Robotok.MVVM;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,10 +20,10 @@ namespace Robotok.View.Grid
         public int XOffset { get; set; }
         public int Thickness { get; set; }
 
-        public ObservableCollection<string> LabelTexts { get; set; }
+        public SuppressNotifyObservableCollection<string> LabelTexts { get; set; }
         public HorizontalNumberStrip()
         {
-            LabelTexts = new ObservableCollection<string>();
+            LabelTexts = new SuppressNotifyObservableCollection<string>();
             InitializeComponent();
         }
 
