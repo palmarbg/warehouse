@@ -12,7 +12,7 @@ namespace RobotokModel.Model
 
         public void AssignNewTask(Robot robot)
         {
-            robot.CurrentGoal = SimulationData.Goals[0].Position;
+            robot.CurrentGoal = SimulationData.Goals[0];
             throw new NotImplementedException();
         }
     }
