@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace RobotokModel.Model
 {
@@ -19,10 +20,22 @@ namespace RobotokModel.Model
         private int RemainingSteps { get; set; }
         public EventHandler<RobotMove> RobotMovedEvent { get; set; }
         public EventHandler<int> GoalFinished { get; set; }
+        public EventHandler<Log> SimulationFinished { get; set; }
+
+        private System.Timers.Timer Timer;
+        private bool SimulationRunning;
 
 
         public Simulation(Config config, string Strategy, int StepLimit)
         {
+
+            Timer = new System.Timers.Timer();
+            Timer.Interval = 1000;
+            Timer.Enabled = true;
+            Timer.Elapsed += SimulationStep;
+            SimulationRunning = false;
+
+
             throw new NotImplementedException();
 
         }
@@ -37,10 +50,47 @@ namespace RobotokModel.Model
         }
         public void StartSimulation()
         {
+            SimulationRunning = true;
+            Timer.Start();
+
             throw new NotImplementedException();
         }
 
-        private void SimulationStep()
+
+
+        public void StopSimulation()
+        {
+            if (SimulationRunning)
+            {
+                SimulationRunning = false;
+                Timer.Stop();
+                SimulationFinished.Invoke(this, this.GetLog());
+            }
+            else throw new NotImplementedException();
+
+            throw new NotImplementedException();
+        }
+        public void PauseSimulation()
+        {
+            throw new NotImplementedException();
+        }
+        public void SetSimulationSpeed()
+        {
+            throw new NotImplementedException();
+        }
+        public void JumpToStep(int step)
+        {
+            throw new NotImplementedException();
+        }
+        public Log GetLog()
+        {
+            throw new NotImplementedException();
+        }
+        private int GoalsRemaining()
+        {
+            throw new NotImplementedException();
+        }
+        private void SimulationStep(object? sender, ElapsedEventArgs args)
         {
 
             var operations = Controller.NextStep();
@@ -59,6 +109,8 @@ namespace RobotokModel.Model
                         {
                             MoveRobotToNewPosition(robot, newPos, operations[i]);
                             GoalFinished.Invoke(this, robot.CurrentGoal.Id);
+                            SimulationData.Goals.Remove(robot.CurrentGoal);
+                            Distributor.AssignNewTask(robot);
                         }
                         else if (SimulationData.Map[newPos.X, newPos.Y] is Robot)
                         {
@@ -117,47 +169,6 @@ namespace RobotokModel.Model
             return newPosition;
         }
 
-        public void StopSimulation()
-        {
-            throw new NotImplementedException();
-        }
-        public void PauseSimulation()
-        {
-            throw new NotImplementedException();
-        }
-        public void SetSimulationSpeed()
-        {
-            throw new NotImplementedException();
-        }
-        public void JumpToStep(int step)
-        {
-            throw new NotImplementedException();
-        }
-        public void GetLog(Log log)
-        {
-            throw new NotImplementedException();
-        }
-        private int GoalsRemaining()
-        {
-            throw new NotImplementedException();
-        }
-        private RobotOperation ReverseOperation(RobotOperation operation)
-        {
-            switch (operation)
-            {
-                case RobotOperation.Forward:
-                    return RobotOperation.Backward;
-                case RobotOperation.Clockwise:
-                    return RobotOperation.CounterClockwise;
-                case RobotOperation.CounterClockwise:
-                    return RobotOperation.Clockwise;
-                case RobotOperation.Backward:
-                    return RobotOperation.Forward;
-                case RobotOperation.Wait:
-                    return RobotOperation.Wait;
-            }
-            return RobotOperation.Wait;
-        }
 
 
     }

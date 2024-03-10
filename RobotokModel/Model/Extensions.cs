@@ -68,6 +68,23 @@ namespace RobotokModel.Model
             }
             return c;
         }
+        public static RobotOperation Reverse(this RobotOperation operation)
+        {
+            switch (operation)
+            {
+                case RobotOperation.Forward:
+                    return RobotOperation.Backward;
+                case RobotOperation.Clockwise:
+                    return RobotOperation.CounterClockwise;
+                case RobotOperation.CounterClockwise:
+                    return RobotOperation.Clockwise;
+                case RobotOperation.Backward:
+                    return RobotOperation.Forward;
+                case RobotOperation.Wait:
+                    return RobotOperation.Wait;
+            }
+            return RobotOperation.Wait;
+        }
     }
 
 }
