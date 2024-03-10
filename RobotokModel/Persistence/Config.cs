@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobotokModel.Persistence
 {
-    public class Persistence
+    public class Config
     {
     }
 }
