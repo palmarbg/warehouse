@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,12 @@ namespace Robotok.MVVM
         {
             if (!SuppressNotify)
                 base.OnCollectionChanged(e);
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            if (!SuppressNotify)
+                base.OnPropertyChanged(e);
         }
     }
 }
