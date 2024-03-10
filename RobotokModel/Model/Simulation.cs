@@ -17,9 +17,11 @@ namespace RobotokModel.Model
         private ITaskDistributor Distributor { get; set; }
         private IController Controller { get; set; }
         private int RemainingSteps { get; set; }
+        public EventHandler<RobotMove> RobotMovedEvent { get; set; }
+        public EventHandler<int> GoalFinished { get; set; }
 
 
-        public Simulation(Config config, string Strategy, int StepLimit )
+        public Simulation(Config config, string Strategy, int StepLimit)
         {
             throw new NotImplementedException();
 
@@ -37,10 +39,10 @@ namespace RobotokModel.Model
         {
             throw new NotImplementedException();
         }
-       
+
         private void SimulationStep()
         {
-            
+
             var operations = Controller.NextStep();
             for (int i = 0; i < Robot.Robots.Count; i++)
             {
@@ -48,7 +50,21 @@ namespace RobotokModel.Model
                 switch (operations[i])
                 {
                     case RobotOperation.Forward:
-                        
+                        var newPos = PoistionInDirection(robot.Rotation, robot.Position);
+                        if (SimulationData.Map[newPos.X, newPos.Y].IsPassable)
+                        {
+                            MoveRobotToNewPosition(robot, newPos, operations[i]);
+                        }
+                        else if (newPos.X == robot.CurrentGoal.Position.X && newPos.Y == robot.CurrentGoal.Position.Y)
+                        {
+                            MoveRobotToNewPosition(robot, newPos, operations[i]);
+                            GoalFinished.Invoke(this, robot.CurrentGoal.Id);
+                        }
+                        else if (SimulationData.Map[newPos.X, newPos.Y] is Robot)
+                        {
+                            throw new NotImplementedException();
+                        }
+
                         break;
                     case RobotOperation.Clockwise:
                         robot.Rotation.RotateClockWise();
@@ -57,18 +73,50 @@ namespace RobotokModel.Model
                         robot.Rotation.RotateCounterClockWise();
                         break;
                     case RobotOperation.Backward:
-                        throw new NotImplementedException();
-
                         break;
                     case RobotOperation.Wait:
-                        throw new NotImplementedException();
-
                         break;
                 }
             }
             throw new NotImplementedException();
 
         }
+        private void MoveRobotToNewPosition(Robot robot, Position newPosition, RobotOperation operaition)
+        {
+            SimulationData.Map[newPosition.X, newPosition.Y] = robot;
+            SimulationData.Map[robot.Position.X, robot.Position.Y] = new EmptyTile();
+            robot.Position = newPosition;
+
+            var rmEvent = new RobotMove();
+            rmEvent.Position = newPosition;
+            rmEvent.Operation = operaition.ToChar();
+            RobotMovedEvent.Invoke(this, rmEvent);
+        }
+        private Position PoistionInDirection(Direction rotation, Position position)
+        {
+            var newPosition = new Position();
+            switch (rotation)
+            {
+                case Direction.Left:
+                    newPosition.X = position.X - 1;
+                    newPosition.Y = position.Y;
+                    break;
+                case Direction.Up:
+                    newPosition.X = position.X;
+                    newPosition.Y = position.Y + 1;
+                    break;
+                case Direction.Right:
+                    newPosition.X = position.X;
+                    newPosition.Y = position.Y + 1;
+                    break;
+                case Direction.Down:
+                    newPosition.X = position.X;
+                    newPosition.Y = position.Y - 1;
+                    break;
+            }
+            return newPosition;
+        }
+
         public void StopSimulation()
         {
             throw new NotImplementedException();
@@ -100,15 +148,15 @@ namespace RobotokModel.Model
                 case RobotOperation.Forward:
                     return RobotOperation.Backward;
                 case RobotOperation.Clockwise:
-                    return RobotOperation.CounterClockwise ;
+                    return RobotOperation.CounterClockwise;
                 case RobotOperation.CounterClockwise:
-                    return RobotOperation.Clockwise ;
+                    return RobotOperation.Clockwise;
                 case RobotOperation.Backward:
                     return RobotOperation.Forward;
                 case RobotOperation.Wait:
                     return RobotOperation.Wait;
             }
-            return RobotOperation.Wait ;
+            return RobotOperation.Wait;
         }
 
 

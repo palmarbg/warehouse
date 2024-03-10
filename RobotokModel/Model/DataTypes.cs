@@ -20,18 +20,20 @@ namespace RobotokModel.Model
     {
         public int X { get; set; }
         public int Y { get; set; }
+        
     }
 
     public struct RobotMove
     {
-        Position Position;
-        char Operation;
+        public Position Position;
+        public char Operation;
     }
 
     public struct SimulationData
     {
         public ITile[,] Map;
         public List<Goal> Goals;
+        
     }
 
     public struct Goal

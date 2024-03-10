@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RobotokModel.Model
 {
 
-    public static class DirectionExtenstions
+    public static class Extenstions
     {
         public static void RotateClockWise(this Direction direction)
         {
@@ -44,6 +44,29 @@ namespace RobotokModel.Model
                     direction = Direction.Right;
                     break;
             }
+        }
+        public static char ToChar(this RobotOperation operation)
+        {
+            char c = 'W';
+            switch (operation)
+            {
+                case RobotOperation.Forward:
+                    c = 'F';
+                    break;
+                case RobotOperation.Clockwise:
+                    c = 'R';
+                    break;
+                case RobotOperation.CounterClockwise:
+                    c = 'L';
+                    break;
+                case RobotOperation.Backward:
+                    c = 'B';
+                    break;
+                case RobotOperation.Wait:
+                    c = 'W';
+                    break;
+            }
+            return c;
         }
     }
 
