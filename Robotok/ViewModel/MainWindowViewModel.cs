@@ -106,8 +106,8 @@ namespace Robotok.ViewModel
         public MainWindowViewModel()
         {
             _zoom=1.0;
-            _row=300;
-            _column=300;
+            _row=200;
+            _column=200;
             _xoffset = 0;
             _yoffset = 0;
             
@@ -117,36 +117,70 @@ namespace Robotok.ViewModel
             Goals = new List<Goal>();
             Blocks = new List<ObservableBlock>();
 
-            Map = new bool[ColumnCount, RowCount];
+            Map = new bool[200, 200];
 
-            for (int i = 0; i < Map.GetLength(0); i++)
-            {
-                for (int j = 0; j < Map.GetLength(1); j++)
-                {
-                    Map[i, j] = random.Next(100) < 95;
-                }
-            }
-
-            var values = Enum.GetValues(typeof(Direction));
-            for(int i = 0; i < 200; i++)
-            {
-                Robots.Add(new Robot {  Rotation = (Direction)values.GetValue(random.Next(values.Length)),
-                                        Position = new Position {
-                                            X = random.Next(0, ColumnCount),
-                                            Y = random.Next(0, RowCount)
-                                        } });
-                Goals.Add(new Goal {    Position = new Position {
-                                            X = random.Next(0, ColumnCount),
-                                            Y = random.Next(0, RowCount)
-                                        } });
-            }
-
-            CalculateBlocks();
             ObservableBlocks = new(Blocks);
             ObservableGoals = new(Goals);
             ObservableRobots = new(Robots);
+
+            PopulateMap();
         }
 
+        public async void PopulateMap()
+        {
+            await Task.Run(() =>
+            {
+                Random random = new Random();
+
+                for (int i = 0; i < Map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Map.GetLength(1); j++)
+                    {
+                        Map[i, j] = random.Next(100) < 95;
+                    }
+                }
+
+                var values = Enum.GetValues(typeof(Direction));
+                for (int i = 0; i < 200; i++)
+                {
+                    Robots.Add(new Robot
+                    {
+                        Rotation = (Direction)values.GetValue(random.Next(values.Length)),
+                        Position = new Position
+                        {
+                            X = random.Next(0, ColumnCount),
+                            Y = random.Next(0, RowCount)
+                        }
+                    });
+                    Goals.Add(new Goal
+                    {
+                        Position = new Position
+                        {
+                            X = random.Next(0, ColumnCount),
+                            Y = random.Next(0, RowCount)
+                        }
+                    });
+                }
+
+                CalculateBlocks();
+
+                ObservableBlocks.OnCollectionChanged();
+                ObservableGoals.OnCollectionChanged();
+                ObservableRobots.OnCollectionChanged();
+
+                Thread.Sleep(3000);
+                foreach (var robot in Robots)
+                {
+                    robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
+                }
+
+                ObservableRobots.OnCollectionChanged();
+            });
+        }
+
+        /// <summary>
+        /// Groups continuous blocks together in rows
+        /// </summary>
         public void CalculateBlocks()
         {
             Blocks.Clear();

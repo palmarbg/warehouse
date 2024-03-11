@@ -35,15 +35,14 @@ namespace Robotok
 
         private void App_Startup(object? sender, StartupEventArgs e)
         {
-            // create viewModel
-            _viewModel = new MainWindowViewModel();
-
             // create view
             _view = new MainWindow();
-            _view.SetDataContext(_viewModel);
-            //_view.DataContext = _viewModel;
-            _view.Closing += new System.ComponentModel.CancelEventHandler(View_Closing); // eseménykezelés a bezáráshoz
             _view.Show();
+
+            // create viewModel
+            _viewModel = new MainWindowViewModel();         
+            _view.SetDataContext(_viewModel);
+            _view.Closing += new System.ComponentModel.CancelEventHandler(View_Closing); // eseménykezelés a bezáráshoz
 
         }
 
