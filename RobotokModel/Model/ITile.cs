@@ -28,10 +28,16 @@ namespace RobotokModel.Model
         private static int id = 0;
 
         public static List<Robot> Robots = new();
+        public static void EndTurn()
+        {
+            Robots.ForEach(f => f.MovedThisTurn = false);
+            
+        }
         public bool IsPassable => false;
         public Direction Rotation { get; set; }
         public Goal CurrentGoal { get; set; }
         public RobotOperation NextOperation { get; set; }
+        public bool MovedThisTurn { get; set; } = false;
         public Position Position { get; set; }
         public int Id { get; }
         public Robot()
