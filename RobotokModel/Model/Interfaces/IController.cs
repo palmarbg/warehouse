@@ -16,7 +16,7 @@ namespace RobotokModel.Model.Interfaces
         public void InitializeController(TimeSpan timeSpan, SimulationData simulationData);
 
         /// <summary>
-        /// 
+        /// Sets the next operation to every robot
         /// </summary>
         /// <param name="timeSpan">Time span to return the calculated operations</param>
         /// <returns>Returns the next RobotOperation for every Robot</returns>

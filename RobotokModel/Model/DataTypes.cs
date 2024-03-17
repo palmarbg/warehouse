@@ -44,18 +44,25 @@ namespace RobotokModel.Model
 
     public struct Goal
     {
+        #region Static
+
         private static int id = 0;
         public static event EventHandler? GoalsChanged;
-        public int Id { get; }
-        public Position Position { get; set; }
-        public Goal()
-        {
-            Id = id++;
-        }
 
         public static void OnGoalsChanged()
         {
             GoalsChanged?.Invoke(null, new());
+        }
+
+        #endregion
+
+        public int Id { get; }
+        public Position Position { get; set; }
+        public bool IsAssigned { get; set; }
+        public Goal()
+        {
+            Id = id++;
+            IsAssigned = false;
         }
     }
 
