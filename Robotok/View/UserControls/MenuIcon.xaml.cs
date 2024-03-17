@@ -21,7 +21,7 @@ namespace Robotok.View.UserControls
     /// <summary>
     /// Interaction logic for MenuIcon.xaml
     /// </summary>
-    public partial class MenuIcon : UserControl, INotifyPropertyChanged
+    public partial class MenuIcon : Button, INotifyPropertyChanged
     {
         private string _label;
         private string _iconSrc;
@@ -68,10 +68,7 @@ namespace Robotok.View.UserControls
 
         protected virtual void OnPropertyChanged([CallerMemberName] String? propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

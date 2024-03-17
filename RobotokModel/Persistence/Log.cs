@@ -9,13 +9,13 @@ namespace RobotokModel.Persistence
 {
     public class Log
     {
-        public List<string> Errors { get; set; } = new List<string>();
+        public List<string> Errors { get; set; } = [];
         public int RobotCount { get; set; }
-        public List<Position> RobotStartingPositions { get; set; } = new List<Position>();
+        public List<Position> RobotStartingPositions { get; set; } = [];
         public int StepCount { get; set; }
-        public List<List<Char>> RobotPlannedMoves { get; set; } = new List<List<Char>>();
-        public List<List<Char>> RobotExecutedMoves { get; set; } = new List<List<Char>>();
-        public List<float> TimerCounts { get; set; } = new List<float>();
+        public List<List<Char>> RobotPlannedMoves { get; set; } = [];
+        public List<List<Char>> RobotExecutedMoves { get; set; } = [];
+        public List<float> TimerCounts { get; set; } = [];
         // TODO: Task, illetve a többi dolog implementálása
 
 

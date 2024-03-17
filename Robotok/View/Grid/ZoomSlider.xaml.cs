@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robotok.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -28,7 +29,7 @@ namespace Robotok.View.Grid
             InitializeComponent();
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
         }

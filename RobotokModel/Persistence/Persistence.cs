@@ -39,7 +39,7 @@ namespace RobotokModel.Persistence
                     configS.taskFile = Directory.GetCurrentDirectory() + "/" + configS.taskFile;
 
                     // creating Config type, that contains useful information
-                    Config config = new Config();
+                    Config config = new();
 
                     // parsing RevealedTaskCount
                     config.RevealedTaskCount = configS.numTasksReveal;
@@ -80,7 +80,7 @@ namespace RobotokModel.Persistence
                     for(int i = 1; i <= robotCount; i++)
                     {
                         int intPos = int.Parse(robots[i]);
-                        Position p = new Position();
+                        Position p = new();
                         p.X = intPos / config.MapWidth;
                         p.Y = intPos % config.MapWidth;
                         if(p.X > 0) { p.X--; }
@@ -94,7 +94,7 @@ namespace RobotokModel.Persistence
                     for (int i = 1; i <= goalCount; i++)
                     {
                         int intPos = int.Parse(goals[i]);
-                        Position p = new Position();
+                        Position p = new();
                         p.X = intPos / config.MapWidth;
                         p.Y = intPos % config.MapWidth;
                         if (p.X > 0) { p.X--; }

@@ -1,4 +1,5 @@
 ﻿using Robotok.MVVM;
+using Robotok.ViewModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,11 +24,11 @@ namespace Robotok.View.Grid
         public SuppressNotifyObservableCollection<string> LabelTexts { get; set; }
         public HorizontalNumberStrip()
         {
-            LabelTexts = new SuppressNotifyObservableCollection<string>();
+            LabelTexts = [];
             InitializeComponent();
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
         }

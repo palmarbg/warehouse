@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robotok.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -38,13 +39,10 @@ namespace Robotok.View.Grid
 
         protected virtual void OnPropertyChanged([CallerMemberName] String? propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
             MapGrid.SetDataContext(viewModel);
