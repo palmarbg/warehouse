@@ -69,6 +69,7 @@ namespace RobotokModel.Persistence
                    for(int i = 3; i < map.Length; i++)
                    {
                         string r = map[i];
+                        // TODO: kicserélni a nem '.' karatereket '@'-ra
                         List<Char> temp = r.ToList();
                         temp.Remove('\n');
                         config.Map.Add(temp);
