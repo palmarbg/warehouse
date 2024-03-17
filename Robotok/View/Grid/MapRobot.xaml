@@ -9,11 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Name="ParentElement">
     <UserControl.Resources>
-        <local:SizeToLineObservableCollection x:Key="SizeToLineObservableCollection"/>
         <local:SizeToCanvasSizeConverter x:Key="SizeToCanvasSizeConverter"/>
-        <local:CoordinateToCanvasMarginConverter x:Key="CoordinateToCanvasMarginConverter"/>
-        <local:UnitCanvasLengthConverter x:Key="UnitCanvasLengthConverter"/>
-        <local:DirectionToDotMarginConverter x:Key="DirectionToDotMarginConverter"/>
         <Style TargetType="FrameworkElement" x:Key="BindMe">
             <Setter Property="Height">
                 <Setter.Value>
@@ -35,24 +31,25 @@
 
         </Style>
     </UserControl.Resources>
-    <ItemsControl>
+    <Canvas Name="MapCanvas"
+            Style="{StaticResource BindMe}"
+            ClipToBounds="True"
+            >
+        <Canvas.LayoutTransform>
+            <TransformGroup>
+                <ScaleTransform ScaleX="{Binding Zoom}"/>
+                <ScaleTransform ScaleY="{Binding Zoom}"/>
+            </TransformGroup>
+        </Canvas.LayoutTransform>
+    </Canvas>
+
+    <!--<ItemsControl>
         <ItemsControl.ItemsSource>
             <Binding Path="ObservableRobots" Mode="OneWay"/>
         </ItemsControl.ItemsSource>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Canvas Name="MapCanvas"
-                            Style="{StaticResource BindMe}"
-                            ClipToBounds="True"
-                            >
-                    <Canvas.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding Zoom}"/>
-                            <ScaleTransform ScaleY="{Binding Zoom}"/>
-                        </TransformGroup>
-                    </Canvas.LayoutTransform>
-                </Canvas>
-
+                
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
@@ -63,13 +60,19 @@
                     ToolTip="{Binding Id}"
                     ToolTipService.InitialShowDelay="0" 
                     ToolTipService.ShowDuration="9999999" 
-                    ToolTipService.BetweenShowDelay="0">
-                    <Grid.Margin>
-                        <MultiBinding Converter="{StaticResource CoordinateToCanvasMarginConverter}">
+                    ToolTipService.BetweenShowDelay="0"
+                    x:Name="Cucc"
+                    >
+                    <Grid.Opacity>
+                        <MultiBinding
+                            Converter="{StaticResource CoordinateToCanvasMarginAnimatedConverter}"
+                            >
                             <Binding Path="Position.X" Mode="OneWay"/>
                             <Binding Path="Position.Y" Mode="OneWay"/>
+                            <Binding Path="" ElementName="Cucc" Mode="OneWay"/>
+                            
                         </MultiBinding>
-                    </Grid.Margin>
+                    </Grid.Opacity>
                     <Ellipse 
                              Fill="#09c2f8"
                              Margin="2"
@@ -88,5 +91,5 @@
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    </ItemsControl>-->
 </UserControl>

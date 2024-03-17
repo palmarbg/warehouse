@@ -4,6 +4,7 @@ using RobotokModel.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -16,6 +17,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -36,50 +38,115 @@ namespace Robotok.View.Grid
         public MapRobot()
         {
             DataContext = this;
-            ObservableRobots = new (new List<Robot>());
+            ObservableRobots = new([]);
             InitializeComponent();
 
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
+            viewModel.RobotsChanged += new EventHandler(AddRobots);
+            viewModel.RobotsMoved += new EventHandler(RefreshRobots);
         }
-    }
 
-    #region Converters
-
-    public class DirectionToDotMarginConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public void AddRobots(object? sender, EventArgs e)
         {
-            
-            if(value == null || value == DependencyProperty.UnsetValue)
-                return new Thickness(0, 0, 0, 0);
-            
-            Direction dir = (Direction)value;
+            if (sender == null)
+                return;
+            List<Robot> robots = (List<Robot>)sender;
 
-            int val = (int)(GridConverterFunctions.unit * 0.7) + 2;
-
-            switch (dir)
+            MapCanvas.Children.Clear();
+            foreach (Robot robot in robots)
             {
-                case Direction.Left:
-                    return new Thickness(0, 0, val, 0);
-                case Direction.Up:
-                    return new Thickness(0, 0, 0, val);
-                case Direction.Right:
-                    return new Thickness(val, 0, 0, 0);
-                case Direction.Down:
-                default:
-                    return new Thickness(0, val, 0, 0);
+                System.Windows.Controls.Grid grid = new()
+                {
+                    Width = GridConverterFunctions.unit,
+                    Height = GridConverterFunctions.unit,
+                    ToolTip = robot.Id,
+                    Margin = new Thickness(
+                        GridConverterFunctions.unit * robot.Position.X,
+                        GridConverterFunctions.unit * robot.Position.Y,
+                        0,
+                        0)
+            };
+                ToolTipService.SetInitialShowDelay(grid, 0);
+                ToolTipService.SetShowDuration(grid, 9999999);
+                ToolTipService.SetBetweenShowDelay(grid, 0);
+
+                System.Windows.Shapes.Ellipse ellipse = new()
+                {
+                    Fill = new SolidColorBrush(Color.FromRgb(9, 194, 248)),
+                    Margin = new Thickness(2)
+                };
+
+                System.Windows.Controls.TextBlock textBlock = new()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 12,
+                    Text = robot.Id.ToString()
+                };
+
+                System.Windows.Shapes.Ellipse dot = new()
+                {
+                    Fill = new SolidColorBrush(Colors.Black),
+                    Width = 6,
+                    Height = 6,
+                    Margin = DirectionToDotMargin(robot.Rotation)
+                };
+
+
+
+                grid.Children.Add(ellipse);
+                grid.Children.Add(textBlock);
+                grid.Children.Add(dot);
+                MapCanvas.Children.Add(grid);
             }
         }
 
-        public object ConvertBack(object value, Type targetTypes, object parameter, CultureInfo culture)
+        public void RefreshRobots(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
-        }
-    }
+            if (sender == null)
+                return;
+            List<Robot> robots = (List<Robot>)sender;
 
-    #endregion
+            for(int i=0; i< MapCanvas.Children.Count;i++)
+            {
+                var element = MapCanvas.Children[i];
+                if (element is System.Windows.Controls.Grid grid)
+                {
+                    Robot robot = robots[i];
+
+                    int x = robot.Position.X;
+                    int y = robot.Position.Y;
+
+                    ThicknessAnimation marginAnimation = new(
+                        new Thickness(GridConverterFunctions.unit * x, GridConverterFunctions.unit * y, 0, 0),
+                        new Duration(TimeSpan.FromSeconds(.5)))
+                    {
+                        From = grid.Margin
+                    };
+                    grid.BeginAnimation(System.Windows.Controls.Grid.MarginProperty, marginAnimation);
+
+                    ((FrameworkElement)grid.Children[2]).Margin = DirectionToDotMargin(robot.Rotation);
+
+                }
+            }
+        }
+
+        private Thickness DirectionToDotMargin(Direction dir)
+        {
+            int val = (int)(GridConverterFunctions.unit * 0.7) + 2;
+
+            return dir switch
+            {
+                Direction.Left => new Thickness(0, 0, val, 0),
+                Direction.Up => new Thickness(0, 0, 0, val),
+                Direction.Right => new Thickness(val, 0, 0, 0),
+                _ => new Thickness(0, val, 0, 0),
+            };
+        }
+
+    }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace RobotokModel.Model
     {
         private static int id = 0;
 
-        public static List<Robot> Robots = new();
+        public static List<Robot> Robots = [];
         public static void EndTurn()
         {
             Robots.ForEach(f => f.MovedThisTurn = false);

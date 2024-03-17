@@ -18,7 +18,7 @@ namespace Robotok.View.Converters
                 parameter == null || parameter == DependencyProperty.UnsetValue)
                 return 0;
 
-            NumberFormatInfo nfi = new NumberFormatInfo();
+            NumberFormatInfo nfi = new();
             nfi.NumberDecimalSeparator = ".";
 
             return Math.Round((double)value, System.Convert.ToInt32((String)parameter), MidpointRounding.AwayFromZero).ToString(nfi);

@@ -15,16 +15,12 @@ namespace RobotokModel.Model
             switch (direction)
             {
                 case Direction.Left:
-                    direction = Direction.Up;
                     break;
                 case Direction.Up:
-                    direction = Direction.Right;
                     break;
                 case Direction.Right:
-                    direction = Direction.Down;
                     break;
                 case Direction.Down:
-                    direction = Direction.Left;
                     break;
             }
         }
@@ -33,16 +29,12 @@ namespace RobotokModel.Model
             switch (direction)
             {
                 case Direction.Left:
-                    direction = Direction.Down;
                     break;
                 case Direction.Up:
-                    direction = Direction.Left;
                     break;
                 case Direction.Right:
-                    direction = Direction.Up;
                     break;
                 case Direction.Down:
-                    direction = Direction.Right;
                     break;
             }
         }

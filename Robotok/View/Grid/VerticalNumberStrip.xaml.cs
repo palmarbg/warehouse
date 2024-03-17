@@ -1,5 +1,6 @@
 ﻿using Robotok.MVVM;
 using Robotok.View.Converters;
+using Robotok.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,11 +36,11 @@ namespace Robotok.View.Grid
 
         public VerticalNumberStrip()
         {
-            LabelTexts = new SuppressNotifyObservableCollection<string>();
+            LabelTexts = [];
             InitializeComponent();
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
         }

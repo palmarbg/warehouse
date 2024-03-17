@@ -13,7 +13,7 @@ namespace RobotokModel.Model
     public class Simulation
     {
         private SimulationData SimulationData { get; set; }
-        private List<List<RobotOperation>> ExecutedOperations { get; set; } = new List<List<RobotOperation>>();
+        private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
         private Log CurrentLog { get; set; }
         private ITaskDistributor Distributor { get; set; }
         private IController Controller { get; set; }
