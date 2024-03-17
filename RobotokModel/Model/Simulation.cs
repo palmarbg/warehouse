@@ -136,7 +136,7 @@ namespace RobotokModel.Model
         // TODO: Prototype 2 : Log planned and executed moves
         private void SimulationStep(object? sender, ElapsedEventArgs args)
         {
-            var operations = Controller.NextStep();
+            var operations = ((PrimitiveController)Controller).NextStep();
             for (int i = 0; i < Robot.Robots.Count; i++)
             {
                 var robot = Robot.Robots[i];

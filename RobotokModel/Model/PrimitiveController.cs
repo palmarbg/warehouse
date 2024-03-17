@@ -11,7 +11,7 @@ namespace RobotokModel.Model
     /// Dijsktra algorithm for shortest path
     /// considers robots as stationary Blocks
     /// </summary>
-    internal class PrimitiveController : IController
+    internal class PrimitiveController //: IController
     {
         int[] dRow = { -1, 0, 1, 0 };
         int[] dCol = { 0, 1, 0, -1 };

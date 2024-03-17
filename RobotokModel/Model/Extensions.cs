@@ -167,7 +167,7 @@ namespace RobotokModel.Model
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PoistionInDirection(robot.Rotation);
                     // newPos is empty or another robots goal
-                    if (newPos.X == robot.CurrentGoal.Position.X && newPos.Y == robot.CurrentGoal.Position.Y)
+                    if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
                         simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
                         robot.MovedThisTurn = true;
@@ -178,7 +178,9 @@ namespace RobotokModel.Model
                     {
                         simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
                         Goal.OnGoalsChanged();
-                        simulation.SimulationData.Goals.Remove(robot.CurrentGoal);
+                        if(robot.CurrentGoal != null)
+                            simulation.SimulationData.Goals.Remove(robot.CurrentGoal.Value);
+                            
                         simulation.Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
                         return true;
