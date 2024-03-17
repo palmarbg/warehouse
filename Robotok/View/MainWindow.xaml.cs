@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robotok.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -28,11 +29,12 @@ namespace Robotok.View
 
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
             _mapGridContainer.SetDataContext(viewModel);
             _zoomSlider.SetDataContext(viewModel);
+            _menubar.SetDataContext(viewModel);
         }
     }
 }

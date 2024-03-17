@@ -42,16 +42,16 @@ namespace Robotok.View.Grid
 
         }
 
-        private void _ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if(DataContext is MainWindowViewModel)
+            if(DataContext is MainWindowViewModel model)
             {
-                ((MainWindowViewModel)DataContext).XOffset = (int)e.HorizontalOffset;
-                ((MainWindowViewModel)DataContext).YOffset = (int)e.VerticalOffset;
+                model.XOffset = (int)e.HorizontalOffset;
+                model.YOffset = (int)e.VerticalOffset;
             }
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
             RobotLayer.SetDataContext(viewModel);
@@ -66,12 +66,14 @@ namespace Robotok.View.Grid
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            
-            // rowcount columncount
-            var lines = new SuppressNotifyObservableCollection<ObservableLine>();
-            lines.SuppressNotify = true;
 
-            if(!GridConverterFunctions.ValidateArray(values, 2))
+            // rowcount columncount
+            var lines = new SuppressNotifyObservableCollection<ObservableLine>
+            {
+                SuppressNotify = true
+            };
+
+            if (!GridConverterFunctions.ValidateArray(values, 2))
                 return lines;
 
             var rowcount = (int)values[0];

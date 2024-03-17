@@ -1,4 +1,5 @@
 ﻿using Robotok.MVVM;
+using Robotok.ViewModel;
 using RobotokModel.Model;
 using System;
 using System.Collections.Generic;
@@ -33,12 +34,12 @@ namespace Robotok.View.Grid
         public MapGoal()
         {
             DataContext = this;
-            ObservableGoals = new (new List<Goal>());
+            ObservableGoals = new ([]);
             InitializeComponent();
 
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
         }

@@ -108,12 +108,12 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Fire with <see cref="OnRobotsChanged" />
         /// </summary>
-        public event EventHandler RobotsChanged;
+        public event EventHandler? RobotsChanged;
 
         /// <summary>
         /// Fire with <see cref="OnRobotsMoved" />
         /// </summary>
-        public event EventHandler RobotsMoved;
+        public event EventHandler? RobotsMoved;
 
         #endregion
 
@@ -127,6 +127,32 @@ namespace Robotok.ViewModel
 
         #endregion
 
+        #region DelegateCommands
+
+        /// <summary> Start the simulation </summary>
+        public DelegateCommand StartSimulation { get; set; }
+
+        /// <summary> Stop the simulation </summary>
+        public DelegateCommand StopSimulation { get; set; }
+
+        /// <summary> Pause the simulation </summary>
+        public DelegateCommand PauseSimulation { get; set; }
+
+        /// <summary> Go to the start of the simulation </summary>
+        public DelegateCommand InitialPosition { get; set; }
+
+        /// <summary> Take one step backward in the simulation </summary>
+        public DelegateCommand PreviousStep { get; set; }
+
+        /// <summary> Take one step forward in the simulation </summary>
+        public DelegateCommand NextStep { get; set; }
+
+        /// <summary> Display the map after the simulation is over </summary>
+        public DelegateCommand FinalPosition { get; set; }
+
+
+        #endregion
+
         #region Constructor
         public MainWindowViewModel()
         {
@@ -136,11 +162,19 @@ namespace Robotok.ViewModel
             _xoffset = 0;
             _yoffset = 0;
 
-            Robots = new List<Robot>();
-            Goals = new List<Goal>();
-            Blocks = new List<ObservableBlock>();
+            Robots = [];
+            Goals = [];
+            Blocks = [];
 
             Map = new bool[200, 200];
+
+            StartSimulation = new DelegateCommand(param => OnSimulationStart());
+            StopSimulation = new DelegateCommand(param => OnSimulationStop());
+            PauseSimulation = new DelegateCommand(param => OnSimulationPause());
+            InitialPosition = new DelegateCommand(param => OnInitialPosition());
+            PreviousStep = new DelegateCommand(param => OnPreviousStep());
+            NextStep = new DelegateCommand(param => OnNextStep());
+            FinalPosition = new DelegateCommand(param => OnFinalPosition());
 
             ObservableBlocks = new(Blocks);
             ObservableGoals = new(Goals);
@@ -159,7 +193,7 @@ namespace Robotok.ViewModel
         {
             await Task.Run(() =>
             {
-                Random random = new Random();
+                Random random = new();
 
                 for (int i = 0; i < Map.GetLength(0); i++)
                 {
@@ -169,8 +203,12 @@ namespace Robotok.ViewModel
                     }
                 }
 
+                CalculateBlocks();
+
+                ObservableBlocks.OnCollectionChanged();
+
                 var values = Enum.GetValues(typeof(Direction));
-                for (int i = 0; i < 2000; i++)
+                for (int i = 0; i < 200; i++)
                 {
                     Robots.Add(new Robot
                     {
@@ -191,9 +229,6 @@ namespace Robotok.ViewModel
                     });
                 }
 
-                CalculateBlocks();
-
-                ObservableBlocks.OnCollectionChanged();
                 ObservableGoals.OnCollectionChanged();
 
                 OnRobotsChanged();
@@ -231,21 +266,20 @@ namespace Robotok.ViewModel
         public void CalculateBlocks()
         {
             Blocks.Clear();
-            int j = 0;
-            int start=0, end=0;
-            for(int i = 0; i < Map.GetLength(0); i++)
+            for (int i = 0; i < Map.GetLength(0); i++)
             {
-                for(j=0; j < Map.GetLength(1); j++)
+                int j;
+                for (j = 0; j < Map.GetLength(1); j++)
                 {
                     if (Map[i, j]) // if empty tile
                         continue;
-                    start= j;
-                    end = j;
-                    while(j+1< Map.GetLength(1) && !Map[i, j+1]) // if the next tile is also a block
+                    int start = j;
+                    int end = j;
+                    while (j + 1 < Map.GetLength(1) && !Map[i, j + 1]) // if the next tile is also a block
                     {
                         end = ++j;
                     }
-                    Blocks.Add((new ObservableBlock { X = start, Y = i, Width=end-start+1}));
+                    Blocks.Add((new ObservableBlock { X = start, Y = i, Width = end - start + 1 }));
                 }
             }
         }
@@ -261,21 +295,55 @@ namespace Robotok.ViewModel
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                RobotsChanged.Invoke(Robots, new EventArgs());
+                RobotsChanged?.Invoke(Robots, new EventArgs());
             });
         }
 
         /// <summary>
-        /// Call when robots moved, but the collection didn't changed
+        /// Call it when the robots moved, but the collection didn't change
         /// <para />
-        /// If the collection changed call <see cref="OnRobotsChanged"/> before
+        /// If the collection changed call <see cref="OnRobotsChanged"/>
         /// </summary>
         public void OnRobotsMoved()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                RobotsMoved.Invoke(Robots, new EventArgs());
+                RobotsMoved?.Invoke(Robots, new EventArgs());
             });
+        }
+
+        public void OnSimulationStart()
+        {
+            Debug.WriteLine("simulation start");
+        }
+
+        public void OnSimulationStop()
+        {
+            Debug.WriteLine("simulation stop");
+        }
+
+        public void OnSimulationPause()
+        {
+            Debug.WriteLine("simulation pause");
+        }
+        public void OnInitialPosition()
+        {
+            Debug.WriteLine("first step");
+        }
+
+        public void OnPreviousStep()
+        {
+            Debug.WriteLine("prev step");
+        }
+
+        public void OnNextStep()
+        {
+            Debug.WriteLine("next step");
+        }
+
+        public void OnFinalPosition()
+        {
+            Debug.WriteLine("last step");
         }
 
         #endregion

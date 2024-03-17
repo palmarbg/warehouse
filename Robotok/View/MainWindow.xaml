@@ -11,12 +11,12 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="55"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
-        <UserControls:Menubar Grid.Row="0"/>
+        <UserControls:Menubar Grid.Row="0" x:Name="_menubar"/>
 
         <Grid:MapGridContainer Grid.Row="1" x:Name="_mapGridContainer"/>
 

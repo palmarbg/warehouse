@@ -34,7 +34,7 @@
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Visible"
                   HorizontalScrollBarVisibility="Visible"
-                  Name="_ScrollViewer" ScrollChanged="_ScrollViewer_ScrollChanged"
+                  Name="_ScrollViewer" ScrollChanged="ScrollViewer_ScrollChanged"
                   
                   >
         <Viewbox Stretch="Uniform"

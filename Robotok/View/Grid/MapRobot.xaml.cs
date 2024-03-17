@@ -38,16 +38,16 @@ namespace Robotok.View.Grid
         public MapRobot()
         {
             DataContext = this;
-            ObservableRobots = new (new List<Robot>());
+            ObservableRobots = new([]);
             InitializeComponent();
 
         }
 
-        public void SetDataContext(INotifyPropertyChanged viewModel)
+        public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
-            ((MainWindowViewModel)viewModel).RobotsChanged += new EventHandler(AddRobots);
-            ((MainWindowViewModel)viewModel).RobotsMoved += new EventHandler(RefreshRobots);
+            viewModel.RobotsChanged += new EventHandler(AddRobots);
+            viewModel.RobotsMoved += new EventHandler(RefreshRobots);
         }
 
         public void AddRobots(object? sender, EventArgs e)
@@ -59,38 +59,45 @@ namespace Robotok.View.Grid
             MapCanvas.Children.Clear();
             foreach (Robot robot in robots)
             {
-                System.Windows.Controls.Grid grid = new();
-                grid.Width = GridConverterFunctions.unit;
-                grid.Height = GridConverterFunctions.unit;
-                grid.ToolTip = robot.Id;
+                System.Windows.Controls.Grid grid = new()
+                {
+                    Width = GridConverterFunctions.unit,
+                    Height = GridConverterFunctions.unit,
+                    ToolTip = robot.Id,
+                    Margin = new Thickness(
+                        GridConverterFunctions.unit * robot.Position.X,
+                        GridConverterFunctions.unit * robot.Position.Y,
+                        0,
+                        0)
+            };
                 ToolTipService.SetInitialShowDelay(grid, 0);
                 ToolTipService.SetShowDuration(grid, 9999999);
                 ToolTipService.SetBetweenShowDelay(grid, 0);
 
-                grid.Margin = new Thickness(
-                    GridConverterFunctions.unit * robot.Position.X,
-                    GridConverterFunctions.unit * robot.Position.Y,
-                    0,
-                    0);
+                System.Windows.Shapes.Ellipse ellipse = new()
+                {
+                    Fill = new SolidColorBrush(Color.FromRgb(9, 194, 248)),
+                    Margin = new Thickness(2)
+                };
 
-                System.Windows.Shapes.Ellipse ellipse = new();
-                ellipse.Fill = new SolidColorBrush(Color.FromRgb(9, 194, 248));
-                ellipse.Margin = new Thickness(2);
+                System.Windows.Controls.TextBlock textBlock = new()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 12,
+                    Text = robot.Id.ToString()
+                };
 
-                System.Windows.Controls.TextBlock textBlock = new();
-                textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                textBlock.VerticalAlignment = VerticalAlignment.Center;
-                textBlock.FontSize = 12;
-                textBlock.Text = robot.Id.ToString();
-
-                System.Windows.Shapes.Ellipse dot = new();
-                dot.Fill = new SolidColorBrush(Colors.Black);
-                dot.Width = 6;
-                dot.Height = 6;
-                dot.Margin = DirectionToDotMargin(robot.Rotation);
+                System.Windows.Shapes.Ellipse dot = new()
+                {
+                    Fill = new SolidColorBrush(Colors.Black),
+                    Width = 6,
+                    Height = 6,
+                    Margin = DirectionToDotMargin(robot.Rotation)
+                };
 
 
-                
+
                 grid.Children.Add(ellipse);
                 grid.Children.Add(textBlock);
                 grid.Children.Add(dot);
@@ -107,24 +114,23 @@ namespace Robotok.View.Grid
             for(int i=0; i< MapCanvas.Children.Count;i++)
             {
                 var element = MapCanvas.Children[i];
-                if(element is System.Windows.Controls.Grid)
+                if (element is System.Windows.Controls.Grid grid)
                 {
-                    var grid = (System.Windows.Controls.Grid)element;
-
                     Robot robot = robots[i];
 
                     int x = robot.Position.X;
                     int y = robot.Position.Y;
 
-                    ThicknessAnimation marginAnimation = new ThicknessAnimation(
+                    ThicknessAnimation marginAnimation = new(
                         new Thickness(GridConverterFunctions.unit * x, GridConverterFunctions.unit * y, 0, 0),
-                        new Duration(TimeSpan.FromSeconds(.5)));
-                    marginAnimation.From = grid.Margin;
+                        new Duration(TimeSpan.FromSeconds(.5)))
+                    {
+                        From = grid.Margin
+                    };
                     grid.BeginAnimation(System.Windows.Controls.Grid.MarginProperty, marginAnimation);
 
                     ((FrameworkElement)grid.Children[2]).Margin = DirectionToDotMargin(robot.Rotation);
-                    
-                    Debug.WriteLine(grid.ToolTip.ToString());
+
                 }
             }
         }
@@ -133,18 +139,13 @@ namespace Robotok.View.Grid
         {
             int val = (int)(GridConverterFunctions.unit * 0.7) + 2;
 
-            switch (dir)
+            return dir switch
             {
-                case Direction.Left:
-                    return new Thickness(0, 0, val, 0);
-                case Direction.Up:
-                    return new Thickness(0, 0, 0, val);
-                case Direction.Right:
-                    return new Thickness(val, 0, 0, 0);
-                case Direction.Down:
-                default:
-                    return new Thickness(0, val, 0, 0);
-            }
+                Direction.Left => new Thickness(0, 0, val, 0),
+                Direction.Up => new Thickness(0, 0, 0, val),
+                Direction.Right => new Thickness(val, 0, 0, 0),
+                _ => new Thickness(0, val, 0, 0),
+            };
         }
 
     }

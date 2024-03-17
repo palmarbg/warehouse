@@ -13,7 +13,7 @@ namespace Robotok.View.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            BitmapImage bimage = new BitmapImage();
+            BitmapImage bimage = new();
             bimage.BeginInit();
             bimage.UriSource = new Uri((String)value, UriKind.Relative);
             bimage.EndInit();
