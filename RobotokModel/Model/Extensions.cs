@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,7 +50,7 @@ namespace RobotokModel.Model
                     c = 'R';
                     break;
                 case RobotOperation.CounterClockwise:
-                    c = 'L';
+                    c = 'C';
                     break;
                 case RobotOperation.Backward:
                     c = 'B';
@@ -59,6 +60,25 @@ namespace RobotokModel.Model
                     break;
             }
             return c;
+        }
+        public static RobotOperation ToRobotOperation(this char operationChar)
+        {
+            //TODO: Prototype 2: Custom Exceptions
+            switch (operationChar)
+            {
+                case 'F':
+                    return RobotOperation.Forward;
+                case 'W':
+                    return RobotOperation.Wait;
+                case 'C':
+                    return RobotOperation.CounterClockwise;
+                case 'R':
+                    return RobotOperation.Clockwise;
+                case 'B':
+                    return RobotOperation.Backward;
+                default:
+                    throw new Exception();
+            }
         }
         public static RobotOperation Reverse(this RobotOperation operation)
         {
@@ -76,6 +96,14 @@ namespace RobotokModel.Model
                     return RobotOperation.Wait;
             }
             return RobotOperation.Wait;
+        }
+        public static T GetMatrixItemInPosition<T>(this T[,] matrix, Position position)
+        {
+            return matrix[position.X, position.Y];
+        }
+        public static void SetMatrixItemInPosition<T>(this T[,] matrix, Position position, T newItem)
+        {
+            matrix[position.X, position.Y] = newItem;
         }
     }
 
