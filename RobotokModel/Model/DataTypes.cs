@@ -20,7 +20,12 @@ namespace RobotokModel.Model
     {
         public int X { get; set; }
         public int Y { get; set; }
-        
+
+        public override readonly string ToString()
+        {
+            return $"({X},{Y})";
+        }
+
     }
 
     public struct RobotMove

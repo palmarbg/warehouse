@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobotokModel.Model
 {
-    internal interface IController
+    public interface IController
     {
         public SimulationData SimulationData { get; set; }
 

@@ -27,6 +27,8 @@ namespace Robotok
         public App()
         {
             Startup += new StartupEventHandler(App_Startup);
+
+            Debug.WriteLine((new Position() { X=1, Y=2}).PoistionInDirection(Direction.Right));
         }
 
         #endregion

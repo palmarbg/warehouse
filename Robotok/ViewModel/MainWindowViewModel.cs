@@ -44,7 +44,6 @@ namespace Robotok.ViewModel
             }
         }
 
-
         public int RowCount
         {
             get { return _row; }
@@ -97,13 +96,18 @@ namespace Robotok.ViewModel
             }
         }
 
+        #endregion
+
+        #region Observable collections
+        
         public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
         public ObservableCollectionWrapper<ObservableBlock> ObservableBlocks { get; set; }
-        
 
         #endregion
 
         #region Events
+
+        //these events will be in the simulation class
 
         /// <summary>
         /// Fire with <see cref="OnRobotsChanged" />
@@ -157,8 +161,8 @@ namespace Robotok.ViewModel
         public MainWindowViewModel()
         {
             _zoom=1.0;
-            _row=200;
-            _column=200;
+            _row=20;
+            _column=40;
             _xoffset = 0;
             _yoffset = 0;
 
@@ -195,6 +199,8 @@ namespace Robotok.ViewModel
             {
                 Random random = new();
 
+                //create blocks
+
                 for (int i = 0; i < Map.GetLength(0); i++)
                 {
                     for (int j = 0; j < Map.GetLength(1); j++)
@@ -207,8 +213,10 @@ namespace Robotok.ViewModel
 
                 ObservableBlocks.OnCollectionChanged();
 
+                //create robots and tasks
+
                 var values = Enum.GetValues(typeof(Direction));
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     Robots.Add(new Robot
                     {
@@ -233,6 +241,7 @@ namespace Robotok.ViewModel
 
                 OnRobotsChanged();
 
+                //move robots
 
                 Thread.Sleep(3000);
                 foreach (var robot in Robots)
@@ -257,6 +266,34 @@ namespace Robotok.ViewModel
                 }
 
                 OnRobotsMoved();
+
+                //change goals
+
+                Thread.Sleep(1000);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Goals.Add(new Goal
+                    {
+                        Position = new Position
+                        {
+                            X = random.Next(0, ColumnCount),
+                            Y = random.Next(0, RowCount)
+                        }
+                    });
+                }
+
+                ObservableGoals.OnCollectionChanged();
+
+                Thread.Sleep(1000);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Goals.RemoveAt(0);
+                }
+
+                ObservableGoals.OnCollectionChanged();
+
             });
         }
 

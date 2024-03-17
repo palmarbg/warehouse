@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobotokModel.Model
 {
-    internal interface ITaskDistributor
+    public interface ITaskDistributor
     {
 
         public SimulationData SimulationData { get; set; }
