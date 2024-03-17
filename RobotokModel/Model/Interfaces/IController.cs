@@ -8,15 +8,19 @@ namespace RobotokModel.Model.Interfaces
 {
     public interface IController
     {
-        public SimulationData SimulationData { get; set; }
+        /// <summary>
+        /// Before starting the simulation it should be called.
+        /// </summary>
+        /// <param name="timeSpan">Time span to initialise the controller</param>
+        /// <param name="simulationData">The data of the simulation</param>
+        public void InitializeController(TimeSpan timeSpan, SimulationData simulationData);
 
         /// <summary>
-        /// Updates robots NextOperation property
+        /// 
         /// </summary>
-        /// <returns>
-        /// Robotoperation[] for Logging
-        /// </returns>
-        public RobotOperation[] NextStep();
-        public RobotOperation[] ClaculateOperations();
+        /// <param name="timeSpan">Time span to return the calculated operations</param>
+        /// <returns>Returns the next RobotOperation for every Robot</returns>
+        public RobotOperation[] ClaculateOperations(TimeSpan timeSpan);
+
     }
 }
