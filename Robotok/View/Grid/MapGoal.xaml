@@ -13,7 +13,6 @@
         <local:SizeToCanvasSizeConverter x:Key="SizeToCanvasSizeConverter"/>
         <local:CoordinateToCanvasMarginConverter x:Key="CoordinateToCanvasMarginConverter"/>
         <local:UnitCanvasLengthConverter x:Key="UnitCanvasLengthConverter"/>
-        <local:DirectionToDotMarginConverter x:Key="DirectionToDotMarginConverter"/>
         <Style TargetType="FrameworkElement" x:Key="BindMe">
             <Setter Property="Height">
                 <Setter.Value>
