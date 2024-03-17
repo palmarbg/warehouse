@@ -328,7 +328,7 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        public void OnRobotsChanged()
+        private void OnRobotsChanged()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -341,7 +341,7 @@ namespace Robotok.ViewModel
         /// <para />
         /// If the collection changed call <see cref="OnRobotsChanged"/>
         /// </summary>
-        public void OnRobotsMoved()
+        private void OnRobotsMoved()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -349,36 +349,36 @@ namespace Robotok.ViewModel
             });
         }
 
-        public void OnSimulationStart()
+        private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
         }
 
-        public void OnSimulationStop()
+        private void OnSimulationStop()
         {
             Debug.WriteLine("simulation stop");
         }
 
-        public void OnSimulationPause()
+        private void OnSimulationPause()
         {
             Debug.WriteLine("simulation pause");
         }
-        public void OnInitialPosition()
+        private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
         }
 
-        public void OnPreviousStep()
+        private void OnPreviousStep()
         {
             Debug.WriteLine("prev step");
         }
 
-        public void OnNextStep()
+        private void OnNextStep()
         {
             Debug.WriteLine("next step");
         }
 
-        public void OnFinalPosition()
+        private void OnFinalPosition()
         {
             Debug.WriteLine("last step");
         }

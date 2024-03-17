@@ -1,9 +1,10 @@
-﻿using RobotokModel.Persistence;
+﻿using RobotokModel.Model.Interfaces;
+using RobotokModel.Persistence;
 using System.Timers;
 
 namespace RobotokModel.Model
 {
-    public class Simulation
+    public class Simulation : ISimulation
     {
 
         #region Fields
@@ -16,14 +17,16 @@ namespace RobotokModel.Model
         #region Properties
 
         public SimulationData SimulationData { get; private set; }
-        private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
-        private Log CurrentLog { get; set; }
         public ITaskDistributor Distributor { get; private set; }
         public IController Controller { get; private set; }
+
+
+        private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
+        private Log CurrentLog { get; set; }
         private int RemainingSteps { get; set; }
 
         #endregion
-       
+
         #region Events
 
         /// <summary>
@@ -62,23 +65,20 @@ namespace RobotokModel.Model
             Timer.Elapsed += SimulationStep;
             SimulationRunning = false;
 
+            Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            throw new NotImplementedException();
+            SimulationData = new() {
+                Map = new ITile[5,5]
+            };
+            
+            //throw new NotImplementedException();
 
         }
 
         #endregion
 
         #region Public methods
-        public void StepForward()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StepBackward()
-        {
-            throw new NotImplementedException();
-        }
+        
         public void StartSimulation()
         {
             SimulationRunning = true;
@@ -99,11 +99,23 @@ namespace RobotokModel.Model
 
             throw new NotImplementedException();
         }
+
+        /*
+         * These will be implemented later on
         public void PauseSimulation()
         {
             throw new NotImplementedException();
         }
-        public void SetSimulationSpeed()
+        public void StepForward()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StepBackward()
+        {
+            throw new NotImplementedException();
+        }
+        public void SetSimulationSpeed(double speed)
         {
             throw new NotImplementedException();
         }
@@ -115,10 +127,12 @@ namespace RobotokModel.Model
         {
             throw new NotImplementedException();
         }
-        private int GoalsRemaining()
-        {
-            throw new NotImplementedException();
-        }
+        */
+
+        #endregion
+
+        #region Private methods
+
         // TODO: Prototype 2 : Log planned and executed moves
         private void SimulationStep(object? sender, ElapsedEventArgs args)
         {
@@ -139,7 +153,7 @@ namespace RobotokModel.Model
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        public void OnRobotsChanged()
+        private void OnRobotsChanged()
         {
             RobotsChanged?.Invoke(Robot.Robots, new EventArgs());
         }
@@ -149,7 +163,7 @@ namespace RobotokModel.Model
         /// <para />
         /// If the collection changed call <see cref="OnRobotsChanged"/>
         /// </summary>
-        public void OnRobotsMoved()
+        private void OnRobotsMoved()
         {
             RobotsMoved?.Invoke(Robot.Robots, new EventArgs());
         }
@@ -157,7 +171,7 @@ namespace RobotokModel.Model
         /// <summary>
         /// Call it when tasks are completed or created
         /// </summary>
-        public void OnGoalsChanged()
+        private void OnGoalsChanged()
         {
             GoalsChanged?.Invoke(SimulationData.Goals, new EventArgs());
         }
@@ -165,7 +179,7 @@ namespace RobotokModel.Model
         /// <summary>
         /// Call it when simulation ended
         /// </summary>
-        public void OnSimulationFinished()
+        private void OnSimulationFinished()
         {
             SimulationFinished?.Invoke(this, new EventArgs());
         }

@@ -177,7 +177,7 @@ namespace RobotokModel.Model
                     else if (simulation.SimulationData.Map[newPos.X, newPos.Y].IsPassable)
                     {
                         simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
-                        simulation.OnGoalsChanged();
+                        Goal.OnGoalsChanged();
                         simulation.SimulationData.Goals.Remove(robot.CurrentGoal);
                         simulation.Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
