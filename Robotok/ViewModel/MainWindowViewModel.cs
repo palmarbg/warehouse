@@ -17,11 +17,17 @@ namespace Robotok.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        #region Fields
+        
         private double _zoom;
         private int _row;
         private int _column;
         private int _xoffset;
         private int _yoffset;
+
+        public bool[,] Map;
+
+        #endregion
 
         #region Properties
 
@@ -91,18 +97,37 @@ namespace Robotok.ViewModel
             }
         }
 
-        public ObservableCollectionWrapper<Robot> ObservableRobots { get; set; }
-        public List<Robot> Robots { get; set; }
         public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
-
-        public List<Goal> Goals { get; set; }
         public ObservableCollectionWrapper<ObservableBlock> ObservableBlocks { get; set; }
-        public List<ObservableBlock> Blocks { get; set; }
-
-        public bool[,] Map;
+        
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Fire with <see cref="OnRobotsChanged" />
+        /// </summary>
+        public event EventHandler RobotsChanged;
+
+        /// <summary>
+        /// Fire with <see cref="OnRobotsMoved" />
+        /// </summary>
+        public event EventHandler RobotsMoved;
+
+        #endregion
+
+        #region Simulation data
+
+        //These will be deleted when the viewmodel get them from the simulation
+
+        public List<Robot> Robots { get; set; }
+        public List<Goal> Goals { get; set; }
+        public List<ObservableBlock> Blocks { get; set; }
+
+        #endregion
+
+        #region Constructor
         public MainWindowViewModel()
         {
             _zoom=1.0;
@@ -110,8 +135,6 @@ namespace Robotok.ViewModel
             _column=200;
             _xoffset = 0;
             _yoffset = 0;
-            
-            Random random = new Random();
 
             Robots = new List<Robot>();
             Goals = new List<Goal>();
@@ -121,12 +144,18 @@ namespace Robotok.ViewModel
 
             ObservableBlocks = new(Blocks);
             ObservableGoals = new(Goals);
-            ObservableRobots = new(Robots);
 
             PopulateMap();
         }
 
-        public async void PopulateMap()
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Populate map with blocks, goals and robots for demo
+        /// </summary>
+        private async void PopulateMap()
         {
             await Task.Run(() =>
             {
@@ -141,11 +170,11 @@ namespace Robotok.ViewModel
                 }
 
                 var values = Enum.GetValues(typeof(Direction));
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < 2000; i++)
                 {
                     Robots.Add(new Robot
                     {
-                        Rotation = (Direction)values.GetValue(random.Next(values.Length)),
+                        Rotation = (Direction)values.GetValue(random.Next(values.Length))!,
                         Position = new Position
                         {
                             X = random.Next(0, ColumnCount),
@@ -166,7 +195,9 @@ namespace Robotok.ViewModel
 
                 ObservableBlocks.OnCollectionChanged();
                 ObservableGoals.OnCollectionChanged();
-                ObservableRobots.OnCollectionChanged();
+
+                OnRobotsChanged();
+
 
                 Thread.Sleep(3000);
                 foreach (var robot in Robots)
@@ -174,7 +205,23 @@ namespace Robotok.ViewModel
                     robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
                 }
 
-                ObservableRobots.OnCollectionChanged();
+                OnRobotsMoved();
+
+                Thread.Sleep(500);
+                foreach (var robot in Robots)
+                {
+                    robot.Rotation = Direction.Down;
+                }
+
+                OnRobotsMoved();
+
+                Thread.Sleep(500);
+                foreach (var robot in Robots)
+                {
+                    robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
+                }
+
+                OnRobotsMoved();
             });
         }
 
@@ -202,6 +249,36 @@ namespace Robotok.ViewModel
                 }
             }
         }
+
+        #endregion
+
+        #region Event methods
+
+        /// <summary>
+        /// Call when the robot collection changed
+        /// </summary>
+        public void OnRobotsChanged()
+        {
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                RobotsChanged.Invoke(Robots, new EventArgs());
+            });
+        }
+
+        /// <summary>
+        /// Call when robots moved, but the collection didn't changed
+        /// <para />
+        /// If the collection changed call <see cref="OnRobotsChanged"/> before
+        /// </summary>
+        public void OnRobotsMoved()
+        {
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                RobotsMoved.Invoke(Robots, new EventArgs());
+            });
+        }
+
+        #endregion
 
 
     }
