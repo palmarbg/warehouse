@@ -56,6 +56,19 @@ namespace RobotokModel.Model.Interfaces
         #region Methods
 
         /// <summary>
+        /// Sets the controller used by the simulation
+        /// </summary>
+        /// <param name="name">Name of the controller</param>
+        public void SetController(string name);
+
+        /// <summary>
+        /// Sets the task distributor used by the simulation
+        /// </summary>
+        /// <param name="name">Name of the task distributor</param>
+        public void SetTaskDistributor(string name);
+
+
+        /// <summary>
         /// Start simulation
         /// </summary>
         public void StartSimulation();

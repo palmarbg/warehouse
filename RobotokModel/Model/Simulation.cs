@@ -1,4 +1,6 @@
-﻿using RobotokModel.Model.Interfaces;
+﻿using RobotokModel.Model.Controllers;
+using RobotokModel.Model.Distributors;
+using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence;
 using System.Timers;
 
@@ -10,7 +12,7 @@ namespace RobotokModel.Model
         #region Fields
 
         private readonly System.Timers.Timer Timer;
-        private bool SimulationRunning;
+        private bool isSimulationRunning;
 
         #endregion
 
@@ -20,10 +22,10 @@ namespace RobotokModel.Model
         public ITaskDistributor Distributor { get; private set; }
         public IController Controller { get; private set; }
 
-
-        private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
-        private Log CurrentLog { get; set; }
-        private int RemainingSteps { get; set; }
+        //not used
+        //private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
+        //private Log CurrentLog { get; set; }
+        //private int RemainingSteps { get; set; }
 
         #endregion
 
@@ -54,7 +56,7 @@ namespace RobotokModel.Model
 
         #region Constructor
 
-        public Simulation(Config config, string Strategy, int StepLimit)
+        public Simulation()
         {
 
             Timer = new System.Timers.Timer
@@ -63,15 +65,14 @@ namespace RobotokModel.Model
                 Enabled = true
             };
             Timer.Elapsed += SimulationStep;
-            SimulationRunning = false;
+
+            isSimulationRunning = false;
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
             SimulationData = new() {
                 Map = new ITile[5,5]
             };
-            
-            //throw new NotImplementedException();
 
         }
 
@@ -81,24 +82,42 @@ namespace RobotokModel.Model
         
         public void StartSimulation()
         {
-            SimulationRunning = true;
+            if(isSimulationRunning) return;
+            isSimulationRunning = true;
             Timer.Start();
-
-            throw new NotImplementedException();
         }
 
         public void StopSimulation()
         {
-            if (SimulationRunning)
-            {
-                SimulationRunning = false;
-                Timer.Stop();
-                OnSimulationFinished();
-            }
-            else throw new NotImplementedException();
+            if (!isSimulationRunning)
+                return;
 
-            throw new NotImplementedException();
+            isSimulationRunning = false;
+            Timer.Stop();
+            OnSimulationFinished();
         }
+
+        public void SetController(string name)
+        {
+            //switch case might be refactored into something else
+            switch (name)
+            {
+                case "demo":
+                    Controller = new DemoController();
+                    return;
+            }
+        }
+
+        public void SetTaskDistributor(string name)
+        {
+            switch (name)
+            {
+                case "demo":
+                    Distributor = new DemoDistributor(SimulationData);
+                    return;
+            }
+        }
+
 
         /*
          * These will be implemented later on

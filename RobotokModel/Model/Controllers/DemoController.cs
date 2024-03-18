@@ -10,6 +10,9 @@ namespace RobotokModel.Model.Controllers
     public class DemoController : IController
     {
         private SimulationData? simulationData;
+
+        public event EventHandler<IControllerEventArgs>? FinishedTask;
+
         public DemoController() { }
 
         /// <summary>
@@ -19,8 +22,10 @@ namespace RobotokModel.Model.Controllers
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public RobotOperation[] ClaculateOperations(TimeSpan timeSpan)
+        public void ClaculateOperations(TimeSpan timeSpan)
         {
+            //The method will be async, only for demo its omitted
+
             if (simulationData == null)
             {
                 throw new InvalidOperationException();
@@ -32,12 +37,18 @@ namespace RobotokModel.Model.Controllers
                 robot.NextOperation = RobotOperation.Forward;
                 result[robot.Id] = robot.NextOperation;
             }
-            return result;
+
+            OnTaskFinished(result);
         }
 
         public void InitializeController(TimeSpan timeSpan, SimulationData simulationData)
         {
             this.simulationData = simulationData;
+        }
+
+        private void OnTaskFinished(RobotOperation[] result)
+        {
+            FinishedTask?.Invoke(this, new(result));
         }
     }
 }
