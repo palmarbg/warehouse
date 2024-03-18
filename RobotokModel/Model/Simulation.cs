@@ -14,6 +14,7 @@ namespace RobotokModel.Model
 
         private readonly System.Timers.Timer Timer;
         private bool isSimulationRunning;
+        private bool isTaskFinished;
 
         #endregion
 
@@ -74,6 +75,7 @@ namespace RobotokModel.Model
             Timer.Stop();
 
             isSimulationRunning = false;
+            isTaskFinished = true;
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
@@ -83,6 +85,8 @@ namespace RobotokModel.Model
 
             SetController("demo");
             SetTaskDistributor("demo");
+
+            Controller?.InitializeController(SimulationData, TimeSpan.FromSeconds(5));
 
         }
 
@@ -115,8 +119,14 @@ namespace RobotokModel.Model
                 case "demo":
                 default :
                     Controller = new DemoController();
-                    return;
+                    break;
             }
+            Controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            {
+                if (Controller != sender)
+                    return;
+                OnTaskFinished(e);
+            });
         }
 
         public void SetTaskDistributor(string name)
@@ -167,10 +177,39 @@ namespace RobotokModel.Model
         private void StepSimulation(object? sender, ElapsedEventArgs e)
         {
             Debug.WriteLine("--SIMULATION STEP--");
-            //Assume it's an async call! 
-            Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
-            //TODO:
-            //
+            if (Controller == null)
+            {
+                throw new Exception();
+            }
+            if (isTaskFinished)
+            {
+                isTaskFinished = false;
+                //Assume it's an async call!
+                Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+                return;
+            } else
+            {
+                OnTaskTimeout();
+            }
+        }
+
+        private void OnTaskTimeout()
+        {
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+        }
+
+        private void OnTaskFinished(IControllerEventArgs e)
+        {
+            isTaskFinished = true;
+            Debug.WriteLine("TASK FINISHED");
+            //only for demo
+            RobotOperation[] robotOperations = e.robotOperations;
+            for(int i = 0;i<Robot.Robots.Count;i++)
+            {
+                Robot robot = Robot.Robots[i];
+                robot.Position = robot.Position.PoistionInDirection(robot.Rotation);
+            }
+            OnRobotsMoved();
         }
 
 

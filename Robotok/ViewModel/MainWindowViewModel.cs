@@ -109,8 +109,6 @@ namespace Robotok.ViewModel
 
         #region Events
 
-        //these events will be in the simulation class
-
         /// <summary>
         /// Fire with <see cref="OnRobotsChanged" />
         /// </summary>
@@ -163,6 +161,10 @@ namespace Robotok.ViewModel
         public MainWindowViewModel(Simulation simulation)
         {
             _simulation = simulation;
+
+            simulation.RobotsChanged += new EventHandler((_,_) => OnRobotsChanged());
+            simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
+            simulation.GoalsChanged += new EventHandler((_,_) => ObservableGoals?.OnCollectionChanged());
 
             _zoom=1.0;
             _row=20;
@@ -251,14 +253,6 @@ namespace Robotok.ViewModel
                 foreach (var robot in Robots)
                 {
                     robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
-                }
-
-                OnRobotsMoved();
-
-                Thread.Sleep(500);
-                foreach (var robot in Robots)
-                {
-                    robot.Rotation = Direction.Down;
                 }
 
                 OnRobotsMoved();
