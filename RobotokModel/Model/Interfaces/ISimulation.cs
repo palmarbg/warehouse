@@ -15,7 +15,7 @@ namespace RobotokModel.Model.Interfaces
         /// <summary>
         /// Contains the current state of the map
         /// </summary>
-        public SimulationData SimulationData { get; }
+        public SimulationData simulationData { get; }
 
         /// <summary>
         /// Task distributor used by the simulation

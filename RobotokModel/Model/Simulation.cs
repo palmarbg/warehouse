@@ -1,5 +1,6 @@
 ﻿using RobotokModel.Model.Controllers;
 using RobotokModel.Model.Distributors;
+using RobotokModel.Model.Executors;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence;
 using System.Diagnostics;
@@ -20,9 +21,11 @@ namespace RobotokModel.Model
 
         #region Properties
 
-        public SimulationData SimulationData { get; private set; }
+        public SimulationData simulationData { get; private set; }
         public ITaskDistributor? Distributor { get; private set; }
         public IController? Controller { get; private set; }
+
+        public IExecutor? Executor { get; private set; }
 
         /// <summary>
         /// Timespan that Controller has to finish task
@@ -79,14 +82,15 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            SimulationData = new() {
+            simulationData = new() {
                 Map = new ITile[5,5]
             };
 
             SetController("demo");
             SetTaskDistributor("demo");
+            Executor = new DemoExecutor(simulationData);
 
-            Controller?.InitializeController(SimulationData, TimeSpan.FromSeconds(5));
+            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(5));
 
         }
 
@@ -135,7 +139,7 @@ namespace RobotokModel.Model
             {
                 case "demo":
                 default :
-                    Distributor = new DemoDistributor(SimulationData);
+                    Distributor = new DemoDistributor(simulationData);
                     return;
             }
         }
@@ -196,19 +200,21 @@ namespace RobotokModel.Model
         private void OnTaskTimeout()
         {
             Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Executor?.Timeout();
         }
 
         private void OnTaskFinished(IControllerEventArgs e)
         {
             isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
-            //only for demo
+            Executor?.ExecuteOperations(e.robotOperations);
+            /*
             RobotOperation[] robotOperations = e.robotOperations;
             for(int i = 0;i<Robot.Robots.Count;i++)
             {
                 Robot robot = Robot.Robots[i];
                 robot.Position = robot.Position.PoistionInDirection(robot.Rotation);
-            }
+            }*/
             OnRobotsMoved();
         }
 
@@ -254,7 +260,7 @@ namespace RobotokModel.Model
         /// </summary>
         private void OnGoalsChanged()
         {
-            GoalsChanged?.Invoke(SimulationData.Goals, new EventArgs());
+            GoalsChanged?.Invoke(simulationData.Goals, new EventArgs());
         }
 
         /// <summary>

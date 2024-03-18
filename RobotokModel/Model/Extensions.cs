@@ -41,33 +41,32 @@ namespace RobotokModel.Model
 
         #region Direction extensions
 
-        public static void RotateClockWise(this Direction direction)
+        public static Direction RotateClockWise(this Direction direction)
         {
-            switch (direction)
+            return direction switch
             {
-                case Direction.Left:
-                    break;
-                case Direction.Up:
-                    break;
-                case Direction.Right:
-                    break;
-                case Direction.Down:
-                    break;
-            }
+                Direction.Up => Direction.Right,
+                Direction.Right => Direction.Down,
+                Direction.Down => Direction.Left,
+                Direction.Left => Direction.Up,
+                _ => throw new Exception()
+            };
         }
-        public static void RotateCounterClockWise(this Direction direction)
+        public static Direction RotateCounterClockWise(this Direction direction)
         {
-            switch (direction)
+            return direction.RotateClockWise().Opposite();
+        }
+
+        public static Direction Opposite(this Direction direction)
+        {
+            return direction switch
             {
-                case Direction.Left:
-                    break;
-                case Direction.Up:
-                    break;
-                case Direction.Right:
-                    break;
-                case Direction.Down:
-                    break;
-            }
+                Direction.Up => Direction.Down,
+                Direction.Down => Direction.Up,
+                Direction.Left => Direction.Right,
+                Direction.Right => Direction.Left,
+                _ => throw new Exception()
+            };
         }
 
         #endregion
@@ -169,24 +168,24 @@ namespace RobotokModel.Model
                     // newPos is empty or another robots goal
                     if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
-                        simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
+                        simulation.simulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
                         robot.MovedThisTurn = true;
                         return true;
                     }
                     // newPos is robots goal
-                    else if (simulation.SimulationData.Map[newPos.X, newPos.Y].IsPassable)
+                    else if (simulation.simulationData.Map[newPos.X, newPos.Y].IsPassable)
                     {
-                        simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
+                        simulation.simulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
                         Goal.OnGoalsChanged();
                         if(robot.CurrentGoal != null)
-                            simulation.SimulationData.Goals.Remove(robot.CurrentGoal.Value);
+                            simulation.simulationData.Goals.Remove(robot.CurrentGoal.Value);
                             
                         simulation.Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
                         return true;
                     }
                     //newPos is blocked by another robot
-                    else if (simulation.SimulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
+                    else if (simulation.simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
                     {
                         if (blockingRobot.MovedThisTurn)
                         {
@@ -198,7 +197,7 @@ namespace RobotokModel.Model
                             // TODO: Check if robot was blocking original robots goal
                             if (blockingRobot.MoveRobot(simulation))
                             {
-                                simulation.SimulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
+                                simulation.simulationData.Map.MoveRobotToNewPosition(robot, newPos, operation);
                                 return true;
                             }
                             else
@@ -233,6 +232,8 @@ namespace RobotokModel.Model
             return false;
 
         }
+
+
 
         #endregion
 
