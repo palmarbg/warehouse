@@ -18,7 +18,9 @@ namespace Robotok.ViewModel
     public class MainWindowViewModel : ViewModelBase
     {
         #region Fields
-        
+
+        private Simulation _simulation;
+
         private double _zoom;
         private int _row;
         private int _column;
@@ -158,8 +160,10 @@ namespace Robotok.ViewModel
         #endregion
 
         #region Constructor
-        public MainWindowViewModel()
+        public MainWindowViewModel(Simulation simulation)
         {
+            _simulation = simulation;
+
             _zoom=1.0;
             _row=20;
             _column=40;
@@ -352,11 +356,13 @@ namespace Robotok.ViewModel
         private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
+            _simulation.StartSimulation();
         }
 
         private void OnSimulationStop()
         {
             Debug.WriteLine("simulation stop");
+            _simulation.StopSimulation();
         }
 
         private void OnSimulationPause()

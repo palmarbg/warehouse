@@ -17,6 +17,7 @@ namespace Robotok
     {
         #region Fields
 
+        private Simulation _simulation = null!;
         private MainWindowViewModel _viewModel = null!;
         private MainWindow _view = null!;
 
@@ -37,12 +38,15 @@ namespace Robotok
 
         private void App_Startup(object? sender, StartupEventArgs e)
         {
+            //create simulation
+            _simulation = new Simulation();
+
             // create view
             _view = new MainWindow();
             _view.Show();
 
             // create viewModel
-            _viewModel = new MainWindowViewModel();         
+            _viewModel = new MainWindowViewModel(_simulation);         
             _view.SetDataContext(_viewModel);
             _view.Closing += new System.ComponentModel.CancelEventHandler(View_Closing); // eseménykezelés a bezáráshoz
 

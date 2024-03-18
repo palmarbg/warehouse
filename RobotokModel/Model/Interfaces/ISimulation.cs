@@ -20,12 +20,12 @@ namespace RobotokModel.Model.Interfaces
         /// <summary>
         /// Task distributor used by the simulation
         /// </summary>
-        public ITaskDistributor Distributor { get; }
+        public ITaskDistributor? Distributor { get; }
 
         /// <summary>
         /// Robot controller used by the simulation
         /// </summary>
-        public IController Controller { get; }
+        public IController? Controller { get; }
 
         #endregion
 

@@ -2,6 +2,7 @@
 using RobotokModel.Model.Distributors;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence;
+using System.Diagnostics;
 using System.Timers;
 
 namespace RobotokModel.Model
@@ -19,8 +20,13 @@ namespace RobotokModel.Model
         #region Properties
 
         public SimulationData SimulationData { get; private set; }
-        public ITaskDistributor Distributor { get; private set; }
-        public IController Controller { get; private set; }
+        public ITaskDistributor? Distributor { get; private set; }
+        public IController? Controller { get; private set; }
+
+        /// <summary>
+        /// Timespan that Controller has to finish task
+        /// </summary>
+        public int Interval { get; private set; }
 
         //not used
         //private List<List<RobotOperation>> ExecutedOperations { get; set; } = [];
@@ -58,13 +64,14 @@ namespace RobotokModel.Model
 
         public Simulation()
         {
-
+            Interval = 1000;
             Timer = new System.Timers.Timer
             {
-                Interval = 1000,
+                Interval = Interval,
                 Enabled = true
             };
-            Timer.Elapsed += SimulationStep;
+            Timer.Elapsed += StepSimulation;
+            Timer.Stop();
 
             isSimulationRunning = false;
 
@@ -73,6 +80,9 @@ namespace RobotokModel.Model
             SimulationData = new() {
                 Map = new ITile[5,5]
             };
+
+            SetController("demo");
+            SetTaskDistributor("demo");
 
         }
 
@@ -103,6 +113,7 @@ namespace RobotokModel.Model
             switch (name)
             {
                 case "demo":
+                default :
                     Controller = new DemoController();
                     return;
             }
@@ -113,6 +124,7 @@ namespace RobotokModel.Model
             switch (name)
             {
                 case "demo":
+                default :
                     Distributor = new DemoDistributor(SimulationData);
                     return;
             }
@@ -151,6 +163,17 @@ namespace RobotokModel.Model
         #endregion
 
         #region Private methods
+
+        private void StepSimulation(object? sender, ElapsedEventArgs e)
+        {
+            Debug.WriteLine("--SIMULATION STEP--");
+            //Assume it's an async call! 
+            Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+            //TODO:
+            //
+        }
+
+
 
         // TODO: Prototype 2 : Log planned and executed moves
         private void SimulationStep(object? sender, ElapsedEventArgs args)
