@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotokModel.Model.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,144 +11,9 @@ namespace RobotokModel.Model
 
     public static class Extenstions
     {
-        #region Position extensions
 
-        public static Position PoistionInDirection(this Position position, Direction rotation)
-        {
-            var newPosition = new Position();
-            switch (rotation)
-            {
-                case Direction.Left:
-                    newPosition.X = position.X - 1;
-                    newPosition.Y = position.Y;
-                    break;
-                case Direction.Up:
-                    newPosition.X = position.X;
-                    newPosition.Y = position.Y - 1;
-                    break;
-                case Direction.Right:
-                    newPosition.X = position.X + 1;
-                    newPosition.Y = position.Y;
-                    break;
-                case Direction.Down:
-                    newPosition.X = position.X;
-                    newPosition.Y = position.Y + 1;
-                    break;
-            }
-            return newPosition;
-        }
-
-        #endregion
-
-        #region Direction extensions
-
-        public static Direction RotateClockWise(this Direction direction)
-        {
-            return direction switch
-            {
-                Direction.Up => Direction.Right,
-                Direction.Right => Direction.Down,
-                Direction.Down => Direction.Left,
-                Direction.Left => Direction.Up,
-                _ => throw new Exception()
-            };
-        }
-        public static Direction RotateCounterClockWise(this Direction direction)
-        {
-            return direction.RotateClockWise().Opposite();
-        }
-
-        public static Direction Opposite(this Direction direction)
-        {
-            return direction switch
-            {
-                Direction.Up => Direction.Down,
-                Direction.Down => Direction.Up,
-                Direction.Left => Direction.Right,
-                Direction.Right => Direction.Left,
-                _ => throw new Exception()
-            };
-        }
-
-        #endregion
-
-        #region RobotOperation extensions
-
-        public static char ToChar(this RobotOperation operation)
-        {
-            char c = 'W';
-            switch (operation)
-            {
-                case RobotOperation.Forward:
-                    c = 'F';
-                    break;
-                case RobotOperation.Clockwise:
-                    c = 'R';
-                    break;
-                case RobotOperation.CounterClockwise:
-                    c = 'C';
-                    break;
-                case RobotOperation.Backward:
-                    c = 'B';
-                    break;
-                case RobotOperation.Wait:
-                    c = 'W';
-                    break;
-            }
-            return c;
-        }
-
-        public static RobotOperation ToRobotOperation(this char operationChar)
-        {
-            //TODO: Prototype 2: Custom Exceptions
-            return operationChar switch
-            {
-                'F' => RobotOperation.Forward,
-                'W' => RobotOperation.Wait,
-                'C' => RobotOperation.CounterClockwise,
-                'R' => RobotOperation.Clockwise,
-                'B' => RobotOperation.Backward,
-                _ => throw new Exception(),
-            };
-        }
-
-        public static RobotOperation Reverse(this RobotOperation operation)
-        {
-            return operation switch
-            {
-                RobotOperation.Forward => RobotOperation.Backward,
-                RobotOperation.Clockwise => RobotOperation.CounterClockwise,
-                RobotOperation.CounterClockwise => RobotOperation.Clockwise,
-                RobotOperation.Backward => RobotOperation.Forward,
-                RobotOperation.Wait => RobotOperation.Wait,
-                _ => RobotOperation.Wait,
-            };
-        }
-
-        #endregion
-
-        #region Map extensions
-
-        /// <summary>
-        /// This wont work if place is taken(?)
-        /// </summary>
-        public static void MoveRobotToNewPosition(this ITile[,] map, Robot robot, Position newPosition, RobotOperation operaition)
-        {
-            map.SetAtPosition(newPosition, robot);
-            map.SetAtPosition(robot.Position, EmptyTile.Instance);
-            robot.Position = newPosition;
-
-            var rmEvent = new RobotMove
-            {
-                Position = newPosition,
-                Operation = operaition.ToChar()
-            };
-        }
-
-        #endregion
-
-        #region Robot extensions
-
+        //THESE WILL BE REFACTORED: ?Executor.cs
+        
         /// <summary>
         /// Moves robot to new Position and resolves robots blocking each other
         /// </summary>
@@ -234,21 +100,24 @@ namespace RobotokModel.Model
         }
 
 
-
-        #endregion
-
-        #region Matrix extension
-
-        public static T GetAtPosition<T>(this T[,] matrix, Position position)
+        /// <summary>
+        /// This wont work if place is taken(?)
+        /// </summary>
+        public static void MoveRobotToNewPosition(this ITile[,] map, Robot robot, Position newPosition, RobotOperation operaition)
         {
-            return matrix[position.X, position.Y];
-        }
-        public static void SetAtPosition<T>(this T[,] matrix, Position position, T newItem)
-        {
-            matrix[position.X, position.Y] = newItem;
+            map.SetAtPosition(newPosition, robot);
+            map.SetAtPosition(robot.Position, EmptyTile.Instance);
+            robot.Position = newPosition;
+
+            var rmEvent = new RobotMove
+            {
+                Position = newPosition,
+                Operation = operaition.ToChar()
+            };
         }
 
-        #endregion
+
+
     }
 
 }

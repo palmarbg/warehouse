@@ -208,13 +208,6 @@ namespace RobotokModel.Model
             isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
             Executor?.ExecuteOperations(e.robotOperations);
-            /*
-            RobotOperation[] robotOperations = e.robotOperations;
-            for(int i = 0;i<Robot.Robots.Count;i++)
-            {
-                Robot robot = Robot.Robots[i];
-                robot.Position = robot.Position.PoistionInDirection(robot.Rotation);
-            }*/
             OnRobotsMoved();
         }
 
