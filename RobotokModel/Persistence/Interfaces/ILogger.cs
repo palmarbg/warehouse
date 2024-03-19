@@ -21,6 +21,6 @@ namespace RobotokModel.Persistence.Interfaces
         /// <returns></returns>
         Task SaveLog(string path); //alternative: void SaveLog(string path);
 
-
+        
     }
 }
