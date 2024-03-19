@@ -19,7 +19,8 @@ namespace RobotokModel.Model.Interfaces
         /// <summary>
         /// Update robot positions
         /// </summary>
-        /// <param name="robotOperations"></param>
-        public void ExecuteOperations(RobotOperation[] robotOperations);
+        /// <param name="robotOperations">Robot operations returned by the Controller</param>
+        /// <returns>Robot operations that were executed</returns>
+        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations);
     }
 }

@@ -22,23 +22,25 @@ namespace RobotokModel.Model.Controllers
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public void ClaculateOperations(TimeSpan timeSpan)
+        public async Task ClaculateOperations(TimeSpan timeSpan)
         {
-            //The method will be async, only for demo its omitted
-
-            if (simulationData == null)
+            await Task.Run(() =>
             {
-                throw new InvalidOperationException();
-            }
 
-            RobotOperation[] result = new RobotOperation[Robot.Robots.Count];
-            foreach(Robot robot in Robot.Robots)
-            {
-                robot.NextOperation = RobotOperation.Forward;
-                result[robot.Id] = robot.NextOperation;
-            }
+                if (simulationData == null)
+                {
+                    throw new InvalidOperationException();
+                }
 
-            OnTaskFinished(result);
+                RobotOperation[] result = new RobotOperation[Robot.Robots.Count];
+                foreach (Robot robot in Robot.Robots)
+                {
+                    robot.NextOperation = RobotOperation.Forward;
+                    result[robot.Id] = robot.NextOperation;
+                }
+
+                OnTaskFinished(result);
+            });
         }
 
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
