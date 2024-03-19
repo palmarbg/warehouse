@@ -22,6 +22,7 @@ namespace RobotokModel.Persistence.Interfaces
         /// </summary>
         /// <param name="path">Absolute path for config file</param>
         /// <returns></returns>
-        Task LoadAsync(string path); //alternative: void Load(string path)
+        //Task LoadAsync(string path); //alternative: void Load(string path)
+        void Load(string path);
     }
 }

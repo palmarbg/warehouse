@@ -3,6 +3,8 @@ using RobotokModel.Model.Distributors;
 using RobotokModel.Model.Executors;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence;
+using RobotokModel.Persistence.DataAccesses;
+using RobotokModel.Persistence.Interfaces;
 using System.Diagnostics;
 using System.Timers;
 
@@ -82,9 +84,10 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            simulationData = new() {
-                Map = new ITile[5,5]
-            };
+            IDataAccess dataAccess = new DemoDataAccess();
+            dataAccess.Load("dummy path");
+
+            simulationData = dataAccess.SimulationData;
 
             SetController("demo");
             SetTaskDistributor("demo");
@@ -212,19 +215,20 @@ namespace RobotokModel.Model
         }
 
 
-
+        /*
         // TODO: Prototype 2 : Log planned and executed moves
         private void SimulationStep(object? sender, ElapsedEventArgs args)
         {
             var operations = ((PrimitiveController)Controller).NextStep();
-            for (int i = 0; i < Robot.Robots.Count; i++)
+            for (int i = 0; i < simulationData.Robots.Length; i++)
             {
-                var robot = Robot.Robots[i];
+                var robot = simulationData.Robots[i];
                 if (!robot.MovedThisTurn) robot.MoveRobot(this);
             }
             Robot.EndTurn();
             OnRobotsMoved();
         }
+        */
 
         #endregion
 
@@ -235,7 +239,7 @@ namespace RobotokModel.Model
         /// </summary>
         private void OnRobotsChanged()
         {
-            RobotsChanged?.Invoke(Robot.Robots, new EventArgs());
+            RobotsChanged?.Invoke(simulationData.Robots, new EventArgs());
         }
 
         /// <summary>
@@ -245,7 +249,7 @@ namespace RobotokModel.Model
         /// </summary>
         private void OnRobotsMoved()
         {
-            RobotsMoved?.Invoke(Robot.Robots, new EventArgs());
+            RobotsMoved?.Invoke(simulationData.Robots, new EventArgs());
         }
 
         /// <summary>

@@ -22,9 +22,9 @@ namespace RobotokModel.Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
         {
-            for (int i = 0; i < Robot.Robots.Count; i++)
+            for (int i = 0; i < simulationData.Robots.Length; i++)
             {
-                Robot robot = Robot.Robots[i];
+                Robot robot = simulationData.Robots[i];
                 robot.ExecuteMove();
             }
             return robotOperations;

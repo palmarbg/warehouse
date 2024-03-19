@@ -27,8 +27,6 @@ namespace Robotok.ViewModel
         private int _xoffset;
         private int _yoffset;
 
-        public bool[,] Map;
-
         #endregion
 
         #region Properties
@@ -176,8 +174,6 @@ namespace Robotok.ViewModel
             Goals = [];
             Blocks = [];
 
-            Map = new bool[200, 200];
-
             StartSimulation = new DelegateCommand(param => OnSimulationStart());
             StopSimulation = new DelegateCommand(param => OnSimulationStop());
             PauseSimulation = new DelegateCommand(param => OnSimulationPause());
@@ -189,7 +185,7 @@ namespace Robotok.ViewModel
             ObservableBlocks = new(Blocks);
             ObservableGoals = new(Goals);
 
-            PopulateMap();
+            CalculateBlocks(simulation.simulationData.Map);
         }
 
         #endregion
@@ -197,108 +193,9 @@ namespace Robotok.ViewModel
         #region Private methods
 
         /// <summary>
-        /// Populate map with blocks, goals and robots for demo
-        /// </summary>
-        private async void PopulateMap()
-        {
-            await Task.Run(() =>
-            {
-                Random random = new();
-
-                //create blocks
-
-                for (int i = 0; i < Map.GetLength(0); i++)
-                {
-                    for (int j = 0; j < Map.GetLength(1); j++)
-                    {
-                        Map[i, j] = random.Next(100) < 95;
-                    }
-                }
-
-                CalculateBlocks();
-
-                ObservableBlocks.OnCollectionChanged();
-
-                //create robots and tasks
-
-                var values = Enum.GetValues(typeof(Direction));
-                for (int i = 0; i < 20; i++)
-                {
-                    Robots.Add(new Robot
-                    {
-                        Rotation = (Direction)values.GetValue(random.Next(values.Length))!,
-                        Position = new Position
-                        {
-                            X = random.Next(0, ColumnCount),
-                            Y = random.Next(0, RowCount)
-                        }
-                    });
-                    Goals.Add(new Goal
-                    {
-                        Position = new Position
-                        {
-                            X = random.Next(0, ColumnCount),
-                            Y = random.Next(0, RowCount)
-                        }
-                    });
-                }
-
-                ObservableGoals.OnCollectionChanged();
-
-                OnRobotsChanged();
-
-                //move robots
-
-                Thread.Sleep(3000);
-                foreach (var robot in Robots)
-                {
-                    robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
-                }
-
-                OnRobotsMoved();
-
-                Thread.Sleep(500);
-                foreach (var robot in Robots)
-                {
-                    robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
-                }
-
-                OnRobotsMoved();
-
-                //change goals
-
-                Thread.Sleep(1000);
-
-                for (int i = 0; i < 20; i++)
-                {
-                    Goals.Add(new Goal
-                    {
-                        Position = new Position
-                        {
-                            X = random.Next(0, ColumnCount),
-                            Y = random.Next(0, RowCount)
-                        }
-                    });
-                }
-
-                ObservableGoals.OnCollectionChanged();
-
-                Thread.Sleep(1000);
-
-                for (int i = 0; i < 20; i++)
-                {
-                    Goals.RemoveAt(0);
-                }
-
-                ObservableGoals.OnCollectionChanged();
-
-            });
-        }
-
-        /// <summary>
         /// Groups continuous blocks together in rows
         /// </summary>
-        public void CalculateBlocks()
+        private void CalculateBlocks(ITile[,] Map)
         {
             Blocks.Clear();
             for (int i = 0; i < Map.GetLength(0); i++)
@@ -306,17 +203,19 @@ namespace Robotok.ViewModel
                 int j;
                 for (j = 0; j < Map.GetLength(1); j++)
                 {
-                    if (Map[i, j]) // if empty tile
+                    if (Map[i, j] is not Block)
                         continue;
+
                     int start = j;
                     int end = j;
-                    while (j + 1 < Map.GetLength(1) && !Map[i, j + 1]) // if the next tile is also a block
+                    while (j + 1 < Map.GetLength(1) && (Map[i, j + 1] is Block)) // if the next tile is also a block
                     {
                         end = ++j;
                     }
                     Blocks.Add((new ObservableBlock { X = start, Y = i, Width = end - start + 1 }));
                 }
             }
+            ObservableBlocks.OnCollectionChanged();
         }
 
         #endregion

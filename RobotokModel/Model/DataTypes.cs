@@ -38,32 +38,28 @@ namespace RobotokModel.Model
     public class SimulationData
     {
         public required ITile[,] Map;
-        public List<Goal> Goals = [];
-        public int Step { get; set; } = 0;
+        public required List<Goal> Goals;
+        public required Robot[] Robots;
+        //public int Step { get; set; } = 0;
     }
 
     public struct Goal
     {
         #region Static
 
-        private static int id = 0;
         public static event EventHandler? GoalsChanged;
-
         public static void OnGoalsChanged()
         {
             GoalsChanged?.Invoke(null, new());
         }
 
         #endregion
+        public required int Id { get; init; }
+        public required Position Position { get; set; }
+        public bool IsAssigned { get; set; } = false;
 
-        public int Id { get; }
-        public Position Position { get; set; }
-        public bool IsAssigned { get; set; }
-        public Goal()
-        {
-            Id = id++;
-            IsAssigned = false;
-        }
+        public Goal() { }
+
     }
 
 }

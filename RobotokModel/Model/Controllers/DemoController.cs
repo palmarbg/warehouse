@@ -32,8 +32,8 @@ namespace RobotokModel.Model.Controllers
                     throw new InvalidOperationException();
                 }
 
-                RobotOperation[] result = new RobotOperation[Robot.Robots.Count];
-                foreach (Robot robot in Robot.Robots)
+                RobotOperation[] result = new RobotOperation[simulationData.Robots.Length];
+                foreach (Robot robot in simulationData.Robots)
                 {
                     robot.NextOperation = RobotOperation.Forward;
                     result[robot.Id] = robot.NextOperation;
