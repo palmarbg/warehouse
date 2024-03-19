@@ -16,12 +16,12 @@ namespace RobotokModel.Model.Interfaces
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan);
 
         /// <summary>
-        /// Sets the next operation to every robot.
-        /// This method may be async
+        /// Sets the next operation for every robot.
+        /// Async method
         /// </summary>
         /// <param name="timeSpan">Time span to return the calculated operations</param>
         /// <returns>Returns the next RobotOperation for every Robot</returns>
-        public void ClaculateOperations(TimeSpan timeSpan);
+        public Task ClaculateOperations(TimeSpan timeSpan);
 
         /// <summary>
         /// This will be invoked when the controller finishes the task

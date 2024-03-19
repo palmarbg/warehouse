@@ -20,13 +20,14 @@ namespace RobotokModel.Model.Executors
         /// Doesn't handle deadlock, illegal moves.
         /// </summary>
         /// <param name="robotOperations"></param>
-        public void ExecuteOperations(RobotOperation[] robotOperations)
+        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
         {
-            for (int i = 0; i < Robot.Robots.Count; i++)
+            for (int i = 0; i < simulationData.Robots.Count; i++)
             {
-                Robot robot = Robot.Robots[i];
+                Robot robot = simulationData.Robots[i];
                 robot.ExecuteMove();
             }
+            return robotOperations;
         }
 
         public void Timeout()

@@ -35,6 +35,7 @@ namespace Robotok.View
             _mapGridContainer.SetDataContext(viewModel);
             _zoomSlider.SetDataContext(viewModel);
             _menubar.SetDataContext(viewModel);
+            viewModel.OnSetDataContext();
         }
     }
 }

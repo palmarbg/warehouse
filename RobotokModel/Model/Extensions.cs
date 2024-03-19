@@ -24,6 +24,10 @@ namespace RobotokModel.Model
         /// <para/>
         /// <c>False</c> if <c>robot</c> was blocked or if it's rotating
         /// </returns>
+        /// 
+
+        //throws error because datatypes were refactored
+        /*
         public static bool MoveRobot(this Robot robot, Simulation simulation)
         {
             var operation = robot.NextOperation;
@@ -116,7 +120,7 @@ namespace RobotokModel.Model
             };
         }
 
-
+        */
 
     }
 

@@ -50,7 +50,7 @@ namespace RobotokModel.Model
 
         public RobotOperation[] NextStep()
         {
-            return Robot.Robots.Select(NextOperation).ToArray();
+            return SimulationData.Robots.Select(NextOperation).ToArray();
         }
         private RobotOperation NextOperation(Robot robot)
         {
