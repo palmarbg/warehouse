@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RobotokModel.Model.Extensions;
+using RobotokModel.Model.Interfaces;
 
 namespace RobotokModel.Model
 {
@@ -10,7 +12,7 @@ namespace RobotokModel.Model
     /// Dijsktra algorithm for shortest path
     /// considers robots as stationary Blocks
     /// </summary>
-    internal class PrimitiveController : IController
+    internal class PrimitiveController //: IController
     {
         int[] dRow = { -1, 0, 1, 0 };
         int[] dCol = { 0, 1, 0, -1 };
@@ -61,8 +63,8 @@ namespace RobotokModel.Model
         {
             InitMatrixes();
             // may cause problems 
-            parents.SetMatrixItemInPosition(robot.Position, robot.Position);
-            distances.SetMatrixItemInPosition(robot.Position, 0);
+            parents.SetAtPosition(robot.Position, robot.Position);
+            distances.SetAtPosition(robot.Position, 0);
             var minPositionQueue = new PriorityQueue<Position, int>(Comparer<int>.Create((a,b) => b-a));
             //fill queue with vertices and distances
             for (int i = 0; i < distances.GetLength(0); i++)
@@ -70,21 +72,21 @@ namespace RobotokModel.Model
                 for (int j = 0; j < distances.GetLength(1); j++)
                 {
                     var pos = new Position() { X = i, Y = j };
-                    minPositionQueue.Enqueue(pos,distances.GetMatrixItemInPosition(pos));
+                    minPositionQueue.Enqueue(pos,distances.GetAtPosition(pos));
                 }
             }
             var u = robot.Position;
-            while (distances.GetMatrixItemInPosition(u) < int.MaxValue && minPositionQueue.Count > 0)
+            while (distances.GetAtPosition(u) < int.MaxValue && minPositionQueue.Count > 0)
             {
                 for (int i = 0; i < 4; i++)
                 {
                     var v = new Position();
                     v.X = u.X + dRow[i];
                     v.Y = u.Y + dCol[i];
-                    if(distances.GetMatrixItemInPosition(v) > distances.GetMatrixItemInPosition(u) + 1)
+                    if(distances.GetAtPosition(v) > distances.GetAtPosition(u) + 1)
                     {
-                        distances.SetMatrixItemInPosition(u, distances.GetMatrixItemInPosition(u)+1);
-                        parents.SetMatrixItemInPosition(v,u);
+                        distances.SetAtPosition(u, distances.GetAtPosition(u)+1);
+                        parents.SetAtPosition(v,u);
                         // change priority
                     }
 
@@ -104,11 +106,11 @@ namespace RobotokModel.Model
             {
                 return false;
             }
-            else if (!SimulationData.Map.GetMatrixItemInPosition(position).IsPassable)
+            else if (!SimulationData.Map.GetAtPosition(position).IsPassable)
             {
                 return false;
             }
-            else if (visited.GetMatrixItemInPosition(position))
+            else if (visited.GetAtPosition(position))
             {
                 return false;
             }

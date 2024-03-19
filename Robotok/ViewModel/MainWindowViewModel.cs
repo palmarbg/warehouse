@@ -18,7 +18,9 @@ namespace Robotok.ViewModel
     public class MainWindowViewModel : ViewModelBase
     {
         #region Fields
-        
+
+        private Simulation _simulation;
+
         private double _zoom;
         private int _row;
         private int _column;
@@ -43,7 +45,6 @@ namespace Robotok.ViewModel
                 }
             }
         }
-
 
         public int RowCount
         {
@@ -97,9 +98,12 @@ namespace Robotok.ViewModel
             }
         }
 
+        #endregion
+
+        #region Observable collections
+        
         public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
         public ObservableCollectionWrapper<ObservableBlock> ObservableBlocks { get; set; }
-        
 
         #endregion
 
@@ -154,11 +158,17 @@ namespace Robotok.ViewModel
         #endregion
 
         #region Constructor
-        public MainWindowViewModel()
+        public MainWindowViewModel(Simulation simulation)
         {
+            _simulation = simulation;
+
+            simulation.RobotsChanged += new EventHandler((_,_) => OnRobotsChanged());
+            simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
+            simulation.GoalsChanged += new EventHandler((_,_) => ObservableGoals?.OnCollectionChanged());
+
             _zoom=1.0;
-            _row=200;
-            _column=200;
+            _row=20;
+            _column=40;
             _xoffset = 0;
             _yoffset = 0;
 
@@ -195,6 +205,8 @@ namespace Robotok.ViewModel
             {
                 Random random = new();
 
+                //create blocks
+
                 for (int i = 0; i < Map.GetLength(0); i++)
                 {
                     for (int j = 0; j < Map.GetLength(1); j++)
@@ -207,8 +219,10 @@ namespace Robotok.ViewModel
 
                 ObservableBlocks.OnCollectionChanged();
 
+                //create robots and tasks
+
                 var values = Enum.GetValues(typeof(Direction));
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     Robots.Add(new Robot
                     {
@@ -233,6 +247,7 @@ namespace Robotok.ViewModel
 
                 OnRobotsChanged();
 
+                //move robots
 
                 Thread.Sleep(3000);
                 foreach (var robot in Robots)
@@ -245,18 +260,38 @@ namespace Robotok.ViewModel
                 Thread.Sleep(500);
                 foreach (var robot in Robots)
                 {
-                    robot.Rotation = Direction.Down;
-                }
-
-                OnRobotsMoved();
-
-                Thread.Sleep(500);
-                foreach (var robot in Robots)
-                {
                     robot.Position = new Position { X = robot.Position.X - 1, Y = robot.Position.Y };
                 }
 
                 OnRobotsMoved();
+
+                //change goals
+
+                Thread.Sleep(1000);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Goals.Add(new Goal
+                    {
+                        Position = new Position
+                        {
+                            X = random.Next(0, ColumnCount),
+                            Y = random.Next(0, RowCount)
+                        }
+                    });
+                }
+
+                ObservableGoals.OnCollectionChanged();
+
+                Thread.Sleep(1000);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Goals.RemoveAt(0);
+                }
+
+                ObservableGoals.OnCollectionChanged();
+
             });
         }
 
@@ -291,7 +326,7 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        public void OnRobotsChanged()
+        private void OnRobotsChanged()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -304,7 +339,7 @@ namespace Robotok.ViewModel
         /// <para />
         /// If the collection changed call <see cref="OnRobotsChanged"/>
         /// </summary>
-        public void OnRobotsMoved()
+        private void OnRobotsMoved()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -312,36 +347,38 @@ namespace Robotok.ViewModel
             });
         }
 
-        public void OnSimulationStart()
+        private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
+            _simulation.StartSimulation();
         }
 
-        public void OnSimulationStop()
+        private void OnSimulationStop()
         {
             Debug.WriteLine("simulation stop");
+            _simulation.StopSimulation();
         }
 
-        public void OnSimulationPause()
+        private void OnSimulationPause()
         {
             Debug.WriteLine("simulation pause");
         }
-        public void OnInitialPosition()
+        private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
         }
 
-        public void OnPreviousStep()
+        private void OnPreviousStep()
         {
             Debug.WriteLine("prev step");
         }
 
-        public void OnNextStep()
+        private void OnNextStep()
         {
             Debug.WriteLine("next step");
         }
 
-        public void OnFinalPosition()
+        private void OnFinalPosition()
         {
             Debug.WriteLine("last step");
         }
