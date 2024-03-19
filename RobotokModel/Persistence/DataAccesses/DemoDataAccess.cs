@@ -129,6 +129,8 @@ namespace RobotokModel.Persistence.DataAccesses
                 }
             }
 
+            SimulationData.Map[5, 5] = Block.Instance;
+
             foreach (Robot robot in SimulationData.Robots)
             {
                 SimulationData.Map.SetAtPosition(robot.Position, robot);

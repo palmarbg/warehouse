@@ -165,12 +165,13 @@ namespace Robotok.ViewModel
             simulation.GoalsChanged += new EventHandler((_,_) => ObservableGoals?.OnCollectionChanged());
 
             _zoom=1.0;
-            _row=20;
-            _column=40;
+            _row=simulation.simulationData.Map.GetLength(1);
+            _column=simulation.simulationData.Map.GetLength(0);
             _xoffset = 0;
             _yoffset = 0;
 
-            Robots = [];
+            Robots = simulation.simulationData.Robots;
+
             Goals = [];
             Blocks = [];
 
@@ -186,6 +187,16 @@ namespace Robotok.ViewModel
             ObservableGoals = new(Goals);
 
             CalculateBlocks(simulation.simulationData.Map);
+            OnRobotsChanged();
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void OnSetDataContext()
+        {
+            OnRobotsChanged();
         }
 
         #endregion
@@ -200,8 +211,7 @@ namespace Robotok.ViewModel
             Blocks.Clear();
             for (int i = 0; i < Map.GetLength(0); i++)
             {
-                int j;
-                for (j = 0; j < Map.GetLength(1); j++)
+                for (int j = 0; j < Map.GetLength(1); j++)
                 {
                     if (Map[i, j] is not Block)
                         continue;
@@ -225,7 +235,7 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        private void OnRobotsChanged()
+        public void OnRobotsChanged()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {

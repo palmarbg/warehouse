@@ -39,7 +39,7 @@ namespace RobotokModel.Model
     {
         public required ITile[,] Map;
         public required List<Goal> Goals;
-        public required Robot[] Robots;
+        public required List<Robot> Robots;
         //public int Step { get; set; } = 0;
     }
 
