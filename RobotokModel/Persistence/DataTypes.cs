@@ -30,4 +30,9 @@ namespace RobotokModel.Persistence
         public int robotId;
         public TaskEventType eventType;
     }
+    public enum Strategy
+    {
+        RoundRobin,
+        AStar,
+    }
 }

@@ -40,6 +40,8 @@ namespace RobotokModel.Model
         public required ITile[,] Map;
         public required List<Goal> Goals;
         public required List<Robot> Robots;
+        public required Persistence.Strategy DistributionStrategy;
+        public required int RevealedTaskCount;
         //public int Step { get; set; } = 0;
     }
 

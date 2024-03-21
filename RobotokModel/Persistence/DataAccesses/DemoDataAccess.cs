@@ -15,6 +15,8 @@ namespace RobotokModel.Persistence.DataAccesses
             {
                 SimulationData = new SimulationData
                 {
+                    RevealedTaskCount = 1,
+                    DistributionStrategy = Strategy.RoundRobin,
                     Map = new ITile[10, 10],
                     Goals =
                     [
@@ -79,6 +81,8 @@ namespace RobotokModel.Persistence.DataAccesses
             
             SimulationData = new SimulationData
             {
+                DistributionStrategy = Strategy.RoundRobin,
+                RevealedTaskCount = 1,
                 Map = new ITile[10, 10],
                 Goals =
                 [
