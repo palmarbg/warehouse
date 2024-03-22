@@ -35,23 +35,24 @@
 
         </Style>
     </UserControl.Resources>
-    <ItemsControl>
+    <Canvas Name="MapCanvas"
+            Style="{StaticResource BindMe}"
+            ClipToBounds="True"
+            >
+        <Canvas.LayoutTransform>
+            <TransformGroup>
+                <ScaleTransform ScaleX="{Binding Zoom}"/>
+                <ScaleTransform ScaleY="{Binding Zoom}"/>
+            </TransformGroup>
+        </Canvas.LayoutTransform>
+    </Canvas>
+    <!--<ItemsControl>
         <ItemsControl.ItemsSource>
             <Binding Path="ObservableBlocks" Mode="OneWay"/>
         </ItemsControl.ItemsSource>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Canvas Name="MapCanvas"
-                            Style="{StaticResource BindMe}"
-                            ClipToBounds="True"
-                            >
-                    <Canvas.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding Zoom}"/>
-                            <ScaleTransform ScaleY="{Binding Zoom}"/>
-                        </TransformGroup>
-                    </Canvas.LayoutTransform>
-                </Canvas>
+                
 
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
@@ -74,5 +75,5 @@
                 </Grid>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    </ItemsControl>-->
 </UserControl>

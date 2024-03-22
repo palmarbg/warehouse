@@ -93,12 +93,12 @@ namespace RobotokModel.Persistence.DataAccesses
                     },
                     new Goal
                     {
-                        Position = new Position {X = 2,Y = 2},
+                        Position = new Position {X = 1,Y = 2},
                         Id = 1
                     },
                     new Goal
                     {
-                        Position = new Position {X = 3,Y = 3},
+                        Position = new Position {X = 2,Y = 3},
                         Id = 2
                     }
                 ],
