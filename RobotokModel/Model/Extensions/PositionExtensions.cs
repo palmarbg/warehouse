@@ -8,7 +8,7 @@ namespace RobotokModel.Model.Extensions
 {
     public static class PositionExtensions
     {
-        public static Position PoistionInDirection(this Position position, Direction rotation)
+        public static Position PositionInDirection(this Position position, Direction rotation)
         {
             var newPosition = new Position();
             switch (rotation)

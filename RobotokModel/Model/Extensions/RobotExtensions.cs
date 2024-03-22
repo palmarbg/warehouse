@@ -13,10 +13,10 @@ namespace RobotokModel.Model.Extensions
             switch (robot.NextOperation)
             {
                 case RobotOperation.Forward:
-                    robot.Position = robot.Position.PoistionInDirection(robot.Rotation);
+                    robot.Position = robot.Position.PositionInDirection(robot.Rotation);
                     break;
                 case RobotOperation.Backward:
-                    robot.Position = robot.Position.PoistionInDirection(robot.Rotation.Opposite());
+                    robot.Position = robot.Position.PositionInDirection(robot.Rotation.Opposite());
                     break;
                 case RobotOperation.Clockwise:
                     robot.Rotation = robot.Rotation.RotateClockWise();
