@@ -113,10 +113,9 @@ namespace RobotokModel.Persistence.DataAccesses
             int height = int.Parse(mapData[1].Split(' ')[1]);
             int width = int.Parse(mapData[2].Split(' ')[1]);
             ITile[,] map = new ITile[width, height];
-            for (int i = 3; i < mapData.Length; i++)
+            for (int y = 0; y < height; y++)
             {
-                int y = i - 3;
-                string row = mapData[y];
+                string row = mapData[y+4];
                 for (int x = 0; x < width; x++)
                 {
                     if (row[x] == '.')

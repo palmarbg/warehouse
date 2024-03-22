@@ -209,20 +209,21 @@ namespace Robotok.ViewModel
         private void CalculateBlocks(ITile[,] Map)
         {
             Blocks.Clear();
-            for (int i = 0; i < Map.GetLength(0); i++)
+            for (int y = 0; y < Map.GetLength(1); y++)
             {
-                for (int j = 0; j < Map.GetLength(1); j++)
+                Debug.WriteLine(Map[y, 0] is Block);
+                for (int x = 0; x < Map.GetLength(0); x++)
                 {
-                    if (Map[i, j] is not Block)
+                    if (Map[x, y] is not Block)
                         continue;
 
-                    int start = j;
-                    int end = j;
-                    while (j + 1 < Map.GetLength(1) && (Map[i, j + 1] is Block)) // if the next tile is also a block
+                    int start = x;
+                    int end = x;
+                    while (x + 1 < Map.GetLength(0) && (Map[x + 1, y] is Block)) // if the next tile is also a block
                     {
-                        end = ++j;
+                        end = ++x;
                     }
-                    Blocks.Add((new ObservableBlock { X = start, Y = i, Width = end - start + 1 }));
+                    Blocks.Add((new ObservableBlock { X = start, Y = y, Width = end - start + 1 }));
                 }
             }
             ObservableBlocks.OnCollectionChanged();
