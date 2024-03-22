@@ -84,7 +84,7 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            IDataAccess dataAccess = new ConfigDataAccess();
+            IDataAccess dataAccess = new DemoDataAccess();
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
             dataAccess.Load(path + "sample_files\\random_20_config.json");
@@ -108,6 +108,13 @@ namespace RobotokModel.Model
             if(isSimulationRunning) return;
             isSimulationRunning = true;
             Timer.Start();
+
+            //to remove
+            foreach(Robot robot in simulationData.Robots)
+            {
+                Distributor?.AssignNewTask(robot);
+            }
+            OnGoalsChanged();
         }
 
         public void StopSimulation()

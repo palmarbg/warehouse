@@ -45,7 +45,7 @@ namespace RobotokModel.Model
         //public int Step { get; set; } = 0;
     }
 
-    public struct Goal
+    public class Goal
     {
         #region Static
 

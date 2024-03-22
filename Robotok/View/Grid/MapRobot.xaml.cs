@@ -50,7 +50,7 @@ namespace Robotok.View.Grid
             viewModel.RobotsMoved += new EventHandler(RefreshRobots);
         }
 
-        public void AddRobots(object? sender, EventArgs e)
+        private void AddRobots(object? sender, EventArgs e)
         {
             if (sender == null)
                 return;
@@ -69,7 +69,7 @@ namespace Robotok.View.Grid
                         GridConverterFunctions.unit * robot.Position.Y,
                         0,
                         0)
-            };
+                };
                 ToolTipService.SetInitialShowDelay(grid, 0);
                 ToolTipService.SetShowDuration(grid, 9999999);
                 ToolTipService.SetBetweenShowDelay(grid, 0);
@@ -105,7 +105,7 @@ namespace Robotok.View.Grid
             }
         }
 
-        public void RefreshRobots(object? sender, EventArgs e)
+        private void RefreshRobots(object? sender, EventArgs e)
         {
             if (sender == null)
                 return;

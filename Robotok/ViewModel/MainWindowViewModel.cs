@@ -117,6 +117,11 @@ namespace Robotok.ViewModel
         /// </summary>
         public event EventHandler? RobotsMoved;
 
+        /// <summary>
+        /// Fire with <see cref="OnGoalsChanged"/>
+        /// </summary>
+        public event EventHandler? GoalsChanged;
+
         #endregion
 
         #region Simulation data
@@ -162,7 +167,7 @@ namespace Robotok.ViewModel
 
             simulation.RobotsChanged += new EventHandler((_,_) => OnRobotsChanged());
             simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
-            simulation.GoalsChanged += new EventHandler((_,_) => ObservableGoals?.OnCollectionChanged());
+            simulation.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
             _zoom=1.0;
             _row=simulation.simulationData.Map.GetLength(1);
@@ -210,7 +215,6 @@ namespace Robotok.ViewModel
             Blocks.Clear();
             for (int y = 0; y < Map.GetLength(1); y++)
             {
-                Debug.WriteLine(Map[y, 0] is Block);
                 for (int x = 0; x < Map.GetLength(0); x++)
                 {
                     if (Map[x, y] is not Block)
@@ -235,7 +239,7 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        public void OnRobotsChanged()
+        private void OnRobotsChanged()
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
@@ -253,6 +257,17 @@ namespace Robotok.ViewModel
             App.Current.Dispatcher.Invoke((Action)delegate
             {
                 RobotsMoved?.Invoke(Robots, new EventArgs());
+            });
+        }
+
+        /// <summary>
+        /// Call when new goals have been assigned or finished
+        /// </summary>
+        private void OnGoalsChanged()
+        {
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                GoalsChanged?.Invoke(Goals, new EventArgs());
             });
         }
 
