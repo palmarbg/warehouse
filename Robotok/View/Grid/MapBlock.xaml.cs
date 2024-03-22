@@ -24,20 +24,12 @@ namespace Robotok.View.Grid
     /// <summary>
     /// Interaction logic for MapBlock.xaml
     /// </summary>
-    public partial class MapBlock : UserControl
+    public partial class MapBlock : Canvas
     {
-        public double Zoom { get; set; }
-        public int RowCount { get; set; }
-        public int ColumnCount { get; set; }
-
-        public ObservableCollectionWrapper<ObservableBlock> ObservableBlocks { get; set; }
 
         public MapBlock()
         {
-            DataContext = this;
-            ObservableBlocks = new ([]);
             InitializeComponent();
-
         }
 
         public void SetDataContext(MainWindowViewModel viewModel)
@@ -46,6 +38,7 @@ namespace Robotok.View.Grid
             viewModel.MapLoaded += new EventHandler(RefreshMap);
         }
 
+        #region Private methods
         private void RefreshMap(object? sender, EventArgs e)
         {
             if (sender == null)
@@ -85,10 +78,10 @@ namespace Robotok.View.Grid
 
                     grid.Children.Add(rectangle);
                     MapCanvas.Children.Add(grid);
-                    //Blocks.Add((new ObservableBlock { X = start, Y = y, Width = end - start + 1 }));
                 }
             }
         }
+        #endregion
     }
 
     public class ObservableBlock

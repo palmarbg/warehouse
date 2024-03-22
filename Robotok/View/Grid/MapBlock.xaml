@@ -1,20 +1,16 @@
-﻿<UserControl x:Class="Robotok.View.Grid.MapBlock"
+﻿<Canvas x:Class="Robotok.View.Grid.MapBlock"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Robotok.View.Grid"
-             xmlns:converters="clr-namespace:Robotok.View.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Name="ParentElement">
-    <UserControl.Resources>
-        <local:SizeToLineObservableCollection x:Key="SizeToLineObservableCollection"/>
+             Name="MapCanvas"
+             ClipToBounds="True">
+    <Canvas.Resources>
         <local:SizeToCanvasSizeConverter x:Key="SizeToCanvasSizeConverter"/>
-        <local:CoordinateToCanvasMarginConverter x:Key="CoordinateToCanvasMarginConverter"/>
-        <local:UnitCanvasLengthConverter x:Key="UnitCanvasLengthConverter"/>
-        <local:SizeToCanvasLengthConverter x:Key="SizeToCanvasLengthConverter"/>
-        <Style TargetType="FrameworkElement" x:Key="BindMe">
+        <Style TargetType="Canvas">
             <Setter Property="Height">
                 <Setter.Value>
                     <Binding Path="RowCount"
@@ -34,46 +30,11 @@
             </Setter>
 
         </Style>
-    </UserControl.Resources>
-    <Canvas Name="MapCanvas"
-            Style="{StaticResource BindMe}"
-            ClipToBounds="True"
-            >
-        <Canvas.LayoutTransform>
-            <TransformGroup>
-                <ScaleTransform ScaleX="{Binding Zoom}"/>
-                <ScaleTransform ScaleY="{Binding Zoom}"/>
-            </TransformGroup>
-        </Canvas.LayoutTransform>
-    </Canvas>
-    <!--<ItemsControl>
-        <ItemsControl.ItemsSource>
-            <Binding Path="ObservableBlocks" Mode="OneWay"/>
-        </ItemsControl.ItemsSource>
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                
-
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Grid
-                    Width="{Binding Width, Converter={StaticResource SizeToCanvasLengthConverter}}"
-                    Height="{Binding  Width, Converter={StaticResource UnitCanvasLengthConverter}}"
-                    >
-                    <Grid.Margin>
-                        <MultiBinding Converter="{StaticResource CoordinateToCanvasMarginConverter}">
-                            <Binding Path="X" Mode="OneWay"/>
-                            <Binding Path="Y" Mode="OneWay"/>
-                        </MultiBinding>
-                    </Grid.Margin>
-                    <Rectangle 
-                             Fill="Black"
-                             Margin="0.5"
-                             />
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>-->
-</UserControl>
+    </Canvas.Resources>
+    <Canvas.LayoutTransform>
+        <TransformGroup>
+            <ScaleTransform ScaleX="{Binding Zoom}"/>
+            <ScaleTransform ScaleY="{Binding Zoom}"/>
+        </TransformGroup>
+    </Canvas.LayoutTransform>
+</Canvas>

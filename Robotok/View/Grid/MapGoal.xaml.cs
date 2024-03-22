@@ -24,20 +24,11 @@ namespace Robotok.View.Grid
     /// <summary>
     /// Interaction logic for MapGoal.xaml
     /// </summary>
-    public partial class MapGoal : UserControl
+    public partial class MapGoal : Canvas
     {
-        public double Zoom { get; set; }
-        public int RowCount { get; set; }
-        public int ColumnCount { get; set; }
-
-        public ObservableCollectionWrapper<Goal> ObservableGoals { get; set; }
-
         public MapGoal()
         {
-            DataContext = this;
-            ObservableGoals = new ([]);
             InitializeComponent();
-
         }
 
         public void SetDataContext(MainWindowViewModel viewModel)
@@ -46,6 +37,7 @@ namespace Robotok.View.Grid
             viewModel.GoalsChanged += new EventHandler(RefreshGoals);
         }
 
+        #region Private methods
         private void RefreshGoals(object? sender, EventArgs e)
         {
             if(sender == null)
@@ -92,5 +84,6 @@ namespace Robotok.View.Grid
 
             }
         }
+        #endregion
     }
 }

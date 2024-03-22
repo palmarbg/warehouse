@@ -27,20 +27,11 @@ namespace Robotok.View.Grid
     /// <summary>
     /// Interaction logic for MapRobot.xaml
     /// </summary>
-    public partial class MapRobot : UserControl
+    public partial class MapRobot : Canvas
     {
-        public double Zoom { get; set; }
-        public int RowCount { get; set; }
-        public int ColumnCount { get; set; }
-
-        public ObservableCollectionWrapper<Robot> ObservableRobots { get; set; }
-
         public MapRobot()
         {
-            DataContext = this;
-            ObservableRobots = new([]);
             InitializeComponent();
-
         }
 
         public void SetDataContext(MainWindowViewModel viewModel)
@@ -50,6 +41,7 @@ namespace Robotok.View.Grid
             viewModel.RobotsMoved += new EventHandler(RefreshRobots);
         }
 
+        #region Private Methods
         private void AddRobots(object? sender, EventArgs e)
         {
             if (sender == null)
@@ -147,6 +139,7 @@ namespace Robotok.View.Grid
                 _ => new Thickness(0, val, 0, 0),
             };
         }
+        #endregion
 
     }
 }
