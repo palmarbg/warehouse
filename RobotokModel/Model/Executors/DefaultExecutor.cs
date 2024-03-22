@@ -23,12 +23,6 @@ namespace RobotokModel.Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
         {
-            //for (int i = 0; i < simulationData.Robots.Count; i++)
-            //{
-            //    Robot robot = simulationData.Robots[i];
-            //    robot.ExecuteMove();
-            //}
-
             // Reset MovedThisTurn
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
@@ -53,10 +47,7 @@ namespace RobotokModel.Model.Executors
         //TODO Robotok körbe akarnak menni, akkor beakadnak
         private bool MoveRobot(Robot robot)
         {
-            if (robot.MovedThisTurn)
-            {
-                return false;
-            }
+            if (robot.MovedThisTurn) return false;
             var operation = robot.NextOperation;
             switch (operation)
             {

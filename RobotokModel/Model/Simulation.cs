@@ -91,7 +91,7 @@ namespace RobotokModel.Model
 
             SetController("demo");
             SetTaskDistributor("demo");
-            Executor = new DemoExecutor(simulationData);
+            Executor = new DefaultExecutor(simulationData);
 
             Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(5));
 
