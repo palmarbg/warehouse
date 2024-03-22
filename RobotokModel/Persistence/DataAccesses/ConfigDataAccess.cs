@@ -7,6 +7,16 @@ namespace RobotokModel.Persistence.DataAccesses
 {
     public class ConfigDataAccess : IDataAccess
     {
+        #region Private
+
+        private Uri baseUri;
+
+        public ConfigDataAccess()
+        {
+            this.baseUri = new("C:\\");
+        }
+
+        #endregion
         public SimulationData SimulationData { get; set; } = null!;
 
         #region Async
@@ -88,8 +98,9 @@ namespace RobotokModel.Persistence.DataAccesses
         #region SideMethods
         private void SetMap(string path)
         {
+            string filePath = new Uri(baseUri, path).ToString();
 
-            string[] mapData = File.ReadAllText(path).Split('\n');
+            string[] mapData = File.ReadAllText(filePath).Split('\n');
             // map[0]: type octile nem tudjuk mit jelent, nem használjuk
             int height = int.Parse(mapData[1].Split(' ')[1]);
             int width = int.Parse(mapData[2].Split(' ')[1]);
@@ -114,7 +125,9 @@ namespace RobotokModel.Persistence.DataAccesses
         }
         private void SetRobots(string path)
         {
-            string[] robotData = File.ReadAllText(path).Split('\n');
+            string filePath = new Uri(baseUri, path).ToString();
+
+            string[] robotData = File.ReadAllText(filePath).Split('\n');
             int robotCount = int.Parse(robotData[0]);
             for (int i = 1; i <= robotCount; i++)
             {
@@ -137,7 +150,9 @@ namespace RobotokModel.Persistence.DataAccesses
         }
         private void SetGoals(string path)
         {
-            string[] goalData = File.ReadAllText(path).Split('\n');
+            string filePath = new Uri(baseUri, path).ToString();
+
+            string[] goalData = File.ReadAllText(filePath).Split('\n');
             int goalCount = int.Parse(goalData[0]);
             for (int i = 1; i <= goalCount; i++)
             {
@@ -156,11 +171,14 @@ namespace RobotokModel.Persistence.DataAccesses
             }
         }
         #endregion
+
         #region Syncronous
         public void Load(string path)
         {
             try
             {
+                baseUri = new(Path.GetDirectoryName(path));
+
                 string jsonString = File.ReadAllText(path);
                 Config? config = JsonSerializer.Deserialize<Config>(jsonString) ?? throw new JSonError("Serialization of config file was unsuccesful!");
                 Strategy strategy;
