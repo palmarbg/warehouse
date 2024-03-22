@@ -147,6 +147,7 @@ namespace RobotokModel.Persistence.DataAccesses
                     Rotation = Direction.Right
                 };
                 SimulationData.Robots.Add(r);
+                SimulationData.Map.SetAtPosition(r.Position, r);
             }
         }
         private void SetGoals(string path)
