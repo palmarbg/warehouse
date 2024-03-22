@@ -12,13 +12,20 @@ namespace RobotokModel.Persistence.DataAccesses
 
         private Uri baseUri;
 
+        #endregion
+
+        #region Constructor
         public ConfigDataAccess()
         {
             this.baseUri = new("C:\\");
         }
 
         #endregion
+
+        #region Properties
         public SimulationData SimulationData { get; set; } = null!;
+
+        #endregion
 
         #region Async
         public async Task LoadAsync(string path)
@@ -99,7 +106,7 @@ namespace RobotokModel.Persistence.DataAccesses
         #region SideMethods
         private void SetMap(string path)
         {
-            string filePath = new Uri(baseUri, path).ToString();
+            string filePath = new Uri(baseUri, path).AbsolutePath;
 
             string[] mapData = File.ReadAllText(filePath).Split('\n');
             // map[0]: type octile nem tudjuk mit jelent, nem használjuk
@@ -126,7 +133,7 @@ namespace RobotokModel.Persistence.DataAccesses
         }
         private void SetRobots(string path)
         {
-            string filePath = new Uri(baseUri, path).ToString();
+            string filePath = new Uri(baseUri, path).AbsolutePath;
 
             string[] robotData = File.ReadAllText(filePath).Split('\n');
             int robotCount = int.Parse(robotData[0]);
@@ -152,7 +159,7 @@ namespace RobotokModel.Persistence.DataAccesses
         }
         private void SetGoals(string path)
         {
-            string filePath = new Uri(baseUri, path).ToString();
+            string filePath = new Uri(baseUri, path).AbsolutePath;
 
             string[] goalData = File.ReadAllText(filePath).Split('\n');
             int goalCount = int.Parse(goalData[0]);
@@ -179,7 +186,9 @@ namespace RobotokModel.Persistence.DataAccesses
         {
             try
             {
-                baseUri = new(Path.GetDirectoryName(path));
+                var cucc = path;
+                baseUri = new(path);
+
                 string jsonString = File.ReadAllText(path);
                 var options = new JsonSerializerOptions();
                 options.PropertyNameCaseInsensitive = true;
