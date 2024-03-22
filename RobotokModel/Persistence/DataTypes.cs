@@ -33,6 +33,5 @@ namespace RobotokModel.Persistence
     public enum Strategy
     {
         RoundRobin,
-        AStar,
     }
 }

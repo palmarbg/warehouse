@@ -2,6 +2,7 @@
 using RobotokModel.Model.Extensions;
 using RobotokModel.Persistence.Interfaces;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RobotokModel.Persistence.DataAccesses
 {
@@ -178,17 +179,16 @@ namespace RobotokModel.Persistence.DataAccesses
             try
             {
                 baseUri = new(Path.GetDirectoryName(path));
-
                 string jsonString = File.ReadAllText(path);
-                Config? config = JsonSerializer.Deserialize<Config>(jsonString) ?? throw new JSonError("Serialization of config file was unsuccesful!");
+                var options = new JsonSerializerOptions();
+                options.PropertyNameCaseInsensitive = true;
+                options.Converters.Add(new JsonStringEnumConverter());
+                Config? config = JsonSerializer.Deserialize<Config>(jsonString, options) ?? throw new JSonError("Serialization of config file was unsuccesful!");
                 Strategy strategy;
-                switch (config.taskAssignmentStrategy)
+                switch (config.TaskAssignmentStrategy)
                 {
                     case "roundrobin":
                         strategy = Strategy.RoundRobin;
-                        break;
-                    case "a*":
-                        strategy = Strategy.AStar;
                         break;
                     default:
                         strategy = Strategy.RoundRobin;
@@ -197,14 +197,14 @@ namespace RobotokModel.Persistence.DataAccesses
                 SimulationData = new SimulationData
                 {
                     DistributionStrategy = strategy,
-                    RevealedTaskCount = config.numTasksReveal,
+                    RevealedTaskCount = config.NumTasksReveal,
                     Map = null!,
                     Goals =[],
                     Robots = []
                 };
-                SetMap(config.mapFile);
-                SetRobots(config.agentFile);
-                SetGoals(config.taskFile);
+                SetMap(config.MapFile);
+                SetRobots(config.AgentFile);
+                SetGoals(config.TaskFile);
             }
             catch
             {

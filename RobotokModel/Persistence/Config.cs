@@ -9,11 +9,11 @@ namespace RobotokModel.Persistence
 {
     public class Config
     {
-        public required string mapFile;
-        public required string agentFile;
-        public required int teamSize;
-        public required string taskFile;
-        public required int numTasksReveal;
-        public required string taskAssignmentStrategy;
+        public required string MapFile { get; set; }
+        public required string AgentFile { get; set; }
+        public required int TeamSize { get; set; }
+        public required string TaskFile { get; set; }
+        public required int NumTasksReveal { get; set; }
+        public required string TaskAssignmentStrategy { get; set; }
     }
 }
