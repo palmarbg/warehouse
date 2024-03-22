@@ -30,7 +30,7 @@ namespace Robotok
         {
             Startup += new StartupEventHandler(App_Startup);
 
-            Debug.WriteLine((new Position() { X = 1, Y = 2 }).PoistionInDirection(Direction.Right));
+            Debug.WriteLine((new Position() { X = 1, Y = 2 }).PositionInDirection(Direction.Right));
         }
 
         #endregion
