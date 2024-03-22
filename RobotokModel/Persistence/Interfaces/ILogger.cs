@@ -16,7 +16,6 @@ namespace RobotokModel.Persistence.Interfaces
     /// </summary>
     public interface ILogger
     {
-
         /// <summary>
         /// Saves the log into the file specified by <c>path</c>
         /// </summary>

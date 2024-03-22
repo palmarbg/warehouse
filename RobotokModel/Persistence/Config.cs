@@ -9,18 +9,11 @@ namespace RobotokModel.Persistence
 {
     public class Config
     {
-        public int RobotCount { get; set; } // teamSize int
-        public List<List<Char>> Map { get; set; } = []; // mapFile string
-        public int MapWidth {get; set; }
-        public int MapHeight { get; set; }
-
-        public Strategy DistributionStrategy { get; set; } // taskAssignmentStrategy string
-        public List<Position> RobotPositions { get; set; } = []; // agentFile string
-        public List<Position> GoalPositions { get; set; } = []; // taskFile string
-        public int RevealedTaskCount { get; set; } // numTasksReveal int
-
-
-
-
+        public required string MapFile { get; set; }
+        public required string AgentFile { get; set; }
+        public required int TeamSize { get; set; }
+        public required string TaskFile { get; set; }
+        public required int NumTasksReveal { get; set; }
+        public required string TaskAssignmentStrategy { get; set; }
     }
 }

@@ -84,8 +84,10 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            IDataAccess dataAccess = new DemoDataAccess();
-            dataAccess.Load("dummy path");
+            IDataAccess dataAccess = new ConfigDataAccess();
+            string path = Directory.GetCurrentDirectory();
+            path = path.Substring(0, path.LastIndexOf("Robotok"));
+            dataAccess.Load(path + "sample_files\\random_20_config.json");
 
             simulationData = dataAccess.SimulationData;
 
