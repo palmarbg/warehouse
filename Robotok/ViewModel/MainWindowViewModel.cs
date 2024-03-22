@@ -171,8 +171,7 @@ namespace Robotok.ViewModel
             _yoffset = 0;
 
             Robots = simulation.simulationData.Robots;
-
-            Goals = [];
+            Goals = simulation.simulationData.Goals;
             Blocks = [];
 
             StartSimulation = new DelegateCommand(param => OnSimulationStart());
