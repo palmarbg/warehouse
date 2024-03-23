@@ -26,7 +26,6 @@ namespace RobotokModel.Model
         public SimulationData simulationData { get; private set; }
         public ITaskDistributor? Distributor { get; private set; }
         public IController? Controller { get; private set; }
-
         public IExecutor? Executor { get; private set; }
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            IDataAccess dataAccess = new DemoDataAccess();
+            IDataAccess dataAccess = new ConfigDataAccess();
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
             dataAccess.Load(path + "sample_files\\random_20_config.json");

@@ -2,6 +2,7 @@
 using Robotok.MVVM;
 using Robotok.View.Grid;
 using RobotokModel.Model;
+using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +20,7 @@ namespace Robotok.ViewModel
     {
         #region Fields
 
-        private Simulation _simulation;
+        private ISimulation _simulation;
 
         private double _zoom;
         private int _row;
@@ -156,7 +157,7 @@ namespace Robotok.ViewModel
         #endregion
 
         #region Constructor
-        public MainWindowViewModel(Simulation simulation)
+        public MainWindowViewModel(ISimulation simulation)
         {
             _simulation = simulation;
 
@@ -202,7 +203,7 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnRobotsChanged()
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
+            App.Current?.Dispatcher.Invoke((Action)delegate
             {
                 RobotsChanged?.Invoke(Robots, new EventArgs());
             });
@@ -215,7 +216,7 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnRobotsMoved()
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
+            App.Current?.Dispatcher.Invoke((Action)delegate
             {
                 RobotsMoved?.Invoke(Robots, new EventArgs());
             });
@@ -226,7 +227,7 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnGoalsChanged()
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
+            App.Current?.Dispatcher.Invoke((Action)delegate
             {
                 GoalsChanged?.Invoke(Goals, new EventArgs());
             });
@@ -237,7 +238,7 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnMapLoaded()
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
+            App.Current?.Dispatcher.Invoke((Action)delegate
             {
                 MapLoaded?.Invoke(_simulation.simulationData.Map, new EventArgs());
             });

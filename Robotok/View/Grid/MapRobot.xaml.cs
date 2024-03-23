@@ -49,6 +49,13 @@ namespace Robotok.View.Grid
             List<Robot> robots = (List<Robot>)sender;
 
             MapCanvas.Children.Clear();
+
+            SolidColorBrush blackBrush = new(Colors.Black);
+            blackBrush.Freeze();
+
+            SolidColorBrush blueBrush = new(Color.FromRgb(9, 194, 248));
+            blueBrush.Freeze();
+
             foreach (Robot robot in robots)
             {
                 System.Windows.Controls.Grid grid = new()
@@ -68,7 +75,7 @@ namespace Robotok.View.Grid
 
                 System.Windows.Shapes.Ellipse ellipse = new()
                 {
-                    Fill = new SolidColorBrush(Color.FromRgb(9, 194, 248)),
+                    Fill = blueBrush,
                     Margin = new Thickness(2)
                 };
 
@@ -82,7 +89,7 @@ namespace Robotok.View.Grid
 
                 System.Windows.Shapes.Ellipse dot = new()
                 {
-                    Fill = new SolidColorBrush(Colors.Black),
+                    Fill = blackBrush,
                     Width = 6,
                     Height = 6,
                     Margin = DirectionToDotMargin(robot.Rotation)

@@ -45,6 +45,10 @@ namespace Robotok.View.Grid
             List<Goal> goals = (List<Goal>)sender;
 
             MapCanvas.Children.Clear();
+
+            SolidColorBrush brush = new(Color.FromRgb(251, 171, 9));
+            brush.Freeze();
+
             foreach(Goal goal in goals)
             {
                 if(!goal.IsAssigned)
@@ -66,7 +70,7 @@ namespace Robotok.View.Grid
 
                 System.Windows.Shapes.Rectangle rectangle = new()
                 {
-                    Fill = new SolidColorBrush(Color.FromRgb(251, 171, 9)),
+                    Fill = brush,
                     Margin = new Thickness(0.5)
                 };
 

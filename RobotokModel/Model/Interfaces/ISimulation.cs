@@ -27,6 +27,11 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         public IController? Controller { get; }
 
+        /// <summary>
+        /// Executor used by the simulation
+        /// </summary>
+        public IExecutor? Executor { get; }
+
         #endregion
 
         #region Events

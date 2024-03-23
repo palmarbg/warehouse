@@ -44,7 +44,12 @@ namespace Robotok.View.Grid
             if (sender == null)
                 return;
             ITile[,] map = (ITile[,])sender;
+
             MapCanvas.Children.Clear();
+
+            SolidColorBrush brush = new(Colors.Black);
+            brush.Freeze();
+
             for (int y = 0; y < map.GetLength(1); y++)
             {
                 for (int x = 0; x < map.GetLength(0); x++)
@@ -72,8 +77,7 @@ namespace Robotok.View.Grid
 
                     System.Windows.Shapes.Rectangle rectangle = new()
                     {
-                        Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0)),
-                        Margin = new Thickness(0.5)
+                        Fill = brush
                     };
 
                     grid.Children.Add(rectangle);
@@ -82,12 +86,5 @@ namespace Robotok.View.Grid
             }
         }
         #endregion
-    }
-
-    public class ObservableBlock
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
     }
 }
