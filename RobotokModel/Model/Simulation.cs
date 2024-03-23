@@ -126,6 +126,11 @@ namespace RobotokModel.Model
             OnSimulationFinished();
         }
 
+        public void InitializeSimulation(SimulationData sData)
+        {
+            this.simulationData = sData;
+        }
+
         public void SetController(string name)
         {
             //switch case might be refactored into something else
