@@ -1,5 +1,6 @@
 ﻿using Robotok.MVVM;
 using Robotok.ViewModel;
+using RobotokModel.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,17 +30,9 @@ namespace Robotok.View.Grid
     /// </summary>
     public partial class MapGrid : UserControl
     {
-        public double Zoom { get; set; }
-        public int RowCount { get; set; }
-        public int ColumnCount { get; set; }
-        public double XOffset { get; set; }
-        public double YOffset { get; set; }
-
         public MapGrid()
         {
-            DataContext = this;
             InitializeComponent();
-
         }
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -57,27 +50,20 @@ namespace Robotok.View.Grid
             RobotLayer.SetDataContext(viewModel);
             GoalLayer.SetDataContext(viewModel);
             BlockLayer.SetDataContext(viewModel);
+            viewModel.MapLoaded += new EventHandler(DrawLines);
         }
-    }
 
-    #region Converters
+        #region Private methods
 
-    public class SizeToLineObservableCollection : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        private void DrawLines(object? sender, EventArgs e)
         {
+            if (sender == null)
+                return;
+            ITile[,] map = (ITile[,])sender;
+            MapCanvas.Children.Clear();
 
-            // rowcount columncount
-            var lines = new SuppressNotifyObservableCollection<ObservableLine>
-            {
-                SuppressNotify = true
-            };
-
-            if (!GridConverterFunctions.ValidateArray(values, 2))
-                return lines;
-
-            var rowcount = (int)values[0];
-            var columncount = (int)values[1];
+            int columncount = map.GetLength(0);
+            int rowcount = map.GetLength(1);
             int unit = GridConverterFunctions.unit;
 
             //for optimisation purposes
@@ -90,62 +76,41 @@ namespace Robotok.View.Grid
                 unit *= AmountOfCellsInOneBlock;
             }
 
+            SolidColorBrush brush = new(Colors.Black);
+            brush.Freeze();
+
             //vertical lines
             for (int i = 1; i <= columncount; i++)
             {
-                lines.Add(new ObservableLine
+                System.Windows.Shapes.Line line = new()
                 {
                     X1 = (int)(i * unit),
                     X2 = (int)(i * unit),
                     Y1 = 0,
                     Y2 = (int)(rowcount * unit),
-                });
+                    Stroke = brush,
+                    StrokeThickness = 1
+                };
+                MapCanvas.Children.Add(line);
             }
             //horizontal lines
             for (int i = 1; i <= rowcount; i++)
             {
-                lines.Add(new ObservableLine
+                System.Windows.Shapes.Line line = new()
                 {
                     Y1 = (int)(i * unit),
                     Y2 = (int)(i * unit),
                     X1 = 0,
                     X2 = (int)(columncount * unit),
-                });
+                    Stroke = brush,
+                    StrokeThickness = 1
+                };
+                MapCanvas.Children.Add(line);
             }
-            return lines;
+
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class SizeToCanvasSizeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null || value == DependencyProperty.UnsetValue)
-                return 0;
-            var count = (int)value;
-
-            return GridConverterFunctions.MapLength(count);
-        }
-
-        public object ConvertBack(object value, Type targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    #endregion
-
-    public struct ObservableLine
-    {
-        public int X1 { get; set; }
-        public int X2 { get; set; }
-        public int Y1 { get; set; }
-        public int Y2 { get; set; }
+        #endregion
     }
 
 }

@@ -26,7 +26,6 @@ namespace RobotokModel.Model
         public SimulationData simulationData { get; private set; }
         public ITaskDistributor? Distributor { get; private set; }
         public IController? Controller { get; private set; }
-
         public IExecutor? Executor { get; private set; }
 
         /// <summary>
@@ -108,6 +107,13 @@ namespace RobotokModel.Model
             if(isSimulationRunning) return;
             isSimulationRunning = true;
             Timer.Start();
+
+            //to remove
+            foreach(Robot robot in simulationData.Robots)
+            {
+                Distributor?.AssignNewTask(robot);
+            }
+            OnGoalsChanged();
         }
 
         public void StopSimulation()

@@ -4,12 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Robotok.View.Grid"
-             xmlns:converters="clr-namespace:Robotok.View.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
              Name="ParentElement">
     <UserControl.Resources>
-        <local:SizeToLineObservableCollection x:Key="SizeToLineObservableCollection"/>
         <local:SizeToCanvasSizeConverter x:Key="SizeToCanvasSizeConverter"/>
         <Style TargetType="FrameworkElement" x:Key="BindMe">
             <Setter Property="Height">
@@ -43,40 +41,17 @@
                  VerticalAlignment="Top"
                  >
             <Grid>
-                <ItemsControl>
-                    <ItemsControl.ItemsSource>
-                        <MultiBinding Converter="{StaticResource SizeToLineObservableCollection}" Mode="OneWay">
-                            <Binding Path="RowCount" Mode="OneWay"/>
-                            <Binding Path="ColumnCount" Mode="OneWay"/>
-                        </MultiBinding>
-                    </ItemsControl.ItemsSource>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas Name="MapCanvas"
-                                Style="{StaticResource BindMe}"
-                                ClipToBounds="True"
-                                >
-                                <Canvas.LayoutTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform ScaleX="{Binding Zoom}"/>
-                                        <ScaleTransform ScaleY="{Binding Zoom}"/>
-                                    </TransformGroup>
-                                </Canvas.LayoutTransform>
-                            </Canvas>
-
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Line X1="{Binding X1}"
-                              X2="{Binding X2}"
-                              Y1="{Binding Y1}"
-                              Y2="{Binding Y2}"
-                              Stroke="Black"
-                              StrokeThickness="1"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Canvas Name="MapCanvas"
+                    Style="{StaticResource BindMe}"
+                    ClipToBounds="True"
+                    >       
+                    <Canvas.LayoutTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Zoom}"/>
+                            <ScaleTransform ScaleY="{Binding Zoom}"/>
+                        </TransformGroup>
+                    </Canvas.LayoutTransform>
+                </Canvas>
 
                 <local:MapBlock x:Name="BlockLayer"/>
                 <local:MapGoal x:Name="GoalLayer"/>

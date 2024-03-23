@@ -23,10 +23,7 @@ namespace Robotok.View
     {
         public MainWindow()
         {
-
             InitializeComponent();
-            //_mapGridContainer.DataContext = this.DataContext;
-
         }
 
         public void SetDataContext(MainWindowViewModel viewModel)

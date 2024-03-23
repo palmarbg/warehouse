@@ -27,20 +27,11 @@ namespace Robotok.View.Grid
     /// <summary>
     /// Interaction logic for MapRobot.xaml
     /// </summary>
-    public partial class MapRobot : UserControl
+    public partial class MapRobot : Canvas
     {
-        public double Zoom { get; set; }
-        public int RowCount { get; set; }
-        public int ColumnCount { get; set; }
-
-        public ObservableCollectionWrapper<Robot> ObservableRobots { get; set; }
-
         public MapRobot()
         {
-            DataContext = this;
-            ObservableRobots = new([]);
             InitializeComponent();
-
         }
 
         public void SetDataContext(MainWindowViewModel viewModel)
@@ -50,13 +41,21 @@ namespace Robotok.View.Grid
             viewModel.RobotsMoved += new EventHandler(RefreshRobots);
         }
 
-        public void AddRobots(object? sender, EventArgs e)
+        #region Private Methods
+        private void AddRobots(object? sender, EventArgs e)
         {
             if (sender == null)
                 return;
             List<Robot> robots = (List<Robot>)sender;
 
             MapCanvas.Children.Clear();
+
+            SolidColorBrush blackBrush = new(Colors.Black);
+            blackBrush.Freeze();
+
+            SolidColorBrush blueBrush = new(Color.FromRgb(9, 194, 248));
+            blueBrush.Freeze();
+
             foreach (Robot robot in robots)
             {
                 System.Windows.Controls.Grid grid = new()
@@ -69,14 +68,14 @@ namespace Robotok.View.Grid
                         GridConverterFunctions.unit * robot.Position.Y,
                         0,
                         0)
-            };
+                };
                 ToolTipService.SetInitialShowDelay(grid, 0);
                 ToolTipService.SetShowDuration(grid, 9999999);
                 ToolTipService.SetBetweenShowDelay(grid, 0);
 
                 System.Windows.Shapes.Ellipse ellipse = new()
                 {
-                    Fill = new SolidColorBrush(Color.FromRgb(9, 194, 248)),
+                    Fill = blueBrush,
                     Margin = new Thickness(2)
                 };
 
@@ -90,7 +89,7 @@ namespace Robotok.View.Grid
 
                 System.Windows.Shapes.Ellipse dot = new()
                 {
-                    Fill = new SolidColorBrush(Colors.Black),
+                    Fill = blackBrush,
                     Width = 6,
                     Height = 6,
                     Margin = DirectionToDotMargin(robot.Rotation)
@@ -105,7 +104,7 @@ namespace Robotok.View.Grid
             }
         }
 
-        public void RefreshRobots(object? sender, EventArgs e)
+        private void RefreshRobots(object? sender, EventArgs e)
         {
             if (sender == null)
                 return;
@@ -147,6 +146,7 @@ namespace Robotok.View.Grid
                 _ => new Thickness(0, val, 0, 0),
             };
         }
+        #endregion
 
     }
 }

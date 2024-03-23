@@ -1,16 +1,16 @@
-﻿<UserControl x:Class="Robotok.View.Grid.MapRobot"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Robotok.View.Grid"
-             xmlns:converters="clr-namespace:Robotok.View.Converters"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Name="ParentElement">
-    <UserControl.Resources>
+﻿<Canvas x:Class="Robotok.View.Grid.MapRobot"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Robotok.View.Grid"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800"
+        Name="MapCanvas"
+        ClipToBounds="True">
+    <Canvas.Resources>
         <local:SizeToCanvasSizeConverter x:Key="SizeToCanvasSizeConverter"/>
-        <Style TargetType="FrameworkElement" x:Key="BindMe">
+        <Style TargetType="Canvas">
             <Setter Property="Height">
                 <Setter.Value>
                     <Binding Path="RowCount"
@@ -30,66 +30,11 @@
             </Setter>
 
         </Style>
-    </UserControl.Resources>
-    <Canvas Name="MapCanvas"
-            Style="{StaticResource BindMe}"
-            ClipToBounds="True"
-            >
-        <Canvas.LayoutTransform>
-            <TransformGroup>
-                <ScaleTransform ScaleX="{Binding Zoom}"/>
-                <ScaleTransform ScaleY="{Binding Zoom}"/>
-            </TransformGroup>
-        </Canvas.LayoutTransform>
-    </Canvas>
-
-    <!--<ItemsControl>
-        <ItemsControl.ItemsSource>
-            <Binding Path="ObservableRobots" Mode="OneWay"/>
-        </ItemsControl.ItemsSource>
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Grid
-                    Width="{Binding Id, Converter={StaticResource UnitCanvasLengthConverter}}"
-                    Height="{Binding Id, Converter={StaticResource UnitCanvasLengthConverter}}"
-                    ToolTip="{Binding Id}"
-                    ToolTipService.InitialShowDelay="0" 
-                    ToolTipService.ShowDuration="9999999" 
-                    ToolTipService.BetweenShowDelay="0"
-                    x:Name="Cucc"
-                    >
-                    <Grid.Opacity>
-                        <MultiBinding
-                            Converter="{StaticResource CoordinateToCanvasMarginAnimatedConverter}"
-                            >
-                            <Binding Path="Position.X" Mode="OneWay"/>
-                            <Binding Path="Position.Y" Mode="OneWay"/>
-                            <Binding Path="" ElementName="Cucc" Mode="OneWay"/>
-                            
-                        </MultiBinding>
-                    </Grid.Opacity>
-                    <Ellipse 
-                             Fill="#09c2f8"
-                             Margin="2"
-                             
-                             />
-                    <TextBlock HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontSize="12"
-                               Text="{Binding Id}"/>
-                    <Ellipse
-                        Fill="Black"
-                        Width="6"
-                        Height="6"
-                        Margin="{Binding Rotation, Converter={StaticResource DirectionToDotMarginConverter}}"
-                        />
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>-->
-</UserControl>
+    </Canvas.Resources>
+    <Canvas.LayoutTransform>
+        <TransformGroup>
+            <ScaleTransform ScaleX="{Binding Zoom}"/>
+            <ScaleTransform ScaleY="{Binding Zoom}"/>
+        </TransformGroup>
+    </Canvas.LayoutTransform>
+</Canvas>

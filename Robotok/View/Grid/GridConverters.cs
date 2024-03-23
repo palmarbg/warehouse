@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 namespace Robotok.View.Grid
 {
+    #region Numberstrip converters 
     public class SizeToStringObservableCollection : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -65,7 +66,6 @@ namespace Robotok.View.Grid
 
     public class StripSizeConverter : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value == DependencyProperty.UnsetValue)
@@ -82,28 +82,19 @@ namespace Robotok.View.Grid
         }
     }
 
-    public class CoordinateToCanvasMarginConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            //x y 
-            if (!GridConverterFunctions.ValidateArray(values, 2))
-                return new Thickness(0, 0, 0, 0);
-            int X = (int)values[0];
-            int Y = (int)values[1];
-            return new Thickness(GridConverterFunctions.unit * X, GridConverterFunctions.unit * Y, 0, 0);
-        }
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    #endregion
 
-    public class UnitCanvasLengthConverter : IValueConverter
+    #region Map layer converters
+
+    public class SizeToCanvasSizeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return GridConverterFunctions.unit;
+            if (value == null || value == DependencyProperty.UnsetValue)
+                return 0;
+            var count = (int)value;
+
+            return GridConverterFunctions.MapLength(count);
         }
 
         public object ConvertBack(object value, Type targetTypes, object parameter, CultureInfo culture)
@@ -112,18 +103,5 @@ namespace Robotok.View.Grid
         }
     }
 
-    public class SizeToCanvasLengthConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null || value == DependencyProperty.UnsetValue)
-                return 0;
-            return (int)value * GridConverterFunctions.unit;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    #endregion
 }

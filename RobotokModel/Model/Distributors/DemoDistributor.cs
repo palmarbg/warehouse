@@ -1,6 +1,7 @@
 ﻿using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace RobotokModel.Model.Distributors
 
         /// <summary>
         /// Assignes the first available goal.
-        /// If there is no available goal, assignes <c>null</c>
+        /// If there is no available goal, assigns <c>null</c>
         /// </summary>
         /// <param name="robot"></param>
         public void AssignNewTask(Robot robot)
@@ -28,7 +29,6 @@ namespace RobotokModel.Model.Distributors
 
                 if(goal.IsAssigned)
                     continue;
-
                 robot.CurrentGoal = goal;
                 goal.IsAssigned = true;
                 return;
