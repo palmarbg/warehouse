@@ -135,15 +135,15 @@ namespace RobotokModel.Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] robotData = File.ReadAllText(filePath).Split('\n');
+            string[] robotData = File.ReadAllText(filePath).Split("\r\n");
             int robotCount = int.Parse(robotData[0]);
             for (int i = 1; i <= robotCount; i++)
             {
                 int intPos = int.Parse(robotData[i]);
                 
 
-                int x = intPos / SimulationData.Map.GetLength(0);
-                int y = intPos % SimulationData.Map.GetLength(0);
+                int x = intPos % SimulationData.Map.GetLength(0);
+                int y = intPos / SimulationData.Map.GetLength(0);
                 if (x > 0) { x--; }
                 if (y > 0) { y--; }
 
@@ -166,8 +166,8 @@ namespace RobotokModel.Persistence.DataAccesses
             for (int i = 1; i <= goalCount; i++)
             {
                 int intPos = int.Parse(goalData[i]);
-                int x = intPos / SimulationData.Map.GetLength(0);
-                int y = intPos % SimulationData.Map.GetLength(0);
+                int x = intPos % SimulationData.Map.GetLength(0);
+                int y = intPos / SimulationData.Map.GetLength(0);
                 if (x > 0) { x--; }
                 if (y > 0) { y--; }
 

@@ -39,13 +39,13 @@ namespace RobotokModel.Model.Controllers
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.Clockwise;
+                                    return RobotOperation.CounterClockwise;
                                 case Direction.Up:
-                                    return RobotOperation.Forward;
+                                    return RobotOperation.CounterClockwise;
                                 case Direction.Right:
                                     return RobotOperation.Clockwise;
                                 case Direction.Down:
-                                    return RobotOperation.Clockwise;
+                                    return RobotOperation.Forward;
                             }
                         }
                         if (distance > 0)
@@ -53,14 +53,15 @@ namespace RobotokModel.Model.Controllers
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.CounterClockwise;
+                                    return RobotOperation.Clockwise;
                                 case Direction.Up:
-                                    return RobotOperation.CounterClockwise;
+                                    return RobotOperation.Forward;
                                 case Direction.Right:
                                     return RobotOperation.Clockwise;
                                 case Direction.Down:
-                                    return RobotOperation.Forward;
+                                    return RobotOperation.Clockwise;
                             }
+
                         }
                         else return RobotOperation.Wait;
                     }
