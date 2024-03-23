@@ -9,7 +9,7 @@ namespace RobotokModel.Model.Controllers
 {
     public class DemoController : IController
     {
-        private SimulationData? simulationData;
+        private SimulationData? SimulationData;
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
 
@@ -27,13 +27,13 @@ namespace RobotokModel.Model.Controllers
             await Task.Run(() =>
             {
 
-                if (simulationData == null)
+                if (SimulationData == null)
                 {
                     throw new InvalidOperationException();
                 }
 
-                RobotOperation[] result = new RobotOperation[simulationData.Robots.Count];
-                foreach (Robot robot in simulationData.Robots)
+                RobotOperation[] result = new RobotOperation[SimulationData.Robots.Count];
+                foreach (Robot robot in SimulationData.Robots)
                 {
                     robot.NextOperation = RobotOperation.Forward;
                     result[robot.Id] = robot.NextOperation;
@@ -45,7 +45,7 @@ namespace RobotokModel.Model.Controllers
 
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
         {
-            this.simulationData = simulationData;
+            this.SimulationData = simulationData;
         }
 
         private void OnTaskFinished(RobotOperation[] result)

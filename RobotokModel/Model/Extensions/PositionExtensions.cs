@@ -32,5 +32,10 @@ namespace RobotokModel.Model.Extensions
             }
             return newPosition;
         }
+        public static bool EqualsPosition(this Position position1, Position position2)
+        {
+            return position1.X == position2.X && position1.Y == position2.Y;
+        }
     }
+
 }

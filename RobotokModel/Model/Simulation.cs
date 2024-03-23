@@ -28,6 +28,7 @@ namespace RobotokModel.Model
         public IController? Controller { get; private set; }
         public IExecutor? Executor { get; private set; }
 
+        private bool IsExecuting = false;
         /// <summary>
         /// Timespan that Controller has to finish task
         /// </summary>
@@ -86,15 +87,15 @@ namespace RobotokModel.Model
             IDataAccess dataAccess = new ConfigDataAccess();
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess.Load(path + "sample_files\\random_20_config.json");
+            dataAccess.Load(path + "sample_files\\simple_test_config.json");
 
             simulationData = dataAccess.SimulationData;
 
-            SetController("demo");
+            SetController("simple");
             SetTaskDistributor("demo");
             Executor = new DefaultExecutor(simulationData);
 
-            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(5));
+            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(6000));
 
         }
 
@@ -126,13 +127,23 @@ namespace RobotokModel.Model
             OnSimulationFinished();
         }
 
+        public void InitializeSimulation(SimulationData sData)
+        {
+            this.simulationData = sData;
+        }
+
         public void SetController(string name)
         {
             //switch case might be refactored into something else
             switch (name)
             {
                 case "demo":
-                default :
+                    Controller = new DemoController();
+                    break;
+                case "simple":
+                    Controller = new SimpleController();
+                    break;
+                default:
                     Controller = new DemoController();
                     break;
             }
@@ -149,7 +160,9 @@ namespace RobotokModel.Model
             switch (name)
             {
                 case "demo":
-                default :
+                    Distributor = new DemoDistributor(simulationData);
+                    break;
+                default:
                     Distributor = new DemoDistributor(simulationData);
                     return;
             }
@@ -196,11 +209,12 @@ namespace RobotokModel.Model
             {
                 throw new Exception();
             }
-            if (isTaskFinished)
+            if (isTaskFinished && !IsExecuting)
             {
                 isTaskFinished = false;
                 //Assume it's an async call!
-                Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+                 //Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+                 Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(6000000));
                 return;
             } else
             {
@@ -218,7 +232,9 @@ namespace RobotokModel.Model
         {
             isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
+            IsExecuting = true;
             Executor?.ExecuteOperations(e.robotOperations);
+            IsExecuting = false;
             OnRobotsMoved();
         }
 
