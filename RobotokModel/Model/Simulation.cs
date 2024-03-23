@@ -28,6 +28,7 @@ namespace RobotokModel.Model
         public IController? Controller { get; private set; }
         public IExecutor? Executor { get; private set; }
 
+        private bool IsExecuting = false;
         /// <summary>
         /// Timespan that Controller has to finish task
         /// </summary>
@@ -94,7 +95,7 @@ namespace RobotokModel.Model
             SetTaskDistributor("demo");
             Executor = new DefaultExecutor(simulationData);
 
-            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(5));
+            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(6000));
 
         }
 
@@ -208,11 +209,12 @@ namespace RobotokModel.Model
             {
                 throw new Exception();
             }
-            if (isTaskFinished)
+            if (isTaskFinished && !IsExecuting)
             {
                 isTaskFinished = false;
                 //Assume it's an async call!
-                Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+                 //Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
+                 Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(6000000));
                 return;
             } else
             {
@@ -230,7 +232,9 @@ namespace RobotokModel.Model
         {
             isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
+            IsExecuting = true;
             Executor?.ExecuteOperations(e.robotOperations);
+            IsExecuting = false;
             OnRobotsMoved();
         }
 

@@ -39,31 +39,38 @@ namespace RobotokModel.Model.Controllers
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.CounterClockwise;
+                                    robot.NextOperation = RobotOperation.CounterClockwise;
+                                    break;
                                 case Direction.Up:
-                                    return RobotOperation.CounterClockwise;
+                                    robot.NextOperation = RobotOperation.CounterClockwise;
+                                    break;
                                 case Direction.Right:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                                 case Direction.Down:
-                                    return RobotOperation.Forward;
+                                    robot.NextOperation = RobotOperation.Forward;
+                                    break;
                             }
                         }
-                        if (distance > 0)
+                        else if (distance > 0)
                         {
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                                 case Direction.Up:
-                                    return RobotOperation.Forward;
+                                    robot.NextOperation = RobotOperation.Forward;
+                                    break;
                                 case Direction.Right:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                                 case Direction.Down:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                             }
-
                         }
-                        else return RobotOperation.Wait;
+                        else robot.NextOperation = RobotOperation.Wait;
                     }
                     else
                     {
@@ -73,32 +80,41 @@ namespace RobotokModel.Model.Controllers
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                                 case Direction.Up:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                                 case Direction.Right:
-                                    return RobotOperation.Forward;
+                                    robot.NextOperation = RobotOperation.Forward;
+                                    break;
                                 case Direction.Down:
-                                    return RobotOperation.CounterClockwise;
+                                    robot.NextOperation = RobotOperation.CounterClockwise;
+                                    break;
                             }
                         }
-                        if (distance > 0)
+                        else if (distance > 0)
                         {
                             switch (robot.Rotation)
                             {
                                 case Direction.Left:
-                                    return RobotOperation.Forward;
+                                    robot.NextOperation = RobotOperation.Forward;
+                                    break;
                                 case Direction.Up:
-                                    return RobotOperation.CounterClockwise;
+                                    robot.NextOperation = RobotOperation.CounterClockwise;
+                                    break;
                                 case Direction.Right:
-                                    return RobotOperation.CounterClockwise;
+                                    robot.NextOperation = RobotOperation.CounterClockwise;
+                                    break;
                                 case Direction.Down:
-                                    return RobotOperation.Clockwise;
+                                    robot.NextOperation = RobotOperation.Clockwise;
+                                    break;
                             }
                         }
-
+                        else robot.NextOperation = RobotOperation.Wait;
                     }
-                    return RobotOperation.Wait;
+
+                    return robot.NextOperation;
                 });
                 OnTaskFinished(result.ToArray());
             });
