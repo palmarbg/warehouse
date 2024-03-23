@@ -28,7 +28,10 @@ namespace RobotokModel.Model.Controllers
                 }
                 var result = SimulationData.Robots.Select(robot =>
                 {
-                    if (robot.CurrentGoal is null) return RobotOperation.Wait;
+                    if (robot.CurrentGoal is null)
+                    {
+                        return RobotOperation.Wait;
+                    }
                     var robotPosition = robot.Position;
                     var goalPosition = robot.CurrentGoal.Position;
                     if (robotPosition.X == goalPosition.X)

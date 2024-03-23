@@ -63,9 +63,8 @@ namespace RobotokModel.Model.Executors
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
                         Goal.OnGoalsChanged();
-                        if (robot.CurrentGoal != null)
-                            simulationData.Goals.Remove(robot.CurrentGoal);
-
+                        //TODO: Robotnak új goal-t kell adni
+                        //robot.CurrentGoal = null;
                         //Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
                         return true;
