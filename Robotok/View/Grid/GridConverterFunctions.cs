@@ -17,7 +17,7 @@ namespace Robotok.View.Grid
 
         /// <param name="zoom"></param>
         /// <returns>
-        /// Returns the number of cells grouped together
+        /// The number of cells grouped together
         /// into one label
         /// </returns>
         public static double AmountOfNumbersInOneLabel(double zoom)
@@ -30,7 +30,7 @@ namespace Robotok.View.Grid
         /// <param name="count"></param>
         /// <param name="zoom"></param>
         /// <returns>
-        /// Returns the number of grouped labels to cover the whole map
+        /// The number of grouped labels to cover the whole map
         /// </returns>
         public static int NumberOfLabels(int count, double zoom)
         {
@@ -55,7 +55,7 @@ namespace Robotok.View.Grid
 
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
-        /// <returns>Returns the number of cells displayed as one block</returns>
+        /// <returns>The number of cells displayed as one block</returns>
         public static int AmountOfCellsInOneBlock(int rowCount, int columnCount)
         {
             return Math.Max(rowCount / 500, columnCount / 500);
@@ -63,7 +63,7 @@ namespace Robotok.View.Grid
 
         /// <param name="count1"></param>
         /// <param name="count2"></param>
-        /// <returns>Returns the number of lines in the first dimension</returns>
+        /// <returns>The number of lines in the first dimension</returns>
         public static int NumberOfLines(int count1, int count2)
         {
             int scale = AmountOfCellsInOneBlock(count1, count2);
@@ -73,7 +73,7 @@ namespace Robotok.View.Grid
 
         /// <param name="offset"></param>
         /// <param name="zoom"></param>
-        /// <returns>Returns the number of grouped labels not displayed at the start</returns>
+        /// <returns>The number of grouped labels not displayed at the start</returns>
         public static int NumberOfLabelsToOmit(int offset, double zoom)
         {
             return (int)Math.Floor(offset / GridConverterFunctions.LabelLength(zoom));
@@ -81,7 +81,7 @@ namespace Robotok.View.Grid
 
         /// <param name="offset"></param>
         /// <param name="zoom"></param>
-        /// <returns>Returns the offset after discarding the first labels</returns>
+        /// <returns>The offset after discarding the first labels</returns>
         public static int OmittedOffset(int offset, double zoom)
         {
             return offset - (int)Math.Round(GridConverterFunctions.LabelLength(zoom) * GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
@@ -92,7 +92,7 @@ namespace Robotok.View.Grid
 
         /// <param name="array"></param>
         /// <param name="length"></param>
-        /// <returns>Returns if array doesn't contain null or UnsetValue</returns>
+        /// <returns>If array doesn't contain null or UnsetValue</returns>
         public static bool ValidateArray(object[] array, int? length=null)
         {
             if(length != null && array.Length != length)

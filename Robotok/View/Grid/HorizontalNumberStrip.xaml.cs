@@ -16,11 +16,6 @@ namespace Robotok.View.Grid
     /// </summary>
     public partial class HorizontalNumberStrip : UserControl
     {
-        public int ColumnCount { get; set; }
-        public double Zoom { get; set; }
-        public int XOffset { get; set; }
-        public int Thickness { get; set; }
-
         public SuppressNotifyObservableCollection<string> LabelTexts { get; set; }
         public HorizontalNumberStrip()
         {

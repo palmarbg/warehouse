@@ -27,11 +27,6 @@ namespace Robotok.View.Grid
     /// </summary>
     public partial class VerticalNumberStrip : UserControl
     {
-        public int RowCount { get; set; }
-        public double Zoom { get; set; }
-        public int YOffset { get; set; }
-        public int Thickness { get; set; }
-
         public SuppressNotifyObservableCollection<string> LabelTexts { get; set; }
 
         public VerticalNumberStrip()
