@@ -1,4 +1,4 @@
-﻿using RobotokModel.Model;
+using RobotokModel.Model;
 using RobotokModel.Model.Extensions;
 using RobotokModel.Persistence.Interfaces;
 using System.Diagnostics;
@@ -135,7 +135,7 @@ namespace RobotokModel.Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] robotData = File.ReadAllText(filePath).Split("\r\n");
+            string[] robotData = File.ReadAllText(filePath).Split("\n");
             int robotCount = int.Parse(robotData[0]);
             for (int i = 1; i <= robotCount; i++)
             {
