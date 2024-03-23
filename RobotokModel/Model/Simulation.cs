@@ -18,6 +18,9 @@ namespace RobotokModel.Model
         private readonly System.Timers.Timer Timer;
         private bool isSimulationRunning;
         private bool isTaskFinished;
+        private bool IsExecuting;
+
+        private IDataAccess dataAccess;
 
         #endregion
 
@@ -25,10 +28,9 @@ namespace RobotokModel.Model
 
         public SimulationData simulationData { get; private set; }
         public ITaskDistributor? Distributor { get; private set; }
-        public IController? Controller { get; private set; }
-        public IExecutor? Executor { get; private set; }
+        public IController Controller { get; private set; } = null!;
+        public IExecutor Executor { get; private set; } = null!;
 
-        private bool IsExecuting = false;
         /// <summary>
         /// Timespan that Controller has to finish task
         /// </summary>
@@ -44,24 +46,24 @@ namespace RobotokModel.Model
         #region Events
 
         /// <summary>
-        /// Fire with <see cref="OnRobotsChanged" />
-        /// </summary>
-        public event EventHandler? RobotsChanged;
-
-        /// <summary>
-        /// Fire with <see cref="OnRobotsMoved" />
+        /// Fire with <see cref="OnRobotsMoved"/>
         /// </summary>
         public event EventHandler? RobotsMoved;
 
         /// <summary>
-        /// Fire with <see cref="OnGoalsChanged" />
+        /// Fire with <see cref="OnGoalsChanged"/>
         /// </summary>
         public event EventHandler? GoalsChanged;
 
         /// <summary>
-        /// Fire with <see cref="OnSimulationFinished" />
+        /// Fire with <see cref="OnSimulationFinished"/>
         /// </summary>
         public event EventHandler? SimulationFinished;
+
+        /// <summary>
+        /// Fire with <see cref="OnSimulationLoaded"/>
+        /// </summary>
+        public event EventHandler? SimulationLoaded;
 
 
         #endregion
@@ -81,22 +83,21 @@ namespace RobotokModel.Model
 
             isSimulationRunning = false;
             isTaskFinished = true;
+            IsExecuting = false;
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            IDataAccess dataAccess = new ConfigDataAccess();
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess.Load(path + "sample_files\\simple_test_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
 
-            simulationData = dataAccess.SimulationData;
+            simulationData = dataAccess.GetInitialSimulationData();
 
             SetController("simple");
             SetTaskDistributor("demo");
-            Executor = new DefaultExecutor(simulationData);
 
-            Controller?.InitializeController(simulationData, TimeSpan.FromSeconds(6000));
-
+            Executor = new DemoExecutor(simulationData);
+            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6));
         }
 
         #endregion
@@ -125,11 +126,6 @@ namespace RobotokModel.Model
             isSimulationRunning = false;
             Timer.Stop();
             OnSimulationFinished();
-        }
-
-        public void InitializeSimulation(SimulationData sData)
-        {
-            this.simulationData = sData;
         }
 
         public void SetController(string name)
@@ -167,6 +163,18 @@ namespace RobotokModel.Model
                     return;
             }
         }
+
+        public void SetInitialPosition()
+        {
+            if (isSimulationRunning || IsExecuting)
+                return;
+            simulationData = dataAccess.GetInitialSimulationData();
+            SetTaskDistributor(simulationData.DistributorName);
+            SetController(Controller.Name);
+            OnSimulationLoaded();
+        }
+
+
 
 
         /*
@@ -213,8 +221,7 @@ namespace RobotokModel.Model
             {
                 isTaskFinished = false;
                 //Assume it's an async call!
-                 //Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
-                 Controller?.ClaculateOperations(TimeSpan.FromMilliseconds(6000000));
+                 Controller.ClaculateOperations(TimeSpan.FromMilliseconds(Interval));
                 return;
             } else
             {
@@ -225,7 +232,7 @@ namespace RobotokModel.Model
         private void OnTaskTimeout()
         {
             Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Executor?.Timeout();
+            Executor.Timeout();
         }
 
         private void OnTaskFinished(IControllerEventArgs e)
@@ -233,43 +240,17 @@ namespace RobotokModel.Model
             isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
             IsExecuting = true;
-            Executor?.ExecuteOperations(e.robotOperations);
+            Executor.ExecuteOperations(e.robotOperations);
             IsExecuting = false;
             OnRobotsMoved();
         }
-
-
-        /*
-        // TODO: Prototype 2 : Log planned and executed moves
-        private void SimulationStep(object? sender, ElapsedEventArgs args)
-        {
-            var operations = ((PrimitiveController)Controller).NextStep();
-            for (int i = 0; i < simulationData.Robots.Length; i++)
-            {
-                var robot = simulationData.Robots[i];
-                if (!robot.MovedThisTurn) robot.MoveRobot(this);
-            }
-            Robot.EndTurn();
-            OnRobotsMoved();
-        }
-        */
 
         #endregion
 
         #region Event methods
 
         /// <summary>
-        /// Call when the robot collection changed
-        /// </summary>
-        private void OnRobotsChanged()
-        {
-            RobotsChanged?.Invoke(simulationData.Robots, new EventArgs());
-        }
-
-        /// <summary>
-        /// Call it when the robots moved, but the collection didn't change
-        /// <para />
-        /// If the collection changed call <see cref="OnRobotsChanged"/>
+        /// Call it when robots moved
         /// </summary>
         private void OnRobotsMoved()
         {
@@ -289,7 +270,18 @@ namespace RobotokModel.Model
         /// </summary>
         private void OnSimulationFinished()
         {
-            SimulationFinished?.Invoke(this, new EventArgs());
+            SimulationFinished?.Invoke(null, new EventArgs());
+        }
+
+        /// <summary>
+        /// Call it when new simulation data have been loaded
+        /// </summary>
+        private void OnSimulationLoaded()
+        {
+            SimulationLoaded?.Invoke(null, new EventArgs());
+
+            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6));
+            Executor = Executor.NewInstance(simulationData);
         }
 
         #endregion

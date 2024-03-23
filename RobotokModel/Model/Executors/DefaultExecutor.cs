@@ -137,6 +137,11 @@ namespace RobotokModel.Model.Executors
             robot.Position = newPosition;
         }
 
+        public IExecutor NewInstance(SimulationData simulationData)
+        {
+            return new DemoExecutor(simulationData);
+        }
+
         public void Timeout()
         {
             //throw new NotImplementedException();

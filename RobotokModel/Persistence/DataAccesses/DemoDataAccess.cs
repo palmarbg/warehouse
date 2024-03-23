@@ -6,82 +6,35 @@ namespace RobotokModel.Persistence.DataAccesses
 {
     public class DemoDataAccess : IDataAccess
     {
-        public SimulationData SimulationData { get; set; } = null!;
+        #region Private fields
 
-        #region Async
-        public async Task LoadAsync(string path)
+        private string path;
+        private SimulationData simulationData = null!;
+
+        #endregion
+
+        #region Constructor
+        public DemoDataAccess(string path)
         {
-            await Task.Run(() =>
-            {
-                SimulationData = new SimulationData
-                {
-                    RevealedTaskCount = 1,
-                    DistributionStrategy = Strategy.RoundRobin,
-                    Map = new ITile[10, 10],
-                    Goals =
-                    [
-                        new Goal
-                        {
-                            Position = new Position {X = 0,Y = 0},
-                            Id = 0
-                        },
-                        new Goal
-                        {
-                            Position = new Position {X = 2,Y = 2},
-                            Id = 1
-                        },
-                        new Goal
-                        {
-                            Position = new Position {X = 3,Y = 3},
-                            Id = 2
-                        }
-                    ],
-                    Robots =
-                    [
-                        new Robot
-                        {
-                            Id = 0,
-                            Position = new Position { X = 0,Y = 4},
-                            Rotation = Direction.Right
-                        },
-                        new Robot
-                        {
-                            Id = 1,
-                            Position = new Position { X = 1,Y = 4},
-                            Rotation = Direction.Right
-                        },
-                        new Robot
-                        {
-                            Id = 2,
-                            Position = new Position { X = 2,Y = 4},
-                            Rotation = Direction.Right
-                        }
-                    ]
-                };
-            });
-
-            for (int i = 0; i < SimulationData.Map.GetLength(0); i++)
-            {
-                for (int j = 0; j < SimulationData.Map.GetLength(1); j++)
-                {
-                    SimulationData.Map[i, j] = EmptyTile.Instance;
-                }
-            }
-
-            foreach (Robot robot in SimulationData.Robots)
-            {
-                SimulationData.Map.SetAtPosition(robot.Position, robot);
-            }
+            this.path = path;
         }
         #endregion
 
-        #region Syncronous
-        public void Load(string path)
+        #region Public methods
+        public SimulationData GetInitialSimulationData()
         {
-            
-            SimulationData = new SimulationData
+            Load();
+            return simulationData;
+        }
+        #endregion
+
+        #region Private methods
+
+        private void Load()
+        {
+            simulationData = new SimulationData
             {
-                DistributionStrategy = Strategy.RoundRobin,
+                DistributorName = "roundrobin",
                 RevealedTaskCount = 1,
                 Map = new ITile[10, 10],
                 Goals =
@@ -125,22 +78,22 @@ namespace RobotokModel.Persistence.DataAccesses
                 ]
             };
 
-            for (int i = 0; i < SimulationData.Map.GetLength(0); i++)
+            for (int i = 0; i < simulationData.Map.GetLength(0); i++)
             {
-                for (int j = 0; j < SimulationData.Map.GetLength(1); j++)
+                for (int j = 0; j < simulationData.Map.GetLength(1); j++)
                 {
-                    SimulationData.Map[i, j] = EmptyTile.Instance;
+                    simulationData.Map[i, j] = EmptyTile.Instance;
                 }
             }
 
-            SimulationData.Map[2, 5] = Block.Instance;
+            simulationData.Map[2, 5] = Block.Instance;
 
-            foreach (Robot robot in SimulationData.Robots)
+            foreach (Robot robot in simulationData.Robots)
             {
-                SimulationData.Map.SetAtPosition(robot.Position, robot);
+                simulationData.Map.SetAtPosition(robot.Position, robot);
             }
         }
-        #endregion
 
+        #endregion
     }
 }

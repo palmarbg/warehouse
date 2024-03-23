@@ -12,17 +12,9 @@ namespace RobotokModel.Persistence.Interfaces
     /// </summary>
     public interface IDataAccess
     {
-        /// <summary>
-        /// Returns the starting position loaded by <see cref="LoadAsync"/>
-        /// </summary>
-        SimulationData SimulationData { get; }
+        //Constructor will get the path for the file
 
-        /// <summary>
-        /// Load config file
-        /// </summary>
-        /// <param name="path">Absolute path for config file</param>
-        /// <returns></returns>
-        //Task LoadAsync(string path); //alternative: void Load(string path)
-        void Load(string path);
+        /// <returns>The initial state of the simulation loaded from the config file</returns>
+        SimulationData GetInitialSimulationData();
     }
 }

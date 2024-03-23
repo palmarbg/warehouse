@@ -9,102 +9,32 @@ namespace RobotokModel.Persistence.DataAccesses
 {
     public class ConfigDataAccess : IDataAccess
     {
-        #region Private
+        #region Private fields
 
         private Uri baseUri;
+        private string path;
+        private SimulationData simulationData = null!;
 
         #endregion
 
         #region Constructor
-        public ConfigDataAccess()
+        public ConfigDataAccess(string path)
         {
-            this.baseUri = new("C:\\");
+            this.path = path;
+            baseUri = new(path);
         }
 
         #endregion
 
-        #region Properties
-        public SimulationData SimulationData { get; set; } = null!;
-
-        #endregion
-
-        #region Async
-        public async Task LoadAsync(string path)
+        #region Public methods
+        public SimulationData GetInitialSimulationData()
         {
-            try
-            {
-                //TODO
-            }
-            catch
-            {
-                throw new JSonError();
-            }
-
-            await Task.Run(() =>
-            {
-                SimulationData = new SimulationData
-                {
-                    DistributionStrategy = Strategy.RoundRobin,
-                    RevealedTaskCount = 1,
-                    Map = new ITile[10, 10],
-                    Goals =
-                    [
-                        new Goal
-                        {
-                            Position = new Position {X = 0,Y = 0},
-                            Id = 0
-                        },
-                        new Goal
-                        {
-                            Position = new Position {X = 2,Y = 2},
-                            Id = 1
-                        },
-                        new Goal
-                        {
-                            Position = new Position {X = 3,Y = 3},
-                            Id = 2
-                        }
-                    ],
-                    Robots =
-                    [
-                        new Robot
-                        {
-                            Id = 0,
-                            Position = new Position { X = 0,Y = 4},
-                            Rotation = Direction.Right
-                        },
-                        new Robot
-                        {
-                            Id = 1,
-                            Position = new Position { X = 1,Y = 4},
-                            Rotation = Direction.Right
-                        },
-                        new Robot
-                        {
-                            Id = 2,
-                            Position = new Position { X = 2,Y = 4},
-                            Rotation = Direction.Right
-                        }
-                    ]
-                };
-            });
-
-            for (int i = 0; i < SimulationData.Map.GetLength(0); i++)
-            {
-                for (int j = 0; j < SimulationData.Map.GetLength(1); j++)
-                {
-                    SimulationData.Map[i, j] = EmptyTile.Instance;
-                }
-            }
-
-            foreach (Robot robot in SimulationData.Robots)
-            {
-                SimulationData.Map.SetAtPosition(robot.Position, robot);
-            }
+            Load();
+            return simulationData;
         }
         #endregion
 
-        #region SideMethods
+        #region Private methods
         private void SetMap(string path)
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
@@ -129,7 +59,7 @@ namespace RobotokModel.Persistence.DataAccesses
                     }
                 }
             }
-            SimulationData.Map = map;
+            simulationData.Map = map;
         }
         private void SetRobots(string path)
         {
@@ -142,8 +72,8 @@ namespace RobotokModel.Persistence.DataAccesses
                 int intPos = int.Parse(robotData[i]);
                 
 
-                int x = intPos % SimulationData.Map.GetLength(0);
-                int y = intPos / SimulationData.Map.GetLength(0);
+                int x = intPos % simulationData.Map.GetLength(0);
+                int y = intPos / simulationData.Map.GetLength(0);
                 if (x > 0) { x--; }
                 if (y > 0) { y--; }
 
@@ -153,8 +83,8 @@ namespace RobotokModel.Persistence.DataAccesses
                     Position = new Position { X = x, Y = y },
                     Rotation = Direction.Right
                 };
-                SimulationData.Robots.Add(r);
-                SimulationData.Map.SetAtPosition(r.Position, r);
+                simulationData.Robots.Add(r);
+                simulationData.Map.SetAtPosition(r.Position, r);
             }
         }
         private void SetGoals(string path)
@@ -166,8 +96,8 @@ namespace RobotokModel.Persistence.DataAccesses
             for (int i = 1; i <= goalCount; i++)
             {
                 int intPos = int.Parse(goalData[i]);
-                int x = intPos % SimulationData.Map.GetLength(0);
-                int y = intPos / SimulationData.Map.GetLength(0);
+                int x = intPos % simulationData.Map.GetLength(0);
+                int y = intPos / simulationData.Map.GetLength(0);
                 if (x > 0) { x--; }
                 if (y > 0) { y--; }
 
@@ -176,17 +106,14 @@ namespace RobotokModel.Persistence.DataAccesses
                     Id = i - 1,
                     Position = new Position { X = x, Y = y },
                 };
-                SimulationData.Goals.Add(g);
+                simulationData.Goals.Add(g);
             }
         }
-        #endregion
 
-        #region Syncronous
-        public void Load(string path)
+        private void Load()
         {
             try
             {
-                var cucc = path;
                 baseUri = new(path);
 
                 string jsonString = File.ReadAllText(path);
@@ -194,19 +121,9 @@ namespace RobotokModel.Persistence.DataAccesses
                 options.PropertyNameCaseInsensitive = true;
                 options.Converters.Add(new JsonStringEnumConverter());
                 Config? config = JsonSerializer.Deserialize<Config>(jsonString, options) ?? throw new JSonError("Serialization of config file was unsuccesful!");
-                Strategy strategy;
-                switch (config.TaskAssignmentStrategy)
+                simulationData = new SimulationData
                 {
-                    case "roundrobin":
-                        strategy = Strategy.RoundRobin;
-                        break;
-                    default:
-                        strategy = Strategy.RoundRobin;
-                        break;
-                }
-                SimulationData = new SimulationData
-                {
-                    DistributionStrategy = strategy,
+                    DistributorName = config.TaskAssignmentStrategy,
                     RevealedTaskCount = config.NumTasksReveal,
                     Map = null!,
                     Goals =[],

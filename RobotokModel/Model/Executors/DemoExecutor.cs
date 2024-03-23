@@ -32,6 +32,11 @@ namespace RobotokModel.Model.Executors
             return robotOperations;
         }
 
+        public IExecutor NewInstance(SimulationData simulationData)
+        {
+            return new DemoExecutor(simulationData);
+        }
+
         public void Timeout()
         {
             throw new NotImplementedException();

@@ -12,7 +12,8 @@ namespace RobotokModel.Model.Controllers
         private SimulationData? SimulationData;
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
-
+        public string Name => "demo";
+        
         public DemoController() { }
 
         /// <summary>
