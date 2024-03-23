@@ -86,11 +86,11 @@ namespace RobotokModel.Model
             IDataAccess dataAccess = new ConfigDataAccess();
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess.Load(path + "sample_files\\random_20_config.json");
+            dataAccess.Load(path + "sample_files\\warehouse_100_config.json");
 
             simulationData = dataAccess.SimulationData;
 
-            SetController("demo");
+            SetController("dem");
             SetTaskDistributor("demo");
             Executor = new DefaultExecutor(simulationData);
 
@@ -137,8 +137,10 @@ namespace RobotokModel.Model
             switch (name)
             {
                 case "demo":
-                default :
                     Controller = new DemoController();
+                    break;
+                default:
+                    Controller = new SimpleController();
                     break;
             }
             Controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
@@ -154,7 +156,9 @@ namespace RobotokModel.Model
             switch (name)
             {
                 case "demo":
-                default :
+                    Distributor = new DemoDistributor(simulationData);
+                    break;
+                default:
                     Distributor = new DemoDistributor(simulationData);
                     return;
             }

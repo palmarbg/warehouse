@@ -1,6 +1,7 @@
 ﻿using RobotokModel.Model;
 using RobotokModel.Model.Extensions;
 using RobotokModel.Persistence.Interfaces;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -215,8 +216,9 @@ namespace RobotokModel.Persistence.DataAccesses
                 SetRobots(config.AgentFile);
                 SetGoals(config.TaskFile);
             }
-            catch
+            catch (Exception ex) 
             {
+                var exs = ex;
                 throw new JSonError();
             }
         }
