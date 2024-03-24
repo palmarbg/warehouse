@@ -60,5 +60,6 @@ namespace RobotokModel.Model
         public Goal? CurrentGoal { get; set; }
         
         public bool MovedThisTurn { get; set; } = false;
+        public bool InspectedThisTurn { get; set;} = false;
     }
 }

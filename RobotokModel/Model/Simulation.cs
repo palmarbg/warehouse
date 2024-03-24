@@ -89,7 +89,7 @@ namespace RobotokModel.Model
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\warehouse_100_config.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 

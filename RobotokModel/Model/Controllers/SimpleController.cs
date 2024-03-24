@@ -1,6 +1,7 @@
 ﻿using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace RobotokModel.Model.Controllers
                 }
                 var result = SimulationData.Robots.Select(robot =>
                 {
+                    if (robot.Id == 10) Debug.WriteLine(robot.NextOperation.ToString());
                     if (robot.CurrentGoal is null)
                     {
                         return RobotOperation.Wait;

@@ -2,6 +2,7 @@
 using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -27,11 +28,12 @@ namespace RobotokModel.Model.Executors
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 simulationData.Robots[i].MovedThisTurn = false;
+                simulationData.Robots[i].InspectedThisTurn = false;
             }
             //Execute operations
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
-                MoveRobot(simulationData.Robots[i]);
+                MoveRobot(simulationData.Robots[i], simulationData.Robots[i]);
             }
 
             return robotOperations;
@@ -45,8 +47,9 @@ namespace RobotokModel.Model.Executors
         /// <returns></returns>
         //TODO aktuális mozgások logolása
         //TODO Robotok körbe akarnak menni, akkor beakadnak
-        private bool MoveRobot(Robot robot)
+        private bool MoveRobot(Robot robot, Robot startingRobot)
         {
+            robot.InspectedThisTurn = true;
             if (robot.MovedThisTurn) return false;
             var operation = robot.NextOperation;
             switch (operation)
@@ -58,6 +61,7 @@ namespace RobotokModel.Model.Executors
                         robot.MovedThisTurn = true;
                         return false;
                     }
+                    if (robot.Id == 0) { Debug.WriteLine(robot.NextOperation.ToString()); }
                     // newPos is robots goal
                     if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
@@ -88,7 +92,13 @@ namespace RobotokModel.Model.Executors
                         else
                         {
                             // TODO: Check if robot was blocking original robots NewPos
-                            if (MoveRobot(blockingRobot))
+                            if (startingRobot.Id == blockingRobot.Id)
+                            {
+                                robot.MovedThisTurn = true;
+                                return false;
+                            }
+                            else
+                            if (!blockingRobot.InspectedThisTurn && MoveRobot(blockingRobot, startingRobot))
                             {
                                 MoveRobotToNewPosition(robot, newPos, operation);
                                 return true;
@@ -139,7 +149,7 @@ namespace RobotokModel.Model.Executors
 
         public IExecutor NewInstance(SimulationData simulationData)
         {
-            return new DemoExecutor(simulationData);
+            return new DefaultExecutor(simulationData);
         }
 
         public void Timeout()
