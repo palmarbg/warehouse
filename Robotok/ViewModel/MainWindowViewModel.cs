@@ -236,7 +236,7 @@ namespace Robotok.ViewModel
         {
             App.Current?.Dispatcher.Invoke((Action)delegate
             {
-                MapLoaded?.Invoke(_simulation.simulationData.Map, new EventArgs());
+                MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
             });
         }
 
@@ -245,11 +245,11 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnSimulationLoaded()
         {
-            RowCount = _simulation.simulationData.Map.GetLength(1);
-            ColumnCount = _simulation.simulationData.Map.GetLength(0);
+            RowCount = _simulation.SimulationData.Map.GetLength(1);
+            ColumnCount = _simulation.SimulationData.Map.GetLength(0);
 
-            Robots = _simulation.simulationData.Robots;
-            Goals = _simulation.simulationData.Goals;
+            Robots = _simulation.SimulationData.Robots;
+            Goals = _simulation.SimulationData.Goals;
 
             OnMapLoaded();
             OnRobotsChanged();
@@ -273,13 +273,13 @@ namespace Robotok.ViewModel
         private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
-            _simulation.StartSimulation();
+            _simulation.Mediator.StartSimulation();
         }
 
         private void OnSimulationStop()
         {
             Debug.WriteLine("simulation stop");
-            _simulation.StopSimulation();
+            _simulation.Mediator.StopSimulation();
         }
 
         private void OnSimulationPause()
@@ -289,7 +289,7 @@ namespace Robotok.ViewModel
         private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
-            _simulation.SetInitialPosition();
+            _simulation.Mediator.SetInitialPosition();
         }
 
         private void OnPreviousStep()
@@ -315,7 +315,7 @@ namespace Robotok.ViewModel
             openFileDialog.Filter = "Config file|*.json";
             if (openFileDialog.ShowDialog() == true)
             {
-                _simulation.LoadSimulation(openFileDialog.FileName);
+                _simulation.Mediator.LoadSimulation(openFileDialog.FileName);
             }
         }
 
