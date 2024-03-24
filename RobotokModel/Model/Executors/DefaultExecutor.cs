@@ -2,6 +2,7 @@
 using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -27,11 +28,12 @@ namespace RobotokModel.Model.Executors
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 simulationData.Robots[i].MovedThisTurn = false;
+                simulationData.Robots[i].InspectedThisTurn = false;
             }
             //Execute operations
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
-                MoveRobot(simulationData.Robots[i]);
+                MoveRobot(simulationData.Robots[i], simulationData.Robots[i]);
             }
 
             return robotOperations;
@@ -45,23 +47,61 @@ namespace RobotokModel.Model.Executors
         /// <returns></returns>
         //TODO aktuális mozgások logolása
         //TODO Robotok körbe akarnak menni, akkor beakadnak
-        private bool MoveRobot(Robot robot)
+        private bool MoveRobot(Robot robot, Robot startingRobot)
         {
+            robot.InspectedThisTurn = true;
             if (robot.MovedThisTurn) return false;
             var operation = robot.NextOperation;
             switch (operation)
             {
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PositionInDirection(robot.Rotation);
-                    if (newPos.X >= simulationData.Map.GetLength(1) || newPos.Y >= simulationData.Map.GetLength(0))
+                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X <0)
                     {
                         robot.MovedThisTurn = true;
                         return false;
                     }
+                    // robot is blocked by Block
+                    if (simulationData.Map.GetAtPosition(newPos) is Block)
+                    {
+                        robot.MovedThisTurn = true;
+                        return false;
+                    }
+                    //newPos is blocked by another robot
+                    else if (simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
+                    {
+                        if (blockingRobot.MovedThisTurn)
+                        {
+                            robot.MovedThisTurn = true;
+                            return false;
+                        }
+                        else
+                        {
+                            // TODO: Check if robot was blocking original robots NewPos
+                            if (startingRobot.Id == blockingRobot.Id)
+                            {
+                                robot.MovedThisTurn = true;
+                                return false;
+                            }
+                            else
+                            if (!blockingRobot.InspectedThisTurn && MoveRobot(blockingRobot, startingRobot))
+                            {
+                                MoveRobotToNewPosition(robot, newPos, operation);
+                                return true;
+                            }
+                            else
+                            {
+                                robot.MovedThisTurn = true;
+                                return false;
+                            }
+                        }
+                    }
                     // newPos is robots goal
-                    if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                    else if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
+                        simulationData.Goals.Remove(robot.CurrentGoal);
+                        robot.CurrentGoal = null;
                         Goal.OnGoalsChanged();
                         //TODO: Robotnak új goal-t kell adni
                         //robot.CurrentGoal = null;
@@ -77,42 +117,19 @@ namespace RobotokModel.Model.Executors
                         robot.MovedThisTurn = true;
                         return true;
                     }
-                    //newPos is blocked by another robot
-                    else if (simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
-                    {
-                        if (blockingRobot.MovedThisTurn)
-                        {
-                            robot.MovedThisTurn = true;
-                            return false;
-                        }
-                        else
-                        {
-                            // TODO: Check if robot was blocking original robots NewPos
-                            if (MoveRobot(blockingRobot))
-                            {
-                                MoveRobotToNewPosition(robot, newPos, operation);
-                                return true;
-                            }
-                            else
-                            {
-                                robot.MovedThisTurn = true;
-                                return false;
-                            }
-                        }
-                    }
-                    // robot is blocked by Block
                     else
                     {
                         robot.MovedThisTurn = true;
                         return false;
                     }
-
                 //break;
                 case RobotOperation.Clockwise:
                     robot.Rotation = robot.Rotation.RotateClockWise();
+                    robot.MovedThisTurn = true;
                     break;
                 case RobotOperation.CounterClockwise:
                     robot.Rotation = robot.Rotation.RotateCounterClockWise();
+                    robot.MovedThisTurn= true;
                     break;
                 case RobotOperation.Backward:
                     // TODO: Prototype 2
@@ -139,7 +156,7 @@ namespace RobotokModel.Model.Executors
 
         public IExecutor NewInstance(SimulationData simulationData)
         {
-            return new DemoExecutor(simulationData);
+            return new DefaultExecutor(simulationData);
         }
 
         public void Timeout()

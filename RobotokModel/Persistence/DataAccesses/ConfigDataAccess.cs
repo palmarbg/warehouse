@@ -70,7 +70,7 @@ namespace RobotokModel.Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] robotData = File.ReadAllText(filePath).Split("\n");
+            string[] robotData = File.ReadAllText(filePath).Split('\n');
             int robotCount = int.Parse(robotData[0]);
             for (int i = 1; i <= robotCount; i++)
             {
@@ -79,8 +79,6 @@ namespace RobotokModel.Persistence.DataAccesses
 
                 int x = intPos % simulationData.Map.GetLength(0);
                 int y = intPos / simulationData.Map.GetLength(0);
-                if (x > 0) { x--; }
-                if (y > 0) { y--; }
 
                 Robot r = new Robot
                 {
@@ -103,8 +101,6 @@ namespace RobotokModel.Persistence.DataAccesses
                 int intPos = int.Parse(goalData[i]);
                 int x = intPos % simulationData.Map.GetLength(0);
                 int y = intPos / simulationData.Map.GetLength(0);
-                if (x > 0) { x--; }
-                if (y > 0) { y--; }
 
                 Goal g = new Goal
                 {
@@ -120,7 +116,6 @@ namespace RobotokModel.Persistence.DataAccesses
             try
             {
                 baseUri = new(path);
-
                 string jsonString = File.ReadAllText(path);
                 var options = new JsonSerializerOptions();
                 options.PropertyNameCaseInsensitive = true;
@@ -138,9 +133,8 @@ namespace RobotokModel.Persistence.DataAccesses
                 SetRobots(config.AgentFile);
                 SetGoals(config.TaskFile);
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
-                var exs = ex;
                 throw new JSonError();
             }
         }

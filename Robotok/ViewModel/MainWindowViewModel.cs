@@ -245,8 +245,8 @@ namespace Robotok.ViewModel
         /// </summary>
         private void OnSimulationLoaded()
         {
-            _row = _simulation.simulationData.Map.GetLength(1);
-            _column = _simulation.simulationData.Map.GetLength(0);
+            RowCount = _simulation.simulationData.Map.GetLength(1);
+            ColumnCount = _simulation.simulationData.Map.GetLength(0);
 
             Robots = _simulation.simulationData.Robots;
             Goals = _simulation.simulationData.Goals;

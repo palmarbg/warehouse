@@ -16,6 +16,8 @@ namespace RobotokModel.Model.Distributors
             this.simulationData = simulationData;
         }
 
+        public bool AllTasksAssigned { get; private set; } = false;
+
         /// <summary>
         /// Assignes the first available goal.
         /// If there is no available goal, assigns <c>null</c>
@@ -31,8 +33,10 @@ namespace RobotokModel.Model.Distributors
                     continue;
                 robot.CurrentGoal = goal;
                 goal.IsAssigned = true;
+                if(i == simulationData.Goals.Count-1) AllTasksAssigned = true;
                 return;
             }
+            AllTasksAssigned = true;
             robot.CurrentGoal = null;
         }
     }

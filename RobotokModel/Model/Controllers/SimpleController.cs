@@ -1,6 +1,7 @@
 ﻿using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,12 @@ namespace RobotokModel.Model.Controllers
     internal class SimpleController : IController
     {
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        private ITaskDistributor _taskDistributor = null!;
         private SimulationData? SimulationData;
         public string Name => "simple";
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {
+            _taskDistributor = distributor;
             this.SimulationData = simulationData;
         }
 
@@ -28,9 +31,31 @@ namespace RobotokModel.Model.Controllers
                 }
                 var result = SimulationData.Robots.Select(robot =>
                 {
+                    if(robot.Id == 1)
+                    {
+                        Debug.WriteLine($"Position: {robot.Position}");
+                        if( robot.CurrentGoal is null)
+                        {
+                        Debug.WriteLine($"Goal: null");
+
+                        }else
+                            Debug.WriteLine($"Goal: {robot.CurrentGoal.Position}");
+                        Debug.WriteLine(_taskDistributor.AllTasksAssigned);
+
+                    }
                     if (robot.CurrentGoal is null)
                     {
-                        return RobotOperation.Wait;
+                        if (_taskDistributor.AllTasksAssigned)
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
+                            return robot.NextOperation;
+                        }
+                        _taskDistributor.AssignNewTask(robot);
+                        if (robot.CurrentGoal is null)
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
+                            return robot.NextOperation;
+                        }
                     }
                     var robotPosition = robot.Position;
                     var goalPosition = robot.CurrentGoal.Position;
@@ -116,7 +141,6 @@ namespace RobotokModel.Model.Controllers
                         }
                         else robot.NextOperation = RobotOperation.Wait;
                     }
-
                     return robot.NextOperation;
                 });
                 OnTaskFinished(result.ToArray());
