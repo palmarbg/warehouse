@@ -16,24 +16,10 @@ namespace RobotokModel.Model.Interfaces
         /// Contains the current state of the map
         /// </summary>
         public SimulationData SimulationData { get; }
-        /*
-        /// <summary>
-        /// Task distributor used by the simulation
-        /// </summary>
-        public ITaskDistributor? Distributor { get; }
 
         /// <summary>
-        /// Robot controller used by the simulation
+        /// Mediator used by the simulation
         /// </summary>
-        public IController Controller { get; }
-
-        /// <summary>
-        /// Executor used by the simulation
-        /// </summary>
-        public IExecutor Executor { get; }
-        
-        */
-
         public IMediator Mediator { get; }
 
         #endregion

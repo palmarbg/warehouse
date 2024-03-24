@@ -69,9 +69,7 @@ namespace RobotokModel.Model
 
             SimulationData = dataAccess.GetInitialSimulationData();
 
-            SetController("simple");
-            SetController("demo");
-
+            controller = new SimpleController();
             taskDistributor = new DemoDistributor(SimulationData);
             executor = new DefaultExecutor(SimulationData);
             Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
@@ -80,18 +78,29 @@ namespace RobotokModel.Model
 
         #region Public methods
 
-        public void StartSimulation()
+        public void StartNewSimulation()
         {
             if (isSimulationRunning) return;
             isSimulationRunning = true;
-            Timer.Start();
 
-            //to remove
-            foreach (Robot robot in SimulationData.Robots)
+            SimulationData = dataAccess.GetInitialSimulationData();
+
+            controller = Controller.NewInstance();
+            Controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
             {
-                taskDistributor.AssignNewTask(robot);
-            }
-            simulation.OnGoalsChanged();
+                if (Controller != sender)
+                    return;
+                OnTaskFinished(e);
+            });
+
+            taskDistributor = taskDistributor.NewInstance(SimulationData);
+            executor = executor.NewInstance(SimulationData);
+
+            Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
+
+            simulation.OnSimulationLoaded();
+
+            Timer.Start();
         }
 
         public void StopSimulation()
@@ -119,12 +128,7 @@ namespace RobotokModel.Model
                     controller = new DemoController();
                     break;
             }
-            Controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
-            {
-                if (Controller != sender)
-                    return;
-                OnTaskFinished(e);
-            });
+            
         }
 
         public void SetTaskDistributor(string name)

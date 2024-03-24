@@ -273,7 +273,7 @@ namespace Robotok.ViewModel
         private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
-            _simulation.Mediator.StartSimulation();
+            _simulation.Mediator.StartNewSimulation();
         }
 
         private void OnSimulationStop()

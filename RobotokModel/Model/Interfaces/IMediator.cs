@@ -20,13 +20,53 @@ namespace RobotokModel.Model.Interfaces
 
         #endregion
 
-        void StartSimulation();
+        #region Methods
+
+        void StartNewSimulation();
         void StopSimulation();
         void SetController(string name);
         void SetTaskDistributor(string name);
         void SetInitialPosition();
-        void LoadSimulation(string filePath);
 
-        //IMediator NewInstance();
+        /// <summary>
+        /// Start new simulation from config file
+        /// </summary>
+        /// <param name="filePath">Absolute path for config file</param>
+        void LoadSimulation(string filePath);
+        
+        /*
+        /// <summary>
+        /// Pause simulation
+        /// </summary>
+        public void PauseSimulation();
+
+        /// <summary>
+        /// ???
+        /// </summary>
+        public void StepForward();
+
+        /// <summary>
+        /// ???
+        /// </summary>
+        public void StepBackward();
+
+        /// <summary>
+        /// When replaying set the replay speed relative to <c>1 move/sec</c>
+        /// </summary>
+        public void SetSimulationSpeed(double speed);
+
+        /// <summary>
+        /// When replaying set the position to the n-th step
+        /// </summary>
+        /// <param name="step"></param>
+        public void JumpToStep(int step);
+
+
+        public Log GetLog();
+
+        */
+
+        #endregion
+
     }
 }

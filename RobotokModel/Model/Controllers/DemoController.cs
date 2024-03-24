@@ -49,5 +49,10 @@ namespace RobotokModel.Model.Controllers
         {
             FinishedTask?.Invoke(this, new(result));
         }
+
+        public IController NewInstance()
+        {
+            return new DemoController();
+        }
     }
 }

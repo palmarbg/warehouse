@@ -33,6 +33,8 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         public event EventHandler<IControllerEventArgs> FinishedTask;
 
+        public IController NewInstance();
+
     }
 
     public class IControllerEventArgs(RobotOperation[] robotOperations) : EventArgs
