@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using Microsoft.Win32;
 using Robotok.MVVM;
 using Robotok.View.Grid;
 using RobotokModel.Model;
@@ -154,6 +155,9 @@ namespace Robotok.ViewModel
         public DelegateCommand FinalPosition { get; set; }
 
 
+        /// <summary> Load a config file </summary>
+        public DelegateCommand LoadSimulation { get; set; }
+
         #endregion
 
         #region Constructor
@@ -180,6 +184,8 @@ namespace Robotok.ViewModel
             PreviousStep = new DelegateCommand(param => OnPreviousStep());
             NextStep = new DelegateCommand(param => OnNextStep());
             FinalPosition = new DelegateCommand(param => OnFinalPosition());
+
+            LoadSimulation = new(param => OnLoadSimulation());
 
             OnSimulationLoaded();
         }
@@ -299,6 +305,18 @@ namespace Robotok.ViewModel
         private void OnFinalPosition()
         {
             Debug.WriteLine("last step");
+        }
+
+
+        private void OnLoadSimulation()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Konfigurációs fájl betöltése";
+            openFileDialog.Filter = "Config file|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _simulation.LoadSimulation(openFileDialog.FileName);
+            }
         }
 
         #endregion

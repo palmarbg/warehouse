@@ -38,6 +38,8 @@ namespace Robotok.View.UserControls
             SetCommandBinding(_backButton,  "PreviousStep",     viewModel);
             SetCommandBinding(_nextButton,  "NextStep",         viewModel);
             SetCommandBinding(_endButton,   "FinalPosition",    viewModel);
+
+            SetCommandBinding(_loadSimulationMenuItem, "LoadSimulation", viewModel);
         }
 
         public void SetCommandBinding(Button btn, string path, MainWindowViewModel viewModel)
@@ -49,6 +51,17 @@ namespace Robotok.View.UserControls
                 Mode = BindingMode.TwoWay
             };
             BindingOperations.SetBinding(btn, Button.CommandProperty, binding);
+        }
+
+        public void SetCommandBinding(MenuItem btn, string path, MainWindowViewModel viewModel)
+        {
+            Binding binding = new()
+            {
+                Source = viewModel,
+                Path = new PropertyPath(path),
+                Mode = BindingMode.TwoWay
+            };
+            BindingOperations.SetBinding(btn, MenuItem.CommandProperty, binding);
         }
     }
 }

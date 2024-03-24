@@ -88,6 +88,11 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         public void SetInitialPosition();
 
+        /// <summary>
+        /// Start new simulation from config file
+        /// </summary>
+        /// <param name="filePath">Absolute path for config file</param>
+        public void LoadSimulation(string filePath);
 
         /*
         /// <summary>

@@ -26,6 +26,12 @@ namespace RobotokModel.Persistence.DataAccesses
             Load();
             return simulationData;
         }
+
+        public IDataAccess NewInstance(string filePath)
+        {
+            return new DemoDataAccess(filePath);
+        }
+
         #endregion
 
         #region Private methods

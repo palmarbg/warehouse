@@ -89,7 +89,7 @@ namespace RobotokModel.Model
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 
@@ -166,12 +166,21 @@ namespace RobotokModel.Model
 
         public void SetInitialPosition()
         {
-            if (isSimulationRunning || IsExecuting)
-                return;
+            Timer.Stop();
+            isSimulationRunning = false;
+            IsExecuting = false;
+            isTaskFinished = true;
+            
             simulationData = dataAccess.GetInitialSimulationData();
             SetTaskDistributor(simulationData.DistributorName);
             SetController(Controller.Name);
             OnSimulationLoaded();
+        }
+
+        public void LoadSimulation(string filePath)
+        {
+            dataAccess = dataAccess.NewInstance(filePath);
+            SetInitialPosition();
         }
 
 
