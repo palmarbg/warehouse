@@ -1,0 +1,8 @@
+{
+  "mapFile": "maps/simple_test2.map",
+  "agentFile": "agents/less_agents.agents",
+  "teamSize": 10,
+  "taskFile": "tasks/more_goals.tasks",
+  "numTasksReveal": 1,
+  "taskAssignmentStrategy": "roundrobin"
+}

@@ -1,0 +1,8 @@
+{
+  "mapFile": "maps/big.map",
+  "agentFile": "agents/100_agent.agents",
+  "teamSize": 10,
+  "taskFile": "tasks/big_goals.tasks",
+  "numTasksReveal": 1,
+  "taskAssignmentStrategy": "roundrobin"
+}

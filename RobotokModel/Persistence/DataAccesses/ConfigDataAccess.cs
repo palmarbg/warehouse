@@ -116,7 +116,6 @@ namespace RobotokModel.Persistence.DataAccesses
             try
             {
                 baseUri = new(path);
-
                 string jsonString = File.ReadAllText(path);
                 var options = new JsonSerializerOptions();
                 options.PropertyNameCaseInsensitive = true;
