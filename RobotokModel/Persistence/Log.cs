@@ -9,15 +9,19 @@ namespace RobotokModel.Persistence
 {
     public class Log
     {
-        public List<string> Errors { get; set; } = [];
-        public int RobotCount { get; set; }
-        public List<Position> RobotStartingPositions { get; set; } = [];
-        public int StepCount { get; set; }
-        public List<List<Char>> RobotPlannedMoves { get; set; } = [];
-        public List<List<Char>> RobotExecutedMoves { get; set; } = [];
-        public List<float> TimerCounts { get; set; } = [];
-        // TODO: Task, illetve a többi dolog implementálása
-
+        public string ActionModel { get; set; } = null!;
+        public string AllValid { get; set; } = null!;
+        public int TeamSize { get; set; }
+        public List<List<Object>> Start { get; set; } = null!;
+        public int NumTaskFinished { get; set; }
+        public int SumOfCost { get; set; }
+        public int MakeSpan { get; set; }
+        public List<string> ActualPaths { get; set; } = null!;
+        public List<string> PlannerPaths { get; set; } = null!;
+        public List<float> PlannerTimes { get; set; } = null!;
+        public List<Object> Errors { get; set; } = null!;
+        public List<List<List<Object>>> Events { get; set; } = null!;
+        public List<List<int>> Tasks { get; set; } = null!;
 
     }
 }
