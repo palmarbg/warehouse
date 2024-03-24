@@ -89,14 +89,14 @@ namespace RobotokModel.Model
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 
             SetController("simple");
             SetTaskDistributor("demo");
 
-            Executor = new DemoExecutor(simulationData);
+            Executor = new DefaultExecutor(simulationData);
             Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6));
         }
 
