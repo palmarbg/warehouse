@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using Microsoft.Win32;
 using Robotok.MVVM;
 using Robotok.View.Grid;
 using RobotokModel.Model;
@@ -154,25 +155,27 @@ namespace Robotok.ViewModel
         public DelegateCommand FinalPosition { get; set; }
 
 
+        /// <summary> Load a config file </summary>
+        public DelegateCommand LoadSimulation { get; set; }
+
         #endregion
 
         #region Constructor
         public MainWindowViewModel(ISimulation simulation)
         {
             _simulation = simulation;
-
-            simulation.RobotsChanged += new EventHandler((_,_) => OnRobotsChanged());
-            simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
-            simulation.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
-
-            _zoom=1.0;
-            _row=simulation.simulationData.Map.GetLength(1);
-            _column=simulation.simulationData.Map.GetLength(0);
+            _zoom = 1.0;
+            _row = 0;
+            _column = 0;
             _xoffset = 0;
             _yoffset = 0;
 
-            Robots = simulation.simulationData.Robots;
-            Goals = simulation.simulationData.Goals;
+            Robots = [];
+            Goals = [];
+
+            simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
+            simulation.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
+            simulation.SimulationLoaded += new EventHandler((_, _) => OnSimulationLoaded());            
 
             StartSimulation = new DelegateCommand(param => OnSimulationStart());
             StopSimulation = new DelegateCommand(param => OnSimulationStop());
@@ -181,22 +184,15 @@ namespace Robotok.ViewModel
             PreviousStep = new DelegateCommand(param => OnPreviousStep());
             NextStep = new DelegateCommand(param => OnNextStep());
             FinalPosition = new DelegateCommand(param => OnFinalPosition());
+
+            LoadSimulation = new(param => OnLoadSimulation());
+
+            OnSimulationLoaded();
         }
 
         #endregion
 
-        #region Public methods
-
-        public void OnSetDataContext()
-        {
-            OnRobotsChanged();
-            OnGoalsChanged();
-            OnMapLoaded();
-        }
-
-        #endregion
-
-        #region Event methods
+        #region Model Event methods
 
         /// <summary>
         /// Call when the robot collection changed
@@ -244,6 +240,36 @@ namespace Robotok.ViewModel
             });
         }
 
+        /// <summary>
+        /// Call when new simulation data have been loaded
+        /// </summary>
+        private void OnSimulationLoaded()
+        {
+            _row = _simulation.simulationData.Map.GetLength(1);
+            _column = _simulation.simulationData.Map.GetLength(0);
+
+            Robots = _simulation.simulationData.Robots;
+            Goals = _simulation.simulationData.Goals;
+
+            OnMapLoaded();
+            OnRobotsChanged();
+            OnGoalsChanged();
+        }
+
+        #endregion
+
+        #region ViewModel Event methods
+
+        /// <summary>
+        /// View calls when datacontext have been set
+        /// </summary>
+        public void OnSetDataContext()
+        {
+            OnRobotsChanged();
+            OnGoalsChanged();
+            OnMapLoaded();
+        }
+
         private void OnSimulationStart()
         {
             Debug.WriteLine("simulation start");
@@ -263,6 +289,7 @@ namespace Robotok.ViewModel
         private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
+            _simulation.SetInitialPosition();
         }
 
         private void OnPreviousStep()
@@ -278,6 +305,18 @@ namespace Robotok.ViewModel
         private void OnFinalPosition()
         {
             Debug.WriteLine("last step");
+        }
+
+
+        private void OnLoadSimulation()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Konfigurációs fájl betöltése";
+            openFileDialog.Filter = "Config file|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _simulation.LoadSimulation(openFileDialog.FileName);
+            }
         }
 
         #endregion

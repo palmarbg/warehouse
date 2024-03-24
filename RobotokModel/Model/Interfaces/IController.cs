@@ -9,6 +9,11 @@ namespace RobotokModel.Model.Interfaces
     public interface IController
     {
         /// <summary>
+        /// Returns the name of the controller
+        /// </summary>
+        string Name { get; }
+        
+        /// <summary>
         /// Before starting the simulation it should be called.
         /// </summary>
         /// <param name="timeSpan">Time span to initialise the controller</param>
@@ -30,13 +35,8 @@ namespace RobotokModel.Model.Interfaces
 
     }
 
-    public class IControllerEventArgs : EventArgs
+    public class IControllerEventArgs(RobotOperation[] robotOperations) : EventArgs
     {
-        public RobotOperation[] robotOperations { get; set; }
-
-        public IControllerEventArgs(RobotOperation[] robotOperations)
-        {
-            this.robotOperations = robotOperations;
-        }
+        public RobotOperation[] robotOperations { get; set; } = robotOperations;
     }
 }

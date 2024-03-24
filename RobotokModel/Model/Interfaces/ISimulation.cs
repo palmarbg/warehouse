@@ -25,21 +25,16 @@ namespace RobotokModel.Model.Interfaces
         /// <summary>
         /// Robot controller used by the simulation
         /// </summary>
-        public IController? Controller { get; }
+        public IController Controller { get; }
 
         /// <summary>
         /// Executor used by the simulation
         /// </summary>
-        public IExecutor? Executor { get; }
+        public IExecutor Executor { get; }
 
         #endregion
 
         #region Events
-
-        /// <summary>
-        /// When robots have been added or removed
-        /// </summary>
-        public event EventHandler? RobotsChanged;
 
         /// <summary>
         /// When robots moved
@@ -55,6 +50,11 @@ namespace RobotokModel.Model.Interfaces
         /// When simulation stops
         /// </summary>
         public event EventHandler? SimulationFinished;
+
+        /// <summary>
+        /// When map have been loaded
+        /// </summary>
+        public event EventHandler? SimulationLoaded;
 
         #endregion
 
@@ -83,6 +83,16 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         public void StopSimulation();
 
+        /// <summary>
+        /// Sets the state of the simulation to the initial position loaded from config files
+        /// </summary>
+        public void SetInitialPosition();
+
+        /// <summary>
+        /// Start new simulation from config file
+        /// </summary>
+        /// <param name="filePath">Absolute path for config file</param>
+        public void LoadSimulation(string filePath);
 
         /*
         /// <summary>

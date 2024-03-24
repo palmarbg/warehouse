@@ -11,7 +11,7 @@ namespace RobotokModel.Model.Controllers
     {
         public event EventHandler<IControllerEventArgs>? FinishedTask;
         private SimulationData? SimulationData;
-
+        public string Name => "simple";
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
         {
             this.SimulationData = simulationData;
