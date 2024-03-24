@@ -11,10 +11,12 @@ namespace RobotokModel.Model.Controllers
     internal class SimpleController : IController
     {
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        private ITaskDistributor _taskDistributor = null!;
         private SimulationData? SimulationData;
         public string Name => "simple";
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {
+            _taskDistributor = distributor;
             this.SimulationData = simulationData;
         }
 
@@ -32,7 +34,11 @@ namespace RobotokModel.Model.Controllers
 
                     if (robot.CurrentGoal is null)
                     {
-                        return RobotOperation.Wait;
+                        if (_taskDistributor.AllTasksAssigned)
+                            return RobotOperation.Wait;
+                        _taskDistributor.AssignNewTask(robot);
+                        if (robot.CurrentGoal is null)
+                            return RobotOperation.Wait;
                     }
                     var robotPosition = robot.Position;
                     var goalPosition = robot.CurrentGoal.Position;

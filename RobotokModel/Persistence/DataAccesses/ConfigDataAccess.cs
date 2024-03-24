@@ -134,9 +134,8 @@ namespace RobotokModel.Persistence.DataAccesses
                 SetRobots(config.AgentFile);
                 SetGoals(config.TaskFile);
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
-                //var exs = ex;
                 throw new JSonError();
             }
         }

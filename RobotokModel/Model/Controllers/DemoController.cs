@@ -44,7 +44,7 @@ namespace RobotokModel.Model.Controllers
             });
         }
 
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {
             this.SimulationData = simulationData;
         }
