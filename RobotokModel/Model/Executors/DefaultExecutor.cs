@@ -56,12 +56,11 @@ namespace RobotokModel.Model.Executors
             {
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PositionInDirection(robot.Rotation);
-                    if (newPos.X >= simulationData.Map.GetLength(1) || newPos.Y >= simulationData.Map.GetLength(0))
+                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0))
                     {
                         robot.MovedThisTurn = true;
                         return false;
                     }
-                    if (robot.Id == 0) { Debug.WriteLine(robot.NextOperation.ToString()); }
                     // newPos is robots goal
                     if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
@@ -116,13 +115,15 @@ namespace RobotokModel.Model.Executors
                         robot.MovedThisTurn = true;
                         return false;
                     }
-
+                    break;
                 //break;
                 case RobotOperation.Clockwise:
                     robot.Rotation = robot.Rotation.RotateClockWise();
+                    robot.MovedThisTurn = true;
                     break;
                 case RobotOperation.CounterClockwise:
                     robot.Rotation = robot.Rotation.RotateCounterClockWise();
+                    robot.MovedThisTurn= true;
                     break;
                 case RobotOperation.Backward:
                     // TODO: Prototype 2

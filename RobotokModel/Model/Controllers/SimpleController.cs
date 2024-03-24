@@ -29,7 +29,7 @@ namespace RobotokModel.Model.Controllers
                 }
                 var result = SimulationData.Robots.Select(robot =>
                 {
-                    if (robot.Id == 10) Debug.WriteLine(robot.NextOperation.ToString());
+
                     if (robot.CurrentGoal is null)
                     {
                         return RobotOperation.Wait;
@@ -118,7 +118,6 @@ namespace RobotokModel.Model.Controllers
                         }
                         else robot.NextOperation = RobotOperation.Wait;
                     }
-
                     return robot.NextOperation;
                 });
                 OnTaskFinished(result.ToArray());
