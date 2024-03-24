@@ -31,14 +31,31 @@ namespace RobotokModel.Model.Controllers
                 }
                 var result = SimulationData.Robots.Select(robot =>
                 {
+                    if(robot.Id == 1)
+                    {
+                        Debug.WriteLine($"Position: {robot.Position}");
+                        if( robot.CurrentGoal is null)
+                        {
+                        Debug.WriteLine($"Goal: null");
 
+                        }else
+                            Debug.WriteLine($"Goal: {robot.CurrentGoal.Position}");
+                        Debug.WriteLine(_taskDistributor.AllTasksAssigned);
+
+                    }
                     if (robot.CurrentGoal is null)
                     {
                         if (_taskDistributor.AllTasksAssigned)
-                            return RobotOperation.Wait;
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
+                            return robot.NextOperation;
+                        }
                         _taskDistributor.AssignNewTask(robot);
                         if (robot.CurrentGoal is null)
-                            return RobotOperation.Wait;
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
+                            return robot.NextOperation;
+                        }
                     }
                     var robotPosition = robot.Position;
                     var goalPosition = robot.CurrentGoal.Position;

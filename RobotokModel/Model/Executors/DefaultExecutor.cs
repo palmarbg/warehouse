@@ -100,9 +100,9 @@ namespace RobotokModel.Model.Executors
                     else if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
-                        Goal.OnGoalsChanged();
                         simulationData.Goals.Remove(robot.CurrentGoal);
                         robot.CurrentGoal = null;
+                        Goal.OnGoalsChanged();
                         //TODO: Robotnak új goal-t kell adni
                         //robot.CurrentGoal = null;
                         //Distributor.AssignNewTask(robot);

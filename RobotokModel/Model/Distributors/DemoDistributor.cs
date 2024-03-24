@@ -33,6 +33,7 @@ namespace RobotokModel.Model.Distributors
                     continue;
                 robot.CurrentGoal = goal;
                 goal.IsAssigned = true;
+                if(i == simulationData.Goals.Count-1) AllTasksAssigned = true;
                 return;
             }
             AllTasksAssigned = true;
