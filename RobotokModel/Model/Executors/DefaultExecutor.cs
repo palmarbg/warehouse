@@ -56,29 +56,16 @@ namespace RobotokModel.Model.Executors
             {
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PositionInDirection(robot.Rotation);
-                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0))
+                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X <0)
                     {
                         robot.MovedThisTurn = true;
                         return false;
                     }
-                    // newPos is robots goal
-                    if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                    // robot is blocked by Block
+                    if (simulationData.Map.GetAtPosition(newPos) is Block)
                     {
-                        MoveRobotToNewPosition(robot, newPos, operation);
-                        Goal.OnGoalsChanged();
-                        //TODO: Robotnak új goal-t kell adni
-                        //robot.CurrentGoal = null;
-                        //Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
-                        return true;
-
-                    }
-                    // newPos is empty or another robots goal
-                    else if (simulationData.Map[newPos.X, newPos.Y].IsPassable)
-                    {
-                        MoveRobotToNewPosition(robot, newPos, operation);
-                        robot.MovedThisTurn = true;
-                        return true;
+                        return false;
                     }
                     //newPos is blocked by another robot
                     else if (simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
@@ -109,13 +96,32 @@ namespace RobotokModel.Model.Executors
                             }
                         }
                     }
-                    // robot is blocked by Block
+                    // newPos is robots goal
+                    else if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                    {
+                        MoveRobotToNewPosition(robot, newPos, operation);
+                        Goal.OnGoalsChanged();
+                        simulationData.Goals.Remove(robot.CurrentGoal);
+                        robot.CurrentGoal = null;
+                        //TODO: Robotnak új goal-t kell adni
+                        //robot.CurrentGoal = null;
+                        //Distributor.AssignNewTask(robot);
+                        robot.MovedThisTurn = true;
+                        return true;
+
+                    }
+                    // newPos is empty or another robots goal
+                    else if (simulationData.Map[newPos.X, newPos.Y].IsPassable)
+                    {
+                        MoveRobotToNewPosition(robot, newPos, operation);
+                        robot.MovedThisTurn = true;
+                        return true;
+                    }
                     else
                     {
                         robot.MovedThisTurn = true;
                         return false;
                     }
-                    break;
                 //break;
                 case RobotOperation.Clockwise:
                     robot.Rotation = robot.Rotation.RotateClockWise();

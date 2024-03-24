@@ -27,7 +27,7 @@ namespace RobotokModel.Model
         #region Properties
 
         public SimulationData simulationData { get; private set; }
-        public ITaskDistributor? Distributor { get; private set; }
+        public ITaskDistributor Distributor { get; private set; } = null!;
         public IController Controller { get; private set; } = null!;
         public IExecutor Executor { get; private set; } = null!;
 
@@ -89,7 +89,7 @@ namespace RobotokModel.Model
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\warehouse_100_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 
@@ -97,7 +97,7 @@ namespace RobotokModel.Model
             SetTaskDistributor("demo");
 
             Executor = new DefaultExecutor(simulationData);
-            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6));
+            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), Distributor);
         }
 
         #endregion
@@ -289,7 +289,7 @@ namespace RobotokModel.Model
         {
             SimulationLoaded?.Invoke(null, new EventArgs());
 
-            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6));
+            Controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), Distributor);
             Executor = Executor.NewInstance(simulationData);
         }
 
