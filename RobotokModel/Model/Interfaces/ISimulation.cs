@@ -15,22 +15,12 @@ namespace RobotokModel.Model.Interfaces
         /// <summary>
         /// Contains the current state of the map
         /// </summary>
-        public SimulationData simulationData { get; }
+        public SimulationData SimulationData { get; }
 
         /// <summary>
-        /// Task distributor used by the simulation
+        /// Mediator used by the simulation
         /// </summary>
-        public ITaskDistributor? Distributor { get; }
-
-        /// <summary>
-        /// Robot controller used by the simulation
-        /// </summary>
-        public IController Controller { get; }
-
-        /// <summary>
-        /// Executor used by the simulation
-        /// </summary>
-        public IExecutor Executor { get; }
+        public IMediator Mediator { get; }
 
         #endregion
 
@@ -59,7 +49,7 @@ namespace RobotokModel.Model.Interfaces
         #endregion
 
         #region Methods
-
+        /*
         /// <summary>
         /// Sets the controller used by the simulation
         /// </summary>
@@ -93,7 +83,7 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         /// <param name="filePath">Absolute path for config file</param>
         public void LoadSimulation(string filePath);
-
+        */
         /*
         /// <summary>
         /// Pause simulation

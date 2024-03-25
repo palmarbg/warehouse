@@ -39,5 +39,10 @@ namespace RobotokModel.Model.Distributors
             AllTasksAssigned = true;
             robot.CurrentGoal = null;
         }
+
+        public ITaskDistributor NewInstance(SimulationData simulationData)
+        {
+            return new DemoDistributor(simulationData);
+        }
     }
 }

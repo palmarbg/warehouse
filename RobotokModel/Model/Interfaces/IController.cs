@@ -26,12 +26,14 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         /// <param name="timeSpan">Time span to return the calculated operations</param>
         /// <returns>Returns the next RobotOperation for every Robot</returns>
-        public Task ClaculateOperations(TimeSpan timeSpan);
+        public void CalculateOperations(TimeSpan timeSpan);
 
         /// <summary>
         /// This will be invoked when the controller finishes the task
         /// </summary>
         public event EventHandler<IControllerEventArgs> FinishedTask;
+
+        public IController NewInstance();
 
     }
 

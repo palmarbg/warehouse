@@ -21,135 +21,140 @@ namespace RobotokModel.Model.Controllers
         }
 
         // Does not care about Block, other robots or deadlocks
-        public async Task ClaculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan)
         {
-            await Task.Run(() =>
+            
+            if (SimulationData == null)
             {
-                if (SimulationData == null)
+                throw new InvalidOperationException();
+            }
+            var result = SimulationData.Robots.Select(robot =>
+            {
+                if(robot.Id == 1)
                 {
-                    throw new InvalidOperationException();
-                }
-                var result = SimulationData.Robots.Select(robot =>
-                {
-                    if(robot.Id == 1)
+                    Debug.WriteLine($"Position: {robot.Position}");
+                    if( robot.CurrentGoal is null)
                     {
-                        Debug.WriteLine($"Position: {robot.Position}");
-                        if( robot.CurrentGoal is null)
-                        {
-                        Debug.WriteLine($"Goal: null");
+                    Debug.WriteLine($"Goal: null");
 
-                        }else
-                            Debug.WriteLine($"Goal: {robot.CurrentGoal.Position}");
-                        Debug.WriteLine(_taskDistributor.AllTasksAssigned);
+                    }else
+                        Debug.WriteLine($"Goal: {robot.CurrentGoal.Position}");
+                    Debug.WriteLine(_taskDistributor.AllTasksAssigned);
 
+                }
+                if (robot.CurrentGoal is null)
+                {
+                    if (_taskDistributor.AllTasksAssigned)
+                    {
+                        robot.NextOperation = RobotOperation.Wait;
+                        return robot.NextOperation;
                     }
+                    _taskDistributor.AssignNewTask(robot);
+                    Goal.OnGoalsChanged();
                     if (robot.CurrentGoal is null)
                     {
-                        if (_taskDistributor.AllTasksAssigned)
-                        {
-                            robot.NextOperation = RobotOperation.Wait;
-                            return robot.NextOperation;
-                        }
-                        _taskDistributor.AssignNewTask(robot);
-                        if (robot.CurrentGoal is null)
-                        {
-                            robot.NextOperation = RobotOperation.Wait;
-                            return robot.NextOperation;
-                        }
+                        robot.NextOperation = RobotOperation.Wait;
+                        return robot.NextOperation;
                     }
-                    var robotPosition = robot.Position;
-                    var goalPosition = robot.CurrentGoal.Position;
-                    if (robotPosition.X == goalPosition.X)
+                }
+                var robotPosition = robot.Position;
+                var goalPosition = robot.CurrentGoal.Position;
+                if (robotPosition.X == goalPosition.X)
+                {
+                    int distance = robot.Position.Y - robot.CurrentGoal.Position.Y;
+                    if (distance < 0)
                     {
-                        int distance = robot.Position.Y - robot.CurrentGoal.Position.Y;
-                        if (distance < 0)
+                        switch (robot.Rotation)
                         {
-                            switch (robot.Rotation)
-                            {
-                                case Direction.Left:
-                                    robot.NextOperation = RobotOperation.CounterClockwise;
-                                    break;
-                                case Direction.Up:
-                                    robot.NextOperation = RobotOperation.CounterClockwise;
-                                    break;
-                                case Direction.Right:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                                case Direction.Down:
-                                    robot.NextOperation = RobotOperation.Forward;
-                                    break;
-                            }
+                            case Direction.Left:
+                                robot.NextOperation = RobotOperation.CounterClockwise;
+                                break;
+                            case Direction.Up:
+                                robot.NextOperation = RobotOperation.CounterClockwise;
+                                break;
+                            case Direction.Right:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                            case Direction.Down:
+                                robot.NextOperation = RobotOperation.Forward;
+                                break;
                         }
-                        else if (distance > 0)
-                        {
-                            switch (robot.Rotation)
-                            {
-                                case Direction.Left:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                                case Direction.Up:
-                                    robot.NextOperation = RobotOperation.Forward;
-                                    break;
-                                case Direction.Right:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                                case Direction.Down:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                            }
-                        }
-                        else robot.NextOperation = RobotOperation.Wait;
                     }
-                    else
+                    else if (distance > 0)
                     {
-                        int distance = robot.Position.X - robot.CurrentGoal.Position.X;
-                        if (distance < 0)
+                        switch (robot.Rotation)
                         {
-                            switch (robot.Rotation)
-                            {
-                                case Direction.Left:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                                case Direction.Up:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                                case Direction.Right:
-                                    robot.NextOperation = RobotOperation.Forward;
-                                    break;
-                                case Direction.Down:
-                                    robot.NextOperation = RobotOperation.CounterClockwise;
-                                    break;
-                            }
+                            case Direction.Left:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                            case Direction.Up:
+                                robot.NextOperation = RobotOperation.Forward;
+                                break;
+                            case Direction.Right:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                            case Direction.Down:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
                         }
-                        else if (distance > 0)
-                        {
-                            switch (robot.Rotation)
-                            {
-                                case Direction.Left:
-                                    robot.NextOperation = RobotOperation.Forward;
-                                    break;
-                                case Direction.Up:
-                                    robot.NextOperation = RobotOperation.CounterClockwise;
-                                    break;
-                                case Direction.Right:
-                                    robot.NextOperation = RobotOperation.CounterClockwise;
-                                    break;
-                                case Direction.Down:
-                                    robot.NextOperation = RobotOperation.Clockwise;
-                                    break;
-                            }
-                        }
-                        else robot.NextOperation = RobotOperation.Wait;
                     }
-                    return robot.NextOperation;
-                });
-                OnTaskFinished(result.ToArray());
+                    else robot.NextOperation = RobotOperation.Wait;
+                }
+                else
+                {
+                    int distance = robot.Position.X - robot.CurrentGoal.Position.X;
+                    if (distance < 0)
+                    {
+                        switch (robot.Rotation)
+                        {
+                            case Direction.Left:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                            case Direction.Up:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                            case Direction.Right:
+                                robot.NextOperation = RobotOperation.Forward;
+                                break;
+                            case Direction.Down:
+                                robot.NextOperation = RobotOperation.CounterClockwise;
+                                break;
+                        }
+                    }
+                    else if (distance > 0)
+                    {
+                        switch (robot.Rotation)
+                        {
+                            case Direction.Left:
+                                robot.NextOperation = RobotOperation.Forward;
+                                break;
+                            case Direction.Up:
+                                robot.NextOperation = RobotOperation.CounterClockwise;
+                                break;
+                            case Direction.Right:
+                                robot.NextOperation = RobotOperation.CounterClockwise;
+                                break;
+                            case Direction.Down:
+                                robot.NextOperation = RobotOperation.Clockwise;
+                                break;
+                        }
+                    }
+                    else robot.NextOperation = RobotOperation.Wait;
+                }
+                return robot.NextOperation;
             });
+            OnTaskFinished(result.ToArray());
+            
         }
 
         private void OnTaskFinished(RobotOperation[] result)
         {
             FinishedTask?.Invoke(this, new(result));
+        }
+
+        public IController NewInstance()
+        {
+            return new SimpleController();
         }
     }
 }

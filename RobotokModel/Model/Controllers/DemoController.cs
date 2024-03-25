@@ -23,25 +23,21 @@ namespace RobotokModel.Model.Controllers
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task ClaculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan)
         {
-            await Task.Run(() =>
+            if (SimulationData == null)
             {
+                throw new InvalidOperationException();
+            }
 
-                if (SimulationData == null)
-                {
-                    throw new InvalidOperationException();
-                }
+            RobotOperation[] result = new RobotOperation[SimulationData.Robots.Count];
+            foreach (Robot robot in SimulationData.Robots)
+            {
+                robot.NextOperation = RobotOperation.Forward;
+                result[robot.Id] = robot.NextOperation;
+            }
 
-                RobotOperation[] result = new RobotOperation[SimulationData.Robots.Count];
-                foreach (Robot robot in SimulationData.Robots)
-                {
-                    robot.NextOperation = RobotOperation.Forward;
-                    result[robot.Id] = robot.NextOperation;
-                }
-
-                OnTaskFinished(result);
-            });
+            OnTaskFinished(result);
         }
 
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
@@ -52,6 +48,11 @@ namespace RobotokModel.Model.Controllers
         private void OnTaskFinished(RobotOperation[] result)
         {
             FinishedTask?.Invoke(this, new(result));
+        }
+
+        public IController NewInstance()
+        {
+            return new DemoController();
         }
     }
 }
