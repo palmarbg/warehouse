@@ -35,5 +35,65 @@ namespace RobotokModel.Model.Extensions
                 _ => throw new Exception()
             };
         }
+        public static (RobotOperation operation, int count) RotateTo(this Direction start, Direction end)
+        {
+            switch (start)
+            {
+                case Direction.Left:
+                    switch (end)
+                    {
+                        case Direction.Left:
+                            return (RobotOperation.Wait, 0);
+                        case Direction.Up:
+                            return (RobotOperation.CounterClockwise, 1);
+                        case Direction.Right:
+                            return (RobotOperation.CounterClockwise, 2);
+                        case Direction.Down:
+                            return (RobotOperation.Clockwise, 1);
+                    }
+                    break;
+                case Direction.Up:
+                    switch (end)
+                    {
+                        case Direction.Left:
+                            return (RobotOperation.Clockwise, 1);
+                        case Direction.Up:
+                            return (RobotOperation.Wait, 0);
+                        case Direction.Right:
+                            return (RobotOperation.CounterClockwise, 1);
+                        case Direction.Down:
+                            return (RobotOperation.CounterClockwise, 2);
+                    }
+                    break;
+                case Direction.Right:
+                    switch (end)
+                    {
+                        case Direction.Left:
+                            return (RobotOperation.CounterClockwise, 2);
+                        case Direction.Up:
+                            return (RobotOperation.Clockwise, 1);
+                        case Direction.Right:
+                            return (RobotOperation.Wait, 0);
+                        case Direction.Down:
+                            return (RobotOperation.CounterClockwise, 1);
+                    }
+                    break;
+                case Direction.Down:
+                    switch (end)
+                    {
+                        case Direction.Left:
+                            return (RobotOperation.CounterClockwise, 1);
+                        case Direction.Up:
+                            return (RobotOperation.CounterClockwise, 2);
+                        case Direction.Right:
+                            return (RobotOperation.Clockwise, 1);
+                        case Direction.Down:
+                            return (RobotOperation.Wait, 0);
+                    }
+                    break;
+            }
+            return (RobotOperation.Wait, 0);
+
+        }
     }
 }
