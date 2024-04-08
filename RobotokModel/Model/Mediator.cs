@@ -64,7 +64,7 @@ namespace RobotokModel.Model
 
             SimulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new SimpleController();
+            controller = new AStarController();
             taskDistributor = new DemoDistributor(SimulationData);
             executor = new DefaultExecutor(SimulationData);
             Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
