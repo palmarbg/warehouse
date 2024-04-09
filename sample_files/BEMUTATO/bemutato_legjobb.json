@@ -1,0 +1,8 @@
+{
+  "mapFile": "../maps/elteik.map",
+  "agentFile": "../agents/no_agents.agents",
+  "teamSize": 0,
+  "taskFile": "../tasks/no_tasks.tasks",
+  "numTasksReveal": 1,
+  "taskAssignmentStrategy": "roundrobin"
+}

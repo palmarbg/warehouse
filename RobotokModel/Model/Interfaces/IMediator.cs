@@ -12,6 +12,7 @@ namespace RobotokModel.Model.Interfaces
         #region Properties
 
         public SimulationData SimulationData { get; }
+        public SimulationState SimulationState { get; }
         public IDataAccess DataAccess { init; }
         public ITaskDistributor TaskDistributor { init; }
         public IController Controller { init; }
@@ -22,18 +23,19 @@ namespace RobotokModel.Model.Interfaces
 
         #region Methods
 
-        void StartNewSimulation();
+        void StartSimulation();
         void StopSimulation();
+        void PauseSimulation();
         void SetController(string name);
         void SetTaskDistributor(string name);
-        void SetInitialPosition();
+        void SetInitialState();
 
         /// <summary>
         /// Start new simulation from config file
         /// </summary>
         /// <param name="filePath">Absolute path for config file</param>
         void LoadSimulation(string filePath);
-        
+
         /*
         /// <summary>
         /// Pause simulation

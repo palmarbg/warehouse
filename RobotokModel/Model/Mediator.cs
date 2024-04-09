@@ -26,12 +26,9 @@ namespace RobotokModel.Model
         private IExecutor executor = null!;
         private ILogger logger = null!;
 
-        private bool isSimulationRunning;
-        private bool isTaskFinished;
-        private bool IsExecuting;
         private int interval;
 
-        private Simulation simulation;
+        private readonly Simulation simulation;
 
         #endregion
 
@@ -43,6 +40,8 @@ namespace RobotokModel.Model
         public IController Controller { private get => controller; init => controller = value; }
         public IExecutor Executor { private get => executor; init => executor = value; }
         public ILogger Logger { private get => logger; init => logger = value; }
+
+        public SimulationState SimulationState { get; private set; } = new SimulationState();
 
         #endregion
 
@@ -59,10 +58,6 @@ namespace RobotokModel.Model
             Timer.Elapsed += (_,_) => StepSimulation();
             Timer.Stop();
 
-            isSimulationRunning = false;
-            isTaskFinished = true;
-            IsExecuting = false;
-
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
             dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
@@ -78,14 +73,23 @@ namespace RobotokModel.Model
 
         #region Public methods
 
-        public void StartNewSimulation()
+        public void StartSimulation()
         {
-            if (isSimulationRunning) return;
-            isSimulationRunning = true;
+            if (SimulationState.IsSimulationRunning)
+                return;
 
-            SimulationData = dataAccess.GetInitialSimulationData();
+            if (SimulationState.IsSimulationPaused)
+            {
+                SimulationState.IsSimulationRunning = true;
+                Timer.Start();
+                return;
+            }
 
-            controller = Controller.NewInstance();
+            SetInitialState();
+
+            SimulationState.IsSimulationRunning = true;
+            SimulationState.IsSimulationEnded = false;
+
             Controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
             {
                 if (Controller != sender)
@@ -93,24 +97,28 @@ namespace RobotokModel.Model
                 OnTaskFinished(e);
             });
 
-            taskDistributor = taskDistributor.NewInstance(SimulationData);
-            executor = executor.NewInstance(SimulationData);
-
             Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
-
-            simulation.OnSimulationLoaded();
 
             Timer.Start();
         }
 
         public void StopSimulation()
         {
-            if (!isSimulationRunning)
+            if (SimulationState.IsSimulationEnded)
                 return;
 
-            isSimulationRunning = false;
+            SimulationState.IsSimulationRunning = false;
+            SimulationState.IsSimulationEnded = true;
+
             Timer.Stop();
             simulation.OnSimulationFinished();
+        }
+
+        public void PauseSimulation()
+        {
+            if(!SimulationState.IsSimulationRunning) return;
+            SimulationState.IsSimulationRunning=false;
+            Timer.Stop();
         }
 
         public void SetController(string name)
@@ -144,26 +152,25 @@ namespace RobotokModel.Model
             }
         }
 
-        public void SetInitialPosition()
+        public void SetInitialState()
         {
             Timer.Stop();
-            isSimulationRunning = false;
-            IsExecuting = false;
-            isTaskFinished = true;
+
+            SimulationState = new SimulationState();
 
             SimulationData = dataAccess.GetInitialSimulationData();
-            SetTaskDistributor(SimulationData.DistributorName);
-            SetController(Controller.Name);
+            taskDistributor = taskDistributor.NewInstance(SimulationData);
+            controller = controller.NewInstance();
+            executor = Executor.NewInstance(SimulationData);
+
             simulation.OnSimulationLoaded();
 
-            Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
-            executor = Executor.NewInstance(SimulationData);
         }
 
         public void LoadSimulation(string filePath)
         {
             dataAccess = dataAccess.NewInstance(filePath);
-            SetInitialPosition();
+            SetInitialState();
         }
 
         #endregion
@@ -173,20 +180,19 @@ namespace RobotokModel.Model
         private void StepSimulation()
         {
             Debug.WriteLine("--SIMULATION STEP--");
-            if (Controller == null)
-            {
-                throw new Exception();
-            }
-            if (isTaskFinished && !IsExecuting)
-            {
-                isTaskFinished = false;
-                Controller.CalculateOperations(TimeSpan.FromMilliseconds(interval));
+
+            if (SimulationState.IsExecutingMoves)
                 return;
-            }
-            else
+
+            if (!SimulationState.IsLastTaskFinished)
             {
                 OnTaskTimeout();
+                return;
             }
+
+            SimulationState.IsLastTaskFinished = false;
+            Controller.CalculateOperations(TimeSpan.FromMilliseconds(interval));
+            
         }
 
         private void OnTaskTimeout()
@@ -197,34 +203,18 @@ namespace RobotokModel.Model
 
         private void OnTaskFinished(IControllerEventArgs e)
         {
-            isTaskFinished = true;
             Debug.WriteLine("TASK FINISHED");
 
-            IsExecuting = true;
+            SimulationState.IsExecutingMoves = true;
+            SimulationState.IsLastTaskFinished = true;
+            
             Executor.ExecuteOperations(e.robotOperations);
-            IsExecuting = false;
+            SimulationState.IsExecutingMoves = false;
 
             simulation.OnRobotsMoved();
         }
 
         #endregion
-
-
-        /*
-        public IMediator NewInstance()
-        {
-            throw new NotImplementedException();
-            
-            return new Mediator(simulation) {
-                DataAccess = DataAccess.NewInstance(),
-                TaskDistributor = TaskDistributor.NewInstance(),
-                Controller = Controller.NewInstance(),
-                Executor = Executor.NewInstance(),
-                Logger = Logger.NewInstance()
-            };
-            
-        }
-        */
     }
 }
 

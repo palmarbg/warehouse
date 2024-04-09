@@ -32,7 +32,7 @@ namespace Robotok.View.UserControls
         {
             this.DataContext = viewModel;
 
-            SetCommandBinding(_playButton,  "StartSimulation",  viewModel);
+            SetCommandBinding(_playButton,  "ToggleSimulation",  viewModel);
             SetCommandBinding(_stopButton,  "StopSimulation",   viewModel);
             SetCommandBinding(_startButton, "InitialPosition",  viewModel);
             SetCommandBinding(_backButton,  "PreviousStep",     viewModel);
@@ -40,6 +40,26 @@ namespace Robotok.View.UserControls
             SetCommandBinding(_endButton,   "FinalPosition",    viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, "LoadSimulation", viewModel);
+
+            _playButton.Click += new RoutedEventHandler((_,_) => {
+                _playButton.IconSrc = _playButton.IconSrc == "Icons/pause.png" ? "Icons/play.png" : "Icons/pause.png";
+                _playButton.LabelText = _playButton.IconSrc == "Icons/pause.png" ? "Pause" : "Start";
+            });
+
+            _stopButton.Click += new RoutedEventHandler((_, _) => {
+                _playButton.IconSrc = "Icons/play.png";
+                _playButton.LabelText = "Start";
+            });
+
+            _startButton.Click += new RoutedEventHandler((_, _) => {
+                _playButton.IconSrc = "Icons/play.png";
+                _playButton.LabelText = "Start";
+            });
+
+            _loadSimulationMenuItem.Click += new RoutedEventHandler((_, _) => {
+                _playButton.IconSrc = "Icons/play.png";
+                _playButton.LabelText = "Start";
+            });
         }
 
         public void SetCommandBinding(Button btn, string path, MainWindowViewModel viewModel)

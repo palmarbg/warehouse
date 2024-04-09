@@ -1,0 +1,8 @@
+{
+    "mapFile": "../maps/simple_test.map",
+    "agentFile": "../agents/bemutato_2.agents",
+    "teamSize": 10,
+    "taskFile": "../tasks/bemutato_2.tasks",
+    "numTasksReveal": 1,
+    "taskAssignmentStrategy": "roundrobin"
+}
