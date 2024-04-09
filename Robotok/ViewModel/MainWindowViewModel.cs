@@ -133,8 +133,8 @@ namespace Robotok.ViewModel
 
         #region DelegateCommands
 
-        /// <summary> Start the simulation </summary>
-        public DelegateCommand StartSimulation { get; set; }
+        /// <summary> Start or pause the simulation </summary>
+        public DelegateCommand ToggleSimulation { get; set; }
 
         /// <summary> Stop the simulation </summary>
         public DelegateCommand StopSimulation { get; set; }
@@ -177,7 +177,7 @@ namespace Robotok.ViewModel
             simulation.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
             simulation.SimulationLoaded += new EventHandler((_, _) => OnSimulationLoaded());            
 
-            StartSimulation = new DelegateCommand(param => OnSimulationStart());
+            ToggleSimulation = new DelegateCommand(param => OnToggleSimulation());
             StopSimulation = new DelegateCommand(param => OnSimulationStop());
             PauseSimulation = new DelegateCommand(param => OnSimulationPause());
             InitialPosition = new DelegateCommand(param => OnInitialPosition());
@@ -270,10 +270,13 @@ namespace Robotok.ViewModel
             OnMapLoaded();
         }
 
-        private void OnSimulationStart()
+        private void OnToggleSimulation()
         {
             Debug.WriteLine("simulation start");
-            _simulation.Mediator.StartNewSimulation();
+            if (_simulation.State.IsSimulationRunning)
+                _simulation.Mediator.PauseSimulation();
+            else
+                _simulation.Mediator.StartSimulation();
         }
 
         private void OnSimulationStop()
@@ -289,7 +292,7 @@ namespace Robotok.ViewModel
         private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
-            _simulation.Mediator.SetInitialPosition();
+            _simulation.Mediator.SetInitialState();
         }
 
         private void OnPreviousStep()

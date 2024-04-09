@@ -71,4 +71,21 @@ namespace Robotok.View.UserControls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
+    public class IsEnabledToOpacityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || value == DependencyProperty.UnsetValue)
+                return 1.0;
+            if((bool)value)
+                return 1.0;
+            return 0.7;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

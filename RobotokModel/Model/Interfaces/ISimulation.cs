@@ -22,6 +22,8 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         public IMediator Mediator { get; }
 
+        public SimulationState State => Mediator.SimulationState;
+
         #endregion
 
         #region Events

@@ -6,39 +6,40 @@
              xmlns:local="clr-namespace:Robotok.View.UserControls"
              xmlns:converters="clr-namespace:Robotok.View.Converters"
         Padding="3,0"
+        HorizontalContentAlignment="Left"
+        Name="ParentElement"
         >
     <Button.Resources>
         <converters:StringToImageSource x:Key="StringToImageSource" />
+        <local:IsEnabledToOpacityConverter x:Key="IsEnabledToOpacityConverter"/>
     </Button.Resources>
-    <!--<StackPanel Orientation="Horizontal"
-                Height="30"
-                MinWidth="30"
-                VerticalAlignment="Center">-->
-        <Grid
-            Height="30"
+    <Grid   Height="30"
             MinWidth="30"
             VerticalAlignment="Center"
             >
+        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="28"/>
+            <ColumnDefinition Width="30"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-            <Image Grid.Column="0"
-                   Height="20"
-                   Width="20"
-                   Source="{Binding IconSrc, Converter={StaticResource StringToImageSource}}"
-                   RenderOptions.BitmapScalingMode="Fant"
-                   RenderOptions.EdgeMode="Aliased"
-                   HorizontalAlignment="Center"
-                   
-                   />
-            <Label Grid.Column="1"
-                   Height="25"
-                   Padding="0"
-                   FontSize="16"
-                   Content="{Binding LabelText}"
-                   />
-        </Grid>
         
-    <!--</StackPanel>-->
+        <Image  Grid.Column="0"
+                Height="20"
+                Width="20"
+                Source="{Binding IconSrc, Converter={StaticResource StringToImageSource}}"
+                RenderOptions.BitmapScalingMode="Fant"
+                RenderOptions.EdgeMode="Aliased"
+                HorizontalAlignment="Center"
+                Opacity="{Binding   IsEnabled,
+                                    ElementName=ParentElement,
+                                    Converter={StaticResource IsEnabledToOpacityConverter}}"
+                />
+
+        <Label  Grid.Column="1"
+                Height="25"
+                Padding="0"
+                FontSize="16"
+                Content="{Binding LabelText}"
+                />
+    </Grid>
 </Button>
