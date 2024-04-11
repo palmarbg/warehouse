@@ -15,5 +15,11 @@ namespace RobotokModel.Persistence.Interfaces
         /// <param name="step">Index of step</param>
         /// <returns>The actual operations executed</returns>
         RobotOperation[] GetRobotOperations(int step);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>All task events</returns>
+        TaskEvent[] GetTaskEvents();
     }
 }

@@ -40,6 +40,11 @@ namespace RobotokModel.Persistence.DataAccesses
             throw new NotImplementedException();
         }
 
+        public TaskEvent[] GetTaskEvents()
+        {
+            throw new NotImplementedException();
+        }
+
         public IDataAccess NewInstance(string filePath)
         {
             return new DemoDataAccess(filePath);
