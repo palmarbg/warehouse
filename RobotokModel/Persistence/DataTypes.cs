@@ -11,6 +11,7 @@ namespace RobotokModel.Persistence
     {
         public int robotId1;
         public int robotId2;
+        public int round;
         public OperationErrorType errorType;
     }
 
@@ -46,7 +47,6 @@ namespace RobotokModel.Persistence
         public required int NumTasksReveal { get; set; }
         public required string TaskAssignmentStrategy { get; set; }
     }
-
     public class Log
     {
         public string ActionModel { get; set; } = null!;
@@ -59,9 +59,9 @@ namespace RobotokModel.Persistence
         public List<List<RobotOperation>> PlannerPaths { get; set; } = null!;
         public List<float> PlannerTimes { get; set; } = null!;
         public List<List<TaskEvent>> Events { get; set; } = null!;
-        public List<List<int>> Tasks { get; set; } = null!;
-        public List<Object> Errors { get; set; } = null!;
-        public List<List<Object>> Start { get; set; } = null!;
+        public List<Goal> Tasks { get; set; } = null!;
+        public List<OperationError> Errors { get; set; } = null!;
+        public List<Robot> Start { get; set; } = null!;
     }
     public class ExternalLog
     {

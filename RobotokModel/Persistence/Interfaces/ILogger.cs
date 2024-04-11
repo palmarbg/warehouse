@@ -21,7 +21,7 @@ namespace RobotokModel.Persistence.Interfaces
         /// </summary>
         /// <param name="path">The file, where the log will be saved</param>
         /// <returns></returns>
-        Task SaveLog(string path); //alternative: void SaveLog(string path);
+        void SaveLog(string path); //alternative: void SaveLog(string path);
 
         /// <summary>
         /// Logs a simulation step. Called by the Executor
@@ -32,7 +32,8 @@ namespace RobotokModel.Persistence.Interfaces
         void LogStep(
             RobotOperation[] controllerOperations,
             RobotOperation[] robotOperations,
-            OperationError[] errors
+            OperationError[] errors,
+            float timeElapsed
             );
 
         /// <summary>
