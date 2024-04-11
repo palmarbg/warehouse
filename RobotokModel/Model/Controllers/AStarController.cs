@@ -21,6 +21,7 @@ namespace RobotokModel.Model.Controllers
         // true if robot finished its task and no more tasks are available, false otherwise
         private bool[] robotsFinished = [];
         private RobotOperation[] previousOperations = [];
+        private int[] blockedCount = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
 
         #region Public Methods
@@ -30,6 +31,7 @@ namespace RobotokModel.Model.Controllers
             this.SimulationData = simulationData;
             robotsFinished = new bool[simulationData.Robots.Count];
             previousOperations = new RobotOperation[simulationData.Robots.Count];
+            blockedCount = new int[simulationData.Robots.Count];
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
@@ -42,7 +44,7 @@ namespace RobotokModel.Model.Controllers
 
             });
             Goal.OnGoalsChanged();
-            _plannedOperations = SimulationData.Robots.Select(FindPath).ToList();
+            _plannedOperations = SimulationData.Robots.Select(f=>FindPath(f)).ToList();
         }
         public IController NewInstance()
         {
@@ -84,6 +86,7 @@ namespace RobotokModel.Model.Controllers
 
                             _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
                             var nextOp = NextOperation(i, robot);
+                            blockedCount[i] = 0;
                             SimulationData.Robots[i].NextOperation = nextOp;
                             result.Add(nextOp);
                         }
@@ -91,25 +94,19 @@ namespace RobotokModel.Model.Controllers
                 }
                 else
                 {
-                    RobotOperation nextOp;
-                    if (robot.BlockedThisTurn)
-                    {
-                        nextOp = previousOperations[i];
-                    }
-                    else
-                    {
-                        nextOp = NextOperation(i, robot);
-                    }
+                    var nextOp = NextOperation(i, robot);
+
                     SimulationData.Robots[i].NextOperation = nextOp;
                     result.Add(nextOp);
                 }
             }
             OnTaskFinished([.. result]);
         }
-
+        // Deadlock
         private RobotOperation NextOperation(int i, Robot robot)
         {
-            if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
+            RobotOperation nextOp;
+            //if(i == 3) { Debug.WriteLine(blockedCount[i]); Debug.WriteLine(robot.CurrentGoal.Position.ToString()); }
             if (_plannedOperations[i].Count == 0)
             {
                 robotsFinished[i] = true;
@@ -120,14 +117,29 @@ namespace RobotokModel.Model.Controllers
                 }
                 return RobotOperation.Wait;
             }
-
-            var nextOp = _plannedOperations[i].Dequeue();
+            if (robot.BlockedThisTurn)
+            {
+                if (blockedCount[i] >= 3)
+                {
+                    blockedCount[i]=0;
+                    _plannedOperations[i] = FindPath(robot,true);
+                    previousOperations[i] = RobotOperation.Wait;
+                    return RobotOperation.Wait;
+                }
+                nextOp = previousOperations[i];
+                blockedCount[i]++;
+            }
+            else
+            {
+                blockedCount[i] = 0;
+                nextOp = _plannedOperations[i].Dequeue();
+            }
             previousOperations[i] = nextOp;
             return nextOp;
         }
         #endregion
         #region Private Methods
-        private Queue<RobotOperation> FindPath(Robot robot)
+        private Queue<RobotOperation> FindPath(Robot robot,bool robotBlock = false)
         {
             if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal"); }
             HashSet<Node> openSet = new HashSet<Node>();
@@ -163,7 +175,7 @@ namespace RobotokModel.Model.Controllers
                 closedSet.Add(current);
                 openSet.Remove(current);
 
-                foreach (var neighbor in GetNeighbors(current))
+                foreach (var neighbor in GetNeighbors(current, robotBlock))
                 {
                     Direction asd = current.Position.DirectionInPosition(neighbor.Position) ?? Direction.Down;
                     int tentativeGScore = gScore[current] + EuclideanDistance(current, neighbor);
@@ -248,7 +260,7 @@ namespace RobotokModel.Model.Controllers
             }
             return Operations;
         }
-        private List<Node> GetNeighbors(Node node)
+        private List<Node> GetNeighbors(Node node,bool robotBlock)
         {
             List<Node> neighbors = new List<Node>();
 
@@ -262,7 +274,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && (SimulationData.Map[checkX, checkY] is EmptyTile || SimulationData.Map[checkX, checkY] is Robot))
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && (SimulationData.Map[checkX, checkY] is EmptyTile || robotBlock ? !(SimulationData.Map[checkX, checkY] is Robot) : SimulationData.Map[checkX, checkY] is Robot) )
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }

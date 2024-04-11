@@ -49,7 +49,7 @@ namespace RobotokModel.Model
         {
             this.simulation = simulation;
 
-            interval = 1000;
+            interval = 300;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,
