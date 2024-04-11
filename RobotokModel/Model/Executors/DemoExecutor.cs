@@ -28,8 +28,8 @@ namespace RobotokModel.Model.Executors
                 Robot robot = simulationData.Robots[i];
                 robot.ExecuteMove();
             }
-
-            return robotOperations;
+            
+            return robotOperations ;
         }
 
         public IExecutor NewInstance(SimulationData simulationData)

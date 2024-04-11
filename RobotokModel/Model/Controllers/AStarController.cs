@@ -17,7 +17,9 @@ namespace RobotokModel.Model.Controllers
         private SimulationData? SimulationData = null!;
         private ITaskDistributor _taskDistributor = null!;
         private List<Queue<RobotOperation>> _plannedOperations = new List<Queue<RobotOperation>>();
-
+        // true if robot finished its task and no more tasks are available, false otherwise
+        private bool[] robotsFinished = [];
+        private RobotOperation[] previousOperations = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
 
         #region Public Methods
@@ -25,7 +27,19 @@ namespace RobotokModel.Model.Controllers
         {
             _taskDistributor = distributor;
             this.SimulationData = simulationData;
-            simulationData.Robots.ForEach(robot => { if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot); });
+            robotsFinished = new bool[simulationData.Robots.Count];
+            previousOperations = new RobotOperation[simulationData.Robots.Count];
+            for (int i = 0; i < simulationData.Robots.Count; i++)
+            {
+                if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
+                if (simulationData.Robots[i].CurrentGoal is null) robotsFinished[i] = true;
+                else robotsFinished[i] = false;
+            }
+            simulationData.Robots.ForEach(robot =>
+            {
+                if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot);
+
+            });
             Goal.OnGoalsChanged();
             _plannedOperations = SimulationData.Robots.Select(FindPath).ToList();
         }
@@ -34,7 +48,7 @@ namespace RobotokModel.Model.Controllers
             return new AStarController();
         }
 
-        // TODO: Final Prototype : Better task assignments and operations for finished robots
+        // TODO: Final Prototype : last executed
         public void CalculateOperations(TimeSpan timeSpan)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
@@ -42,46 +56,52 @@ namespace RobotokModel.Model.Controllers
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
                 var operationQueue = _plannedOperations[i];
+                var robot = SimulationData.Robots[i];
                 if (operationQueue.Count == 0)
                 {
-                    if (SimulationData.Robots[i].CurrentGoal is null)
+                    if (robotsFinished[i])
                     {
-                        if (!_taskDistributor.AllTasksAssigned)
+                        SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                        result.Add(RobotOperation.Wait);
+                        continue;
+                    }
+                    if (robot.CurrentGoal is null)
+                    {
+                        if (_taskDistributor.AllTasksAssigned)
                         {
-                            _taskDistributor.AssignNewTask(SimulationData.Robots[i]);
-                            Goal.OnGoalsChanged();
-                        }
-                        else
-                        {
+                            robotsFinished[i] = true;
                             SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
                             result.Add(RobotOperation.Wait);
                             continue;
                         }
+                        else
+                        {
+                            _taskDistributor.AssignNewTask(SimulationData.Robots[i]);
+                            Goal.OnGoalsChanged();
 
-                    }
-                    _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
-                    if (_plannedOperations[i].Count > 0)
-                    {
-                        var nextOp = _plannedOperations[i].Dequeue();
-                        SimulationData.Robots[i].NextOperation = nextOp;
-                        result.Add(nextOp);
-                    }
-                    else
-                    {
-                        SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
-                        result.Add(RobotOperation.Wait);
-                    }
+                            _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
 
+                            if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
+                            var nextOp = _plannedOperations[i].Dequeue();
+                            previousOperations[i] = nextOp;
+
+                            SimulationData.Robots[i].NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
+                    }
                 }
                 else
                 {
-                    var nextOp = operationQueue.Dequeue();
+                    if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
+
+                    var nextOp = _plannedOperations[i].Dequeue();
+                    previousOperations[i] = nextOp;
+
                     SimulationData.Robots[i].NextOperation = nextOp;
                     result.Add(nextOp);
                 }
-
             }
-            OnTaskFinished(result.ToArray());
+            OnTaskFinished([.. result]);
         }
         #endregion
         #region Private Methods
@@ -220,7 +240,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is EmptyTile)
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && (SimulationData.Map[checkX, checkY] is EmptyTile || SimulationData.Map[checkX, checkY] is Robot))
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
