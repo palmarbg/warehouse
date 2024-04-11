@@ -29,6 +29,8 @@ namespace RobotokModel.Model.Executors
             {
                 simulationData.Robots[i].MovedThisTurn = false;
                 simulationData.Robots[i].InspectedThisTurn = false;
+                simulationData.Robots[i].BlockedThisTurn = false;
+
             }
             //Execute operations
             for (int i = 0; i < simulationData.Robots.Count; i++)
@@ -40,8 +42,8 @@ namespace RobotokModel.Model.Executors
         }
 
         /// <summary>
-        /// Moves the given robot
-        /// Moves all robots this robots new move is dependent on
+        /// Moves the given robot.
+        /// Moves all robots this robots new move is dependent on.
         /// </summary>
         /// <param name="robot"></param>
         /// <returns></returns>
@@ -56,15 +58,17 @@ namespace RobotokModel.Model.Executors
             {
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PositionInDirection(robot.Rotation);
-                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X <0)
+                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X < 0)
                     {
                         robot.MovedThisTurn = true;
+                        robot.BlockedThisTurn = true;
                         return false;
                     }
                     // robot is blocked by Block
                     if (simulationData.Map.GetAtPosition(newPos) is Block)
                     {
                         robot.MovedThisTurn = true;
+
                         return false;
                     }
                     //newPos is blocked by another robot
@@ -72,6 +76,7 @@ namespace RobotokModel.Model.Executors
                     {
                         if (blockingRobot.MovedThisTurn)
                         {
+                            robot.BlockedThisTurn = true;
                             robot.MovedThisTurn = true;
                             return false;
                         }
@@ -80,6 +85,7 @@ namespace RobotokModel.Model.Executors
                             // TODO: Check if robot was blocking original robots NewPos
                             if (startingRobot.Id == blockingRobot.Id)
                             {
+                                robot.BlockedThisTurn = true;
                                 robot.MovedThisTurn = true;
                                 return false;
                             }
@@ -91,6 +97,7 @@ namespace RobotokModel.Model.Executors
                             }
                             else
                             {
+                                robot.BlockedThisTurn = true;
                                 robot.MovedThisTurn = true;
                                 return false;
                             }
@@ -119,6 +126,7 @@ namespace RobotokModel.Model.Executors
                     }
                     else
                     {
+                        robot.BlockedThisTurn = true;
                         robot.MovedThisTurn = true;
                         return false;
                     }
@@ -129,7 +137,7 @@ namespace RobotokModel.Model.Executors
                     break;
                 case RobotOperation.CounterClockwise:
                     robot.Rotation = robot.Rotation.RotateCounterClockWise();
-                    robot.MovedThisTurn= true;
+                    robot.MovedThisTurn = true;
                     break;
                 case RobotOperation.Backward:
                     // TODO: Prototype 2
