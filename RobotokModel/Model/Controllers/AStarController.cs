@@ -246,7 +246,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1))
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX,checkY] is EmptyTile)
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
