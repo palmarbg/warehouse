@@ -61,5 +61,10 @@ namespace RobotokModel.Model
         
         public bool MovedThisTurn { get; set; } = false;
         public bool InspectedThisTurn { get; set;} = false;
+
+        public override string ToString()
+        {
+            return Position.ToString();
+        }
     }
 }
