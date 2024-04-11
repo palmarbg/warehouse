@@ -35,7 +35,7 @@ namespace RobotokModel.Model.Extensions
                 _ => throw new Exception()
             };
         }
-        public static (RobotOperation operation, int count) RotateTo(this Direction start, Direction end)
+        public static List<RobotOperation> RotateTo(this Direction start, Direction end)
         {
             switch (start)
             {
@@ -43,57 +43,58 @@ namespace RobotokModel.Model.Extensions
                     switch (end)
                     {
                         case Direction.Left:
-                            return (RobotOperation.Wait, 0);
+                            return new List<RobotOperation>();
                         case Direction.Up:
-                            return (RobotOperation.CounterClockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise };
                         case Direction.Right:
-                            return (RobotOperation.CounterClockwise, 2);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise, RobotOperation.CounterClockwise };
                         case Direction.Down:
-                            return (RobotOperation.Clockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.Clockwise };
                     }
                     break;
                 case Direction.Up:
                     switch (end)
                     {
                         case Direction.Left:
-                            return (RobotOperation.Clockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.Clockwise };
                         case Direction.Up:
-                            return (RobotOperation.Wait, 0);
+                            return new List<RobotOperation>();
                         case Direction.Right:
-                            return (RobotOperation.CounterClockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise };
                         case Direction.Down:
-                            return (RobotOperation.CounterClockwise, 2);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise, RobotOperation.CounterClockwise };
                     }
                     break;
                 case Direction.Right:
                     switch (end)
                     {
                         case Direction.Left:
-                            return (RobotOperation.CounterClockwise, 2);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise, RobotOperation.CounterClockwise };
                         case Direction.Up:
-                            return (RobotOperation.Clockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.Clockwise };
                         case Direction.Right:
-                            return (RobotOperation.Wait, 0);
+                            return new List<RobotOperation>();
                         case Direction.Down:
-                            return (RobotOperation.CounterClockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise };
                     }
                     break;
                 case Direction.Down:
                     switch (end)
                     {
                         case Direction.Left:
-                            return (RobotOperation.CounterClockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise };
                         case Direction.Up:
-                            return (RobotOperation.CounterClockwise, 2);
+                            return new List<RobotOperation> { RobotOperation.CounterClockwise, RobotOperation.CounterClockwise };
                         case Direction.Right:
-                            return (RobotOperation.Clockwise, 1);
+                            return new List<RobotOperation> { RobotOperation.Clockwise };
                         case Direction.Down:
-                            return (RobotOperation.Wait, 0);
+                            return new List<RobotOperation>();
                     }
                     break;
             }
-            return (RobotOperation.Wait, 0);
 
+            return new List<RobotOperation>(); 
         }
+
     }
 }
