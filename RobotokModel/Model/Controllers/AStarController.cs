@@ -60,12 +60,43 @@ namespace RobotokModel.Model.Controllers
             }
         }
         // TODO check nulls
+        // TODO dont check paths over and over again
         public void CalculateOperations(TimeSpan timeSpan)
         {
-            var result = _plannedOperations.Select(f => f.Dequeue()).ToArray();
-            for (int i = 0; i < SimulationData.Robots.Count; i++)
+            var result = new List<RobotOperation>();
+            for (int i = 0; i < _plannedOperations.Count; i++)
             {
-                SimulationData.Robots[i].NextOperation = result[i];
+                var operationQueue = _plannedOperations[i];
+                if (operationQueue.Count == 0)
+                {
+                    if (SimulationData.Robots[i].CurrentGoal is null)
+                    {
+                        SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                        result.Add(RobotOperation.Wait);
+                    }
+                    else
+                    {
+                        _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
+                        if (_plannedOperations[i].Count > 0)
+                        {
+                            var nextOp = _plannedOperations[i].Dequeue();
+                            SimulationData.Robots[i].NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
+                        else
+                        {
+                            SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                            result.Add(RobotOperation.Wait);
+                        }
+                    }
+                }
+                else
+                {
+                    var nextOp = operationQueue.Dequeue();
+                    SimulationData.Robots[i].NextOperation = nextOp;
+                    result.Add(nextOp);
+                }
+
             }
             OnTaskFinished(result.ToArray());
         }
@@ -117,7 +148,7 @@ namespace RobotokModel.Model.Controllers
                         neighbor.parent = current;
                         gScore[neighbor] = tentativeGScore;
                         fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
-                        if ( !openSet.Contains(neighbor))
+                        if (!openSet.Contains(neighbor))
                         {
                             openSet.Add(neighbor);
                         }
@@ -156,20 +187,21 @@ namespace RobotokModel.Model.Controllers
         }
         private Queue<RobotOperation> NodePathToRobotOperationList(List<Node> path)
         {
-            Queue<RobotOperation > Operations = new Queue<RobotOperation>();
+            Queue<RobotOperation> Operations = new Queue<RobotOperation>();
             var robot = SimulationData.Map.GetAtPosition(path[0].Position);
-            Direction currentDirection = Direction.Down;
-            if ( robot is not Robot)
+            Direction currentDirection = Direction.Right;
+            if (robot is not Robot)
             {
                 throw new Exception("Path does not start at a robot");
             }
             else
             {
-                currentDirection = ((Robot) robot).Rotation;
+                currentDirection = ((Robot)robot).Rotation;
             }
 
-            for (int i = 1; i < path.Count; i++) {
-                var startPos = path[i-1].Position;
+            for (int i = 1; i < path.Count; i++)
+            {
+                var startPos = path[i - 1].Position;
                 var endPos = path[i].Position;
                 var dir = startPos.DirectionInPosition(endPos);
                 if (dir == null)
@@ -179,8 +211,20 @@ namespace RobotokModel.Model.Controllers
                 else
                 {
                     var ops = currentDirection.RotateTo((Direction)dir);
-                    for (int j = 0;j < ops.Count; j++)
+                    for (int j = 0; j < ops.Count; j++)
                     {
+                        var op = ops[j];
+                        switch (op)
+                        {
+                            case RobotOperation.Clockwise:
+                                currentDirection = currentDirection.RotateClockWise();
+                                break;
+                            case RobotOperation.CounterClockwise:
+                                currentDirection = currentDirection.RotateCounterClockWise();
+                                break;
+                             default :
+                                break;
+                        }
                         Operations.Enqueue(ops[j]);
                     }
                     Operations.Enqueue(RobotOperation.Forward);
@@ -221,7 +265,7 @@ namespace RobotokModel.Model.Controllers
         {
             _taskDistributor = distributor;
             this.SimulationData = simulationData;
-            simulationData.Robots.ForEach(robot => { if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot);  });
+            simulationData.Robots.ForEach(robot => { if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot); });
             Goal.OnGoalsChanged();
             _plannedOperations = SimulationData.Robots.Select(FindPath).ToList();
             var asd = 0;
