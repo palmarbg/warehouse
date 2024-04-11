@@ -42,9 +42,9 @@ namespace RobotokModel.Model.Extensions
             {
                 if (start.Y == end.Y)
                     return null;
-                if (start.Y > end.Y)
-                    return Direction.Up;
                 if (start.Y < end.Y)
+                    return Direction.Up;
+                if (start.Y > end.Y)
                     return Direction.Down;
             }else if(start.Y == end.Y)
             {
