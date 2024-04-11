@@ -62,7 +62,7 @@ namespace RobotokModel.Persistence
         public List<Goal> Tasks { get; set; } = null!;
         public List<OperationError> Errors { get; set; } = null!;
         public List<Robot> Start { get; set; } = null!;
-    }
+    }    
     public class ExternalLog
     {
         public required string ActionModel { get; set; }

@@ -12,55 +12,13 @@ namespace RobotokModel.Persistence.DataAccesses
 {
     class LogDataAccess
     {
-        private Uri baseUri = null!;
-
+        
         public void SaveLog(Log log, string path)
         {
-
-            /*
-        public List<List<RobotOperation>> ActualPaths { get; set; } = null!;
-        public List<List<RobotOperation>> PlannerPaths { get; set; } = null!;
-
-        public List<List<TaskEvent>> Events { get; set; } = null!;
-        public List<Goal> Tasks { get; set; } = null!;
-        public List<OperationError> Errors { get; set; } = null!;
-        public List<Robot> Start { get; set; } = null!;
-             */
-
-            List<string> actualPaths = new List<string>();
-            List<string> plannedPaths = new List<string>();
-
-
-            ExternalLog externalLog = new ExternalLog
-            {
-                ActionModel = log.ActionModel,
-                AllValid = log.AllValid,
-                TeamSize = log.TeamSize,
-                NumTaskFinished = log.NumTaskFinished,
-                SumOfCost = log.SumOfCost,
-                MakeSpan = log.MakeSpan,
-                ActualPaths = actualPaths,
-                PlannerPaths = plannedPaths,
-                PlannerTimes = log.PlannerTimes,
-                Events = null!,
-                Tasks = null!,
-                Errors = null!,
-                Start = null!
-            };
-
-            var options = new JsonSerializerOptions();
-            options.PropertyNameCaseInsensitive = true;
-            options.Converters.Add(new JsonStringEnumConverter());
-
-
-            string fileName = path;
-            string jsonString = JsonSerializer.Serialize(externalLog ,options) ?? throw new NotImplementedException("Serialization of config file was unsuccesful!");
-            File.WriteAllText(fileName, jsonString);
+            throw new NotImplementedException(); // moved to SaveLogDataAccess
         }
-        public Log LoadLog(string path) // TODO: cleanup
+        public Log LoadLog(string path) // move this to LoadLogDataAccess
         {
-            var cucc = path;
-            baseUri = new(path);
             string jsonString = File.ReadAllText(path);
             var options = new JsonSerializerOptions();
             options.PropertyNameCaseInsensitive = true;
@@ -186,20 +144,15 @@ namespace RobotokModel.Persistence.DataAccesses
         }
         public Direction ToDirection(string rawDirection)
         {
-            switch (rawDirection)
+            return rawDirection switch
             {
-                case "W":
-                    return Direction.Left;
-                case "N":
-                    return Direction.Up;
-                case "E":
-                    return Direction.Right;
-                case "S":
-                    return Direction.Down;
-                default:
-                    throw new Exception("Parsing in direction was not succesful!");
-
-            }
+                "W" => Direction.Left,
+                "N" => Direction.Up,
+                "E" => Direction.Right,
+                "S" => Direction.Down,
+                _ => throw new Exception("Parsing in direction was not succesful!"),
+            };
         }
+
     }
 }
