@@ -98,6 +98,8 @@ namespace Robotok.ViewModel
             }
         }
 
+        public int Interval => Math.Min(_simulation.Interval, 500);
+
         #endregion
 
         #region Events

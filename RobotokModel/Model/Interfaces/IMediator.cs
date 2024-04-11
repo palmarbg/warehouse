@@ -18,6 +18,7 @@ namespace RobotokModel.Model.Interfaces
         public IController Controller { init; }
         public IExecutor Executor { init; }
         public ILogger Logger { init; }
+        public int Interval { get; }
 
         #endregion
 

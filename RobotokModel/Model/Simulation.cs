@@ -14,8 +14,9 @@ namespace RobotokModel.Model
     public class Simulation : ISimulation
     {
         #region Properties
-
+        public int Interval => Mediator.Interval;
         public SimulationData SimulationData => Mediator.SimulationData;
+        public SimulationState State => Mediator.SimulationState;
         public IMediator Mediator { get; private set; } = null!;
 
         #endregion

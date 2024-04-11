@@ -42,6 +42,7 @@ namespace RobotokModel.Model
         public ILogger Logger { private get => logger; init => logger = value; }
 
         public SimulationState SimulationState { get; private set; } = new SimulationState();
+        public int Interval => interval;
 
         #endregion
 
@@ -49,7 +50,7 @@ namespace RobotokModel.Model
         {
             this.simulation = simulation;
 
-            interval = 1000;
+            interval = 200;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,

@@ -29,6 +29,7 @@ namespace Robotok.View.Grid
     /// </summary>
     public partial class MapRobot : Canvas
     {
+        private MainWindowViewModel _viewModel = null!;
         public MapRobot()
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace Robotok.View.Grid
 
         public void SetDataContext(MainWindowViewModel viewModel)
         {
+            _viewModel = viewModel;
             this.DataContext = viewModel;
             viewModel.RobotsChanged += new EventHandler(AddRobots);
             viewModel.RobotsMoved += new EventHandler(RefreshRobots);
@@ -122,7 +124,7 @@ namespace Robotok.View.Grid
 
                     ThicknessAnimation marginAnimation = new(
                         new Thickness(GridConverterFunctions.unit * x, GridConverterFunctions.unit * y, 0, 0),
-                        new Duration(TimeSpan.FromSeconds(.5)))
+                        new Duration(TimeSpan.FromMilliseconds(_viewModel.Interval)))
                     {
                         From = grid.Margin
                     };
