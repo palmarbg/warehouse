@@ -3,6 +3,7 @@ using RobotokModel.Model.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -48,7 +49,7 @@ namespace RobotokModel.Model.Controllers
             return new AStarController();
         }
 
-        // TODO: Final Prototype : last executed
+        // TODO: Final Prototype : 
         public void CalculateOperations(TimeSpan timeSpan)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
@@ -62,6 +63,7 @@ namespace RobotokModel.Model.Controllers
                     if (robotsFinished[i])
                     {
                         SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                        previousOperations[i] = RobotOperation.Wait;
                         result.Add(RobotOperation.Wait);
                         continue;
                     }
@@ -71,6 +73,7 @@ namespace RobotokModel.Model.Controllers
                         {
                             robotsFinished[i] = true;
                             SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                            previousOperations[i] = RobotOperation.Wait;
                             result.Add(RobotOperation.Wait);
                             continue;
                         }
@@ -80,11 +83,7 @@ namespace RobotokModel.Model.Controllers
                             Goal.OnGoalsChanged();
 
                             _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
-
-                            if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
-                            var nextOp = _plannedOperations[i].Dequeue();
-                            previousOperations[i] = nextOp;
-
+                            var nextOp = NextOperation(i, robot);
                             SimulationData.Robots[i].NextOperation = nextOp;
                             result.Add(nextOp);
                         }
@@ -92,16 +91,39 @@ namespace RobotokModel.Model.Controllers
                 }
                 else
                 {
-                    if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
-
-                    var nextOp = _plannedOperations[i].Dequeue();
-                    previousOperations[i] = nextOp;
-
+                    RobotOperation nextOp;
+                    if (robot.BlockedThisTurn)
+                    {
+                        nextOp = previousOperations[i];
+                    }
+                    else
+                    {
+                        nextOp = NextOperation(i, robot);
+                    }
                     SimulationData.Robots[i].NextOperation = nextOp;
                     result.Add(nextOp);
                 }
             }
             OnTaskFinished([.. result]);
+        }
+
+        private RobotOperation NextOperation(int i, Robot robot)
+        {
+            if (robot.InspectedThisTurn && !robot.MovedThisTurn) { _plannedOperations[i].Enqueue(previousOperations[i]); }
+            if (_plannedOperations[i].Count == 0)
+            {
+                robotsFinished[i] = true;
+                if (robot.CurrentGoal is not null)
+                {
+                    robot.CurrentGoal.IsAssigned = false;
+                    robot.CurrentGoal = null;
+                }
+                return RobotOperation.Wait;
+            }
+
+            var nextOp = _plannedOperations[i].Dequeue();
+            previousOperations[i] = nextOp;
+            return nextOp;
         }
         #endregion
         #region Private Methods
