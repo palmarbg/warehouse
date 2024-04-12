@@ -42,7 +42,12 @@ namespace RobotokModel.Persistence.DataAccesses
 
         public RobotOperation[] GetRobotOperations(int step)
         {
-            return log.ActualPaths[step].ToArray();
+            List<RobotOperation> operations = new List<RobotOperation>();
+            foreach(List<RobotOperation> robotPath in log.ActualPaths)
+            {
+                operations.Add(robotPath[step]);
+            }
+            return operations.ToArray();
         }
 
         public TaskEvent[] GetTaskEvents()
