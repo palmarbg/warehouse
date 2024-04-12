@@ -13,6 +13,7 @@ namespace RobotokModel.Model.Controllers
         public event EventHandler<IControllerEventArgs>? FinishedTask;
         private ITaskDistributor _taskDistributor = null!;
         private SimulationData? SimulationData;
+        
         public string Name => "simple";
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {

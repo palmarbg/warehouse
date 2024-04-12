@@ -42,6 +42,7 @@ namespace RobotokModel.Model
         public ILogger Logger { private get => logger; init => logger = value; }
 
         public SimulationState SimulationState { get; private set; } = new SimulationState();
+        public int Interval => interval;
 
         #endregion
 
@@ -49,7 +50,7 @@ namespace RobotokModel.Model
         {
             this.simulation = simulation;
 
-            interval = 1000;
+            interval = 200;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,
@@ -60,11 +61,11 @@ namespace RobotokModel.Model
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\simple_test_config.json");
+            dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
 
             SimulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new SimpleController();
+            controller = new AStarController();
             taskDistributor = new DemoDistributor(SimulationData);
             executor = new DefaultExecutor(SimulationData);
             Controller.InitializeController(SimulationData, TimeSpan.FromSeconds(6), taskDistributor);
