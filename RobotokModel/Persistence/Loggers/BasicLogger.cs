@@ -51,7 +51,7 @@ namespace RobotokModel.Persistence.Loggers
             }
             log.MakeSpan = log.ActualPaths[0].Count;
             log.SumOfCost = log.ActualPaths.Count * log.ActualPaths[0].Count;
-            dataAccess.SaveLog(log, path);
+            dataAccess.SaveLogData(path, log);
         }
         public void LogTimeout()
         {
