@@ -12,7 +12,7 @@ namespace RobotokModel.Persistence.Loggers
 {
     class BasicLogger : ILogger
     {
-        private LogDataAccess dataAccess = new LogDataAccess();
+        private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
         private Log log = new Log();
         private int round = 0;
         public BasicLogger(string actionModel, int teamSize, SimulationData simulationData)
