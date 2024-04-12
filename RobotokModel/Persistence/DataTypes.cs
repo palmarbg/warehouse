@@ -11,6 +11,7 @@ namespace RobotokModel.Persistence
     {
         public int robotId1;
         public int robotId2;
+        public int round;
         public OperationErrorType errorType;
     }
 
@@ -26,6 +27,12 @@ namespace RobotokModel.Persistence
 
     public struct TaskEvent
     {
+        public TaskEvent(int taskId, int robotId, TaskEventType eventType)
+        {
+            this.taskId = taskId;
+            this.robotId = robotId;
+            this.eventType = eventType;
+        }
         public int taskId;
         public int robotId;
         public TaskEventType eventType;
@@ -40,23 +47,37 @@ namespace RobotokModel.Persistence
         public required int NumTasksReveal { get; set; }
         public required string TaskAssignmentStrategy { get; set; }
     }
-
     public class Log
     {
         public string ActionModel { get; set; } = null!;
         public string AllValid { get; set; } = null!;
         public int TeamSize { get; set; }
-        public List<List<Object>> Start { get; set; } = null!;
         public int NumTaskFinished { get; set; }
         public int SumOfCost { get; set; }
         public int MakeSpan { get; set; }
-        public List<string> ActualPaths { get; set; } = null!;
-        public List<string> PlannerPaths { get; set; } = null!;
+        public List<List<RobotOperation>> ActualPaths { get; set; } = null!;
+        public List<List<RobotOperation>> PlannerPaths { get; set; } = null!;
         public List<float> PlannerTimes { get; set; } = null!;
-        public List<Object> Errors { get; set; } = null!;
-        public List<List<List<Object>>> Events { get; set; } = null!;
-        public List<List<int>> Tasks { get; set; } = null!;
-
+        public List<List<TaskEvent>> Events { get; set; } = null!;
+        public List<Goal> Tasks { get; set; } = null!;
+        public List<OperationError> Errors { get; set; } = null!;
+        public List<Robot> Start { get; set; } = null!;
+    }    
+    public class ExternalLog
+    {
+        public required string ActionModel { get; set; }
+        public required string AllValid { get; set; }
+        public required int TeamSize { get; set; }
+        public required int NumTaskFinished { get; set; }
+        public required int SumOfCost { get; set; }
+        public required int MakeSpan { get; set; }
+        public required List<string> ActualPaths { get; set; }
+        public required List<string> PlannerPaths { get; set; }
+        public required List<float> PlannerTimes { get; set; }
+        public required List<List<Object>> Errors { get; set; }
+        public required List<List<List<Object>>> Events { get; set; }
+        public required List<List<Object>> Start { get; set; }
+        public required List<List<int>> Tasks { get; set; }
     }
 
 }

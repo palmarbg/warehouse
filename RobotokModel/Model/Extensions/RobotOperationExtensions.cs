@@ -42,6 +42,7 @@ namespace RobotokModel.Model.Extensions
                 'C' => RobotOperation.CounterClockwise,
                 'R' => RobotOperation.Clockwise,
                 'B' => RobotOperation.Backward,
+                'T' => RobotOperation.Wait,
                 _ => throw new Exception(),
             };
         }

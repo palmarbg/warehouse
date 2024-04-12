@@ -10,7 +10,7 @@ namespace RobotokModel.Persistence.Loggers
 {
     class TestLogger : ILogger
     {
-        public Task SaveLog(string path)
+        public void SaveLog(string path)
         {
             throw new NotImplementedException();
         }
@@ -26,7 +26,8 @@ namespace RobotokModel.Persistence.Loggers
         public void LogStep(
         RobotOperation[] controllerOperations,
         RobotOperation[] robotOperations,
-        OperationError[] errors
+        OperationError[] errors,
+        float timeElapsed
         )
         {
             throw new NotImplementedException();

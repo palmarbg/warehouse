@@ -14,7 +14,7 @@ namespace RobotokModel.Model
 
     public enum RobotOperation
     {
-        Forward, Clockwise, CounterClockwise, Backward, Wait
+        Forward, Clockwise, CounterClockwise, Backward, Wait, Timeout
     }
 
     public struct Position
