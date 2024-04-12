@@ -2,6 +2,7 @@
 using RobotokModel.Model.Distributors;
 using RobotokModel.Model.Executors;
 using RobotokModel.Model.Interfaces;
+using RobotokModel.Model.Mediators;
 using RobotokModel.Persistence;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
@@ -53,7 +54,7 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            Mediator = new Mediator(this);
+            Mediator = new ReplayMediator(this);
         }
 
         #endregion
