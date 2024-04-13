@@ -132,6 +132,7 @@ namespace RobotokModel.Model.Executors
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
                         simulationData.Goals.Remove(robot.CurrentGoal);
+                        OnTaskFinished(robot.CurrentGoal.Id,robot.Id);
                         robot.CurrentGoal = null;
                         Goal.OnGoalsChanged();
                         //TODO: Robotnak új goal-t kell adni
@@ -197,6 +198,11 @@ namespace RobotokModel.Model.Executors
             OnTimeout();
         }
 
+        public void TaskAssigned(int taskId, int robotId)
+        {
+            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
+        }
+
         public void SaveSimulation(string filepath)
         {
             logger.SaveLog(filepath);
@@ -204,14 +210,9 @@ namespace RobotokModel.Model.Executors
 
         #region Private methods
 
-        private void OnTaskFinished(int taskId, int step, int robotId)
+        private void OnTaskFinished(int taskId, int robotId)
         {
-            logger.LogEvent(new(taskId, step, TaskEventType.finished), robotId);
-        }
-
-        private void OnTaskAssigned(int taskId, int step, int robotId)
-        {
-            logger.LogEvent(new(taskId, step, TaskEventType.assigned), robotId);
+            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.finished), robotId);
         }
 
         private void OnWallHit(int robotId)

@@ -76,6 +76,8 @@ namespace RobotokModel.Model.Mediators
             simulationState.IsSimulationRunning = true;
             simulationState.IsSimulationEnded = false;
 
+            taskDistributor.TaskAssigned += new EventHandler<(Robot, Goal)>((_, robotAndGoal) => OnTaskAssigned(robotAndGoal.Item1.Id, robotAndGoal.Item2.Id));
+
             controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
             {
                 if (controller != sender)
@@ -145,6 +147,15 @@ namespace RobotokModel.Model.Mediators
             simulationData.Step++;
 
             simulation.OnRobotsMoved();
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected virtual void OnTaskAssigned(int robotId, int taskId)
+        {
+            
         }
 
         #endregion

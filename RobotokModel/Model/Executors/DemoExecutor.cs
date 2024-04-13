@@ -43,6 +43,11 @@ namespace RobotokModel.Model.Executors
             throw new NotImplementedException();
         }
 
+        public void TaskAssigned(int taskId, int robotId)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Timeout()
         {
             throw new NotImplementedException();

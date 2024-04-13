@@ -85,5 +85,14 @@ namespace RobotokModel.Model.Mediators
         }
 
         #endregion
+
+        #region Protected methods
+
+        protected override void OnTaskAssigned(int robotId, int taskId)
+        {
+            executor.TaskAssigned(taskId, robotId);
+        }
+
+        #endregion
     }
 }

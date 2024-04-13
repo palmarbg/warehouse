@@ -40,6 +40,11 @@ namespace RobotokModel.Model.Mediators.ReplayMediatorUtils
             throw new NotImplementedException();
         }
 
+        public void TaskAssigned(int taskId, int robotId)
+        {
+            
+        }
+
         public void Timeout()
         {
             

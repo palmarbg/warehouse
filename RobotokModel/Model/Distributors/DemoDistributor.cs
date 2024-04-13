@@ -12,6 +12,7 @@ namespace RobotokModel.Model.Distributors
     {
         private SimulationData simulationData;
         private int iterator = 0;
+        public event EventHandler<(Robot, Goal)>? TaskAssigned;
         public DemoDistributor(SimulationData simulationData)
         {
             this.simulationData = simulationData;
@@ -36,6 +37,7 @@ namespace RobotokModel.Model.Distributors
 
                 robot.CurrentGoal = goal;
                 goal.IsAssigned = true;
+                OnTaskAssigned(robot);
 
                 return;
             }
@@ -45,6 +47,11 @@ namespace RobotokModel.Model.Distributors
         public ITaskDistributor NewInstance(SimulationData simulationData)
         {
             return new DemoDistributor(simulationData);
+        }
+
+        private void OnTaskAssigned(Robot robot)
+        {
+            TaskAssigned?.Invoke(null, (robot, robot.CurrentGoal!));
         }
     }
 }

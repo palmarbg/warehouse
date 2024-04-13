@@ -31,5 +31,7 @@ namespace RobotokModel.Model.Interfaces
         public IExecutor NewInstance(SimulationData simulationData);
 
         public void SaveSimulation(string filepath);
+        void TaskAssigned(int taskId, int robotId);
+
     }
 }
