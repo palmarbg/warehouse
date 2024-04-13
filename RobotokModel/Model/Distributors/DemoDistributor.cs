@@ -27,6 +27,7 @@ namespace RobotokModel.Model.Distributors
         /// <param name="robot"></param>
         public void AssignNewTask(Robot robot)
         {
+            Debug.WriteLine(simulationData.Goals.Count);
             while (iterator < simulationData.Goals.Count)
             {
                 Goal goal = simulationData.Goals[iterator];

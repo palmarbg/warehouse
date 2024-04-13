@@ -25,9 +25,9 @@ namespace RobotokModel.Model.Mediators
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            IDataAccess mapDataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");
+            IDataAccess mapDataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");//random_20_config
             //dataAccess = new MockLoadLogDataAccess();
-            dataAccess = new LoadLogDataAccess(path + "sample_files\\random_20_log.json", mapDataAccess);
+            dataAccess = new LoadLogDataAccess(path + "sample_files\\random_20_log.json", mapDataAccess);//random_20_log
 
             simulationData = dataAccess.GetInitialSimulationData();
 

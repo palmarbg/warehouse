@@ -46,7 +46,7 @@ namespace RobotokModel.Model.Mediators
         {
             this.simulation = simulation;
 
-            interval = 100;
+            interval = 500;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,

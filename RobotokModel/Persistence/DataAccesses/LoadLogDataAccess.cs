@@ -157,7 +157,7 @@ namespace RobotokModel.Persistence.DataAccesses
                 Goal g = new Goal
                 {
                     Id = task[0],
-                    Position = new Position { X = task[2], Y = task[1] },
+                    Position = new Position { X = task[2], Y = task[1] },//it has to be in this order!!!
                 };
                 log.Tasks.Add(g);
             }

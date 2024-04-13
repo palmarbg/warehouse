@@ -54,7 +54,7 @@ namespace RobotokModel.Model
 
             Goal.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
 
-            Mediator = new SimulationMediator(this);
+            Mediator = new ReplayMediator(this);
         }
 
         #endregion

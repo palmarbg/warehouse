@@ -39,7 +39,7 @@ namespace RobotokModel.Persistence.Loggers
                 });
             }
 
-            log.Tasks = simulationData.Goals;
+            
 
 
             // LogEvent()
@@ -59,6 +59,7 @@ namespace RobotokModel.Persistence.Loggers
         }
         public void SaveLog(string path)
         {
+            log.Tasks = simulationData.Goals;
             log.AllValid = !log.Errors.All(e=>e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
             foreach(List<TaskEvent> events in log.Events)

@@ -59,8 +59,8 @@ namespace RobotokModel.Persistence.DataAccesses
             {
                 externalLog.Tasks.Add(new([
                     goal.Id,
-                    goal.Position.X,
-                    goal.Position.Y
+                    goal.Position.Y,
+                    goal.Position.X //it has to be in this order!!!
                 ]));
             }
 
