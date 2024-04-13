@@ -58,22 +58,12 @@ namespace RobotokModel.Persistence.DataAccesses
             return operations.ToArray();
         }
 
-        public TaskEvent[] GetTaskEvents()
+        public List<TaskEvent[]> GetTaskEvents()
         {
-            int i = 0;
-            int count = 0;
-            foreach(List<TaskEvent> t in log.Events)
+            List<TaskEvent[]> taskEvents = new ();
+            for (int i = 0; i < log.Events.Count; i++)
             {
-                count += t.Count;
-            }
-            TaskEvent[] taskEvents = new TaskEvent[count];
-            foreach (List<TaskEvent> ts in log.Events)
-            {
-                foreach (TaskEvent task in ts)
-                {
-                    taskEvents[i] = task;
-                    i++;
-                }
+                taskEvents.Add(log.Events[i].ToArray());
             }
             return taskEvents;
         }

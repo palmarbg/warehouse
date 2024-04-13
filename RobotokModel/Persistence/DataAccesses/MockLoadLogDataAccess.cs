@@ -14,7 +14,7 @@ namespace RobotokModel.Persistence.DataAccesses
         
         private readonly DemoDataAccess _demoDataAccess;
         private readonly List<RobotOperation[]> _robotOperations;
-        private readonly TaskEvent[] _taskEvents;
+        private readonly List<TaskEvent[]> _taskEvents;
 
         #endregion
         public MockLoadLogDataAccess()
@@ -27,7 +27,7 @@ namespace RobotokModel.Persistence.DataAccesses
                 ];
             _robotOperations = Enumerable.Repeat(robotOperations, 15).ToList();
 
-            _taskEvents = [new(0, 0, TaskEventType.assigned)];
+            _taskEvents = [[new(0, 0, TaskEventType.assigned)], [], []];
         }
         public SimulationData GetInitialSimulationData()
         {
@@ -41,11 +41,17 @@ namespace RobotokModel.Persistence.DataAccesses
             return robotOperations;
         }
 
-        public TaskEvent[] GetTaskEvents()
+        public List<TaskEvent[]> GetTaskEvents()
         {
-            TaskEvent[] taskEvents = new TaskEvent[_taskEvents.Length];
-            Array.Copy(_taskEvents, taskEvents, _taskEvents.Length);
-            return taskEvents;
+            List<TaskEvent[]> toreturn = new List<TaskEvent[]>();
+            for (int i = 0; i < _taskEvents.Count; i++)
+            {
+                TaskEvent[] taskEvents = new TaskEvent[_taskEvents[i].Length];
+                Array.Copy(_taskEvents[i], taskEvents, _taskEvents[i].Length);
+                toreturn.Add(taskEvents);
+            }
+            
+            return toreturn;
         }
 
         public IDataAccess NewInstance(string filePath)

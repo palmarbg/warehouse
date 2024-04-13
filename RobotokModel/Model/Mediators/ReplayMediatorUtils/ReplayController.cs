@@ -14,8 +14,8 @@ namespace RobotokModel.Model.Mediators.ReplayMediatorUtils
     {
         private readonly ILoadLogDataAccess loadLogDataAccess = null!;
         private SimulationData simulationData = null!;
-        private TaskEvent[] taskEvents;
-        private int taskEventIterator = 0;
+        private List<TaskEvent[]> taskEvents;
+        private int[] taskEventIterator = null!;
         public string Name => "ReplayController";
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
@@ -28,20 +28,25 @@ namespace RobotokModel.Model.Mediators.ReplayMediatorUtils
 
         public void CalculateOperations(TimeSpan timeSpan)
         {
-            while(taskEventIterator < taskEvents.Length && taskEvents[taskEventIterator].step <= simulationData.Step)
+            for(int i = 0; i < taskEventIterator.Length; i++)
             {
-                TaskEvent taskEvent = taskEvents[taskEventIterator];
-                Goal goal = simulationData.Goals[taskEvent.taskId];
-                goal.IsAssigned = taskEvent.eventType == TaskEventType.assigned;
-                Goal.OnGoalsChanged();
-                taskEventIterator++;
+                while (taskEventIterator[i] < taskEvents[i].Length && taskEvents[i][taskEventIterator[i]].step <= simulationData.Step)
+                {
+                    TaskEvent taskEvent = taskEvents[i][taskEventIterator[i]];
+                    Goal goal = simulationData.Goals[taskEvent.taskId];
+                    goal.IsAssigned = taskEvent.eventType == TaskEventType.assigned;
+                    Goal.OnGoalsChanged();
+                    taskEventIterator[i]++;
+                }
             }
+            
             OnTaskFinished(loadLogDataAccess.GetRobotOperations(simulationData.Step));
         }
 
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {
             this.simulationData = simulationData;
+            taskEventIterator = Enumerable.Repeat(0, simulationData.Robots.Count).ToArray();
         }
 
         public IController NewInstance()

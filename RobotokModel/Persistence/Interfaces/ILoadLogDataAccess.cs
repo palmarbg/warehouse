@@ -19,7 +19,7 @@ namespace RobotokModel.Persistence.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <returns>All task events</returns>
-        TaskEvent[] GetTaskEvents();
+        /// <returns>Task events of each robot</returns>
+        List<TaskEvent[]> GetTaskEvents();
     }
 }
