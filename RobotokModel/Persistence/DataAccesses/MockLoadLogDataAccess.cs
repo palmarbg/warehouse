@@ -22,9 +22,12 @@ namespace RobotokModel.Persistence.DataAccesses
             _demoDataAccess = new DemoDataAccess("");
 
             RobotOperation[] robotOperations = Enumerable.Repeat<RobotOperation>(RobotOperation.Forward, 3).ToArray();
+            robotOperations = [
+                RobotOperation.Forward, RobotOperation.Clockwise, RobotOperation.CounterClockwise
+                ];
             _robotOperations = Enumerable.Repeat(robotOperations, 15).ToList();
 
-            _taskEvents = new TaskEvent[0];
+            _taskEvents = [new(0, 0, TaskEventType.assigned)];
         }
         public SimulationData GetInitialSimulationData()
         {

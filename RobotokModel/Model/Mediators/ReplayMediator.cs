@@ -2,6 +2,7 @@
 using RobotokModel.Model.Distributors;
 using RobotokModel.Model.Executors;
 using RobotokModel.Model.Interfaces;
+using RobotokModel.Model.Mediators.ReplayMediatorUtils;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
 using System;
@@ -24,14 +25,15 @@ namespace RobotokModel.Model.Mediators
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            //dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
-            dataAccess = new MockLoadLogDataAccess();
+            IDataAccess mapDataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");
+            //dataAccess = new MockLoadLogDataAccess();
+            dataAccess = new LoadLogDataAccess(path + "sample_files\\random_20_log.json", mapDataAccess);
 
             simulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new AStarController();
-            taskDistributor = new DemoDistributor(simulationData);
-            executor = new DefaultExecutor(simulationData);
+            controller = new ReplayController((ILoadLogDataAccess)dataAccess);
+            taskDistributor = new ReplayDistributor();
+            executor = new ReplayExecutor(simulationData);
             controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
 
         }

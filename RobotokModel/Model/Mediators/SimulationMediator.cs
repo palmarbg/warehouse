@@ -14,7 +14,7 @@ using System.Timers;
 
 namespace RobotokModel.Model.Mediators
 {
-    internal class Mediator : AbstractMediator, ISimulationMediator
+    internal class SimulationMediator : AbstractMediator, ISimulationMediator
     {
         #region Private fields
 
@@ -33,7 +33,7 @@ namespace RobotokModel.Model.Mediators
 
         #region Constructor
 
-        public Mediator(Simulation simulation) : base(simulation)
+        public SimulationMediator(Simulation simulation) : base(simulation)
         {
             
             Timer.Elapsed += (_, _) => StepSimulation();

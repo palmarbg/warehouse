@@ -44,7 +44,7 @@ namespace RobotokModel.Model.Mediators
         {
             this.simulation = simulation;
 
-            interval = 200;
+            interval = 100;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,
@@ -141,6 +141,8 @@ namespace RobotokModel.Model.Mediators
 
             executor.ExecuteOperations(e.robotOperations);
             simulationState.IsExecutingMoves = false;
+
+            simulationData.Step++;
 
             simulation.OnRobotsMoved();
         }

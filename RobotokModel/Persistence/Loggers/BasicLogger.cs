@@ -74,7 +74,8 @@ namespace RobotokModel.Persistence.Loggers
         }
         public void LogEvent(TaskEvent taskEvent)
         {
-            log.Events[taskEvent.robotId].Add(taskEvent);
+            //log.Events[taskEvent.robotId].Add(taskEvent);
+            log.Events[taskEvent.step].Add(taskEvent);
         }
 
         public void LogStep(

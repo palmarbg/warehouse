@@ -27,14 +27,14 @@ namespace RobotokModel.Persistence
 
     public struct TaskEvent
     {
-        public TaskEvent(int taskId, int robotId, TaskEventType eventType)
+        public TaskEvent(int taskId, int step, TaskEventType eventType)
         {
             this.taskId = taskId;
-            this.robotId = robotId;
+            this.step = step;
             this.eventType = eventType;
         }
         public int taskId;
-        public int robotId;
+        public int step;
         public TaskEventType eventType;
     }
 
