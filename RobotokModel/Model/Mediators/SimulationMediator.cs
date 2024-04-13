@@ -4,6 +4,7 @@ using RobotokModel.Model.Executors;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
+using RobotokModel.Persistence.Loggers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,15 +22,6 @@ namespace RobotokModel.Model.Mediators
         protected ILogger logger = null!;
 
         #endregion
-        #region Properties
-
-        public IDataAccess DataAccess { init => dataAccess = value; }
-        public ITaskDistributor TaskDistributor { init => taskDistributor = value; }
-        public IController Controller { init => controller = value; }
-        public IExecutor Executor { init => executor = value; }
-        public ILogger Logger { init => logger = value; }
-
-        #endregion
 
         #region Constructor
 
@@ -40,16 +32,27 @@ namespace RobotokModel.Model.Mediators
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("Robotok"));
-            //dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
-            dataAccess = new MockLoadLogDataAccess();
+            dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 
             controller = new AStarController();
             taskDistributor = new DemoDistributor(simulationData);
-            executor = new DefaultExecutor(simulationData);
+            
+            ILogger logger = new BasicLogger(simulationData);
+            executor = new DefaultExecutor(simulationData, logger);
+
             controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
 
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void SaveSimulation(string filepath)
+        {
+            //save
         }
 
         #endregion
@@ -78,6 +81,7 @@ namespace RobotokModel.Model.Mediators
         {
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             executor.Timeout();
+            simulationData.Step++;
         }
 
         #endregion

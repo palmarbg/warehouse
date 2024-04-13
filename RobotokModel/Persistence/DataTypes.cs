@@ -9,6 +9,13 @@ namespace RobotokModel.Persistence
 {
     public struct OperationError
     {
+        public OperationError(int robotId1, int robotId2, int round, OperationErrorType errorType)
+        {
+            this.robotId1 = robotId1;
+            this.robotId2 = robotId2;
+            this.round = round;
+            this.errorType = errorType;
+        }
         public int robotId1;
         public int robotId2;
         public int round;

@@ -1,5 +1,7 @@
 ﻿using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
+using RobotokModel.Persistence;
+using RobotokModel.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,15 +9,21 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RobotokModel.Model.Executors
 {
     public class DefaultExecutor : IExecutor
     {
         private readonly SimulationData simulationData;
-        public DefaultExecutor(SimulationData simulationData)
+        private readonly ILogger logger;
+        private List<OperationError> errors = null!;
+
+        public ILogger Logger => logger;
+        public DefaultExecutor(SimulationData simulationData, ILogger logger)
         {
             this.simulationData = simulationData;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -24,6 +32,7 @@ namespace RobotokModel.Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
         {
+            errors = new List<OperationError>();
             // Reset MovedThisTurn
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
@@ -32,11 +41,24 @@ namespace RobotokModel.Model.Executors
                 simulationData.Robots[i].BlockedThisTurn = false;
 
             }
+
+            RobotOperation[] executedOperations = new RobotOperation[robotOperations.Length];
+
             //Execute operations
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
-                MoveRobot(simulationData.Robots[i], simulationData.Robots[i]);
+                Robot robot = simulationData.Robots[i];
+                MoveRobot(robot, robot);
+                if (robot.BlockedThisTurn)
+                {
+                    executedOperations[i] = RobotOperation.Wait;
+                } else
+                {
+                    executedOperations[i] = robotOperations[i];
+                }
             }
+
+            OnStepFinished(robotOperations, executedOperations, errors.ToArray(), 0.5f);
 
             return robotOperations;
         }
@@ -46,7 +68,7 @@ namespace RobotokModel.Model.Executors
         /// Moves all robots this robots new move is dependent on.
         /// </summary>
         /// <param name="robot"></param>
-        /// <returns></returns>
+        /// <returns>did the robot move</returns>
         //TODO aktuális mozgások logolása
         //TODO Robotok körbe akarnak menni, akkor beakadnak
         private bool MoveRobot(Robot robot, Robot startingRobot)
@@ -62,13 +84,14 @@ namespace RobotokModel.Model.Executors
                     {
                         robot.MovedThisTurn = true;
                         robot.BlockedThisTurn = true;
+                        OnWallHit(robot.Id);
                         return false;
                     }
                     // robot is blocked by Block
                     if (simulationData.Map.GetAtPosition(newPos) is Block)
                     {
                         robot.MovedThisTurn = true;
-
+                        OnWallHit(robot.Id);
                         return false;
                     }
                     //newPos is blocked by another robot
@@ -78,6 +101,7 @@ namespace RobotokModel.Model.Executors
                         {
                             robot.BlockedThisTurn = true;
                             robot.MovedThisTurn = true;
+                            OnRobotCrash(robot.Id, blockingRobot.Id);
                             return false;
                         }
                         else
@@ -99,6 +123,7 @@ namespace RobotokModel.Model.Executors
                             {
                                 robot.BlockedThisTurn = true;
                                 robot.MovedThisTurn = true;
+                                OnRobotCrash(robot.Id, blockingRobot.Id);
                                 return false;
                             }
                         }
@@ -126,9 +151,10 @@ namespace RobotokModel.Model.Executors
                     }
                     else
                     {
-                        robot.BlockedThisTurn = true;
-                        robot.MovedThisTurn = true;
-                        return false;
+                        throw new Exception();
+                        //robot.BlockedThisTurn = true;
+                        //robot.MovedThisTurn = true;
+                        //return false;
                     }
                 //break;
                 case RobotOperation.Clockwise:
@@ -164,12 +190,57 @@ namespace RobotokModel.Model.Executors
 
         public IExecutor NewInstance(SimulationData simulationData)
         {
-            return new DefaultExecutor(simulationData);
+            return new DefaultExecutor(simulationData, logger.NewInstance(simulationData));
         }
 
         public void Timeout()
         {
-            //throw new NotImplementedException();
+            OnTimeout();
         }
+
+        #region Private methods
+
+        private void OnTaskFinished(int taskId, int step)
+        {
+            logger.LogEvent(new(taskId, step, TaskEventType.finished));
+        }
+
+        private void OnTaskAssigned(int taskId, int step)
+        {
+            logger.LogEvent(new(taskId, step, TaskEventType.assigned));
+        }
+
+        private void OnWallHit(int robotId)
+        {
+            errors.Add(new(robotId, -1, simulationData.Step, OperationErrorType.wallhit));
+        }
+
+        private void OnTimeout()
+        {
+            logger.LogTimeout();
+            errors.Add(new(-1, -1, simulationData.Step, OperationErrorType.timeout));
+        }
+
+        private void OnRobotCrash(int robotId1, int robotId2)
+        {
+            errors.Add(new(robotId1, robotId2, simulationData.Step, OperationErrorType.collision));
+        }
+
+        private void OnStepFinished(
+            RobotOperation[] controllerOperations,
+            RobotOperation[] robotOperations,
+            OperationError[] errors,
+            float timeElapsed
+        )
+        {
+            logger.LogStep(
+                controllerOperations,
+                robotOperations,
+                errors,
+                timeElapsed
+            );
+        }
+
+        #endregion
     }
 }

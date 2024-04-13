@@ -41,6 +41,7 @@ namespace RobotokModel.Model
         public required List<Goal> Goals;
         public required List<Robot> Robots;
         public required string DistributorName;
+        public string? ControllerName;
         public required int RevealedTaskCount;
         public int Step { get; set; } = 0;
     }

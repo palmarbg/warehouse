@@ -46,5 +46,7 @@ namespace RobotokModel.Persistence.Interfaces
         /// </summary>
         /// <param name="taskEvent"></param>
         void LogEvent(TaskEvent taskEvent);
+
+        ILogger NewInstance(SimulationData simulationData);
     }
 }

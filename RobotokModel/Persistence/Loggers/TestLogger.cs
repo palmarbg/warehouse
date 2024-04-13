@@ -32,5 +32,10 @@ namespace RobotokModel.Persistence.Loggers
         {
             throw new NotImplementedException();
         }
+
+        public ILogger NewInstance(SimulationData simulationData)
+        {
+            return new TestLogger();
+        }
     }
 }

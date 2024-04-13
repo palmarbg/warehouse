@@ -14,9 +14,14 @@ namespace RobotokModel.Persistence.Loggers
     {
         private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
         private Log log = new Log();
-        private int round = 0;
-        public BasicLogger(string actionModel, int teamSize, SimulationData simulationData)
+        private SimulationData simulationData;
+        public BasicLogger(SimulationData simulationData)
         {
+            string actionModel = simulationData.ControllerName ?? string.Empty;
+            int teamSize = simulationData.Robots.Count;
+
+            this.simulationData = simulationData;
+
             // Konstruktorból inicializálva
             log.ActionModel = actionModel;
             log.TeamSize = teamSize;
@@ -26,14 +31,16 @@ namespace RobotokModel.Persistence.Loggers
 
             // LogEvent()
             log.Events = new List<List<TaskEvent>>();
-            for(int i = 0; i < teamSize; i++)
-            {
-                log.Events.Add(new List<TaskEvent>());
-            }
-
             // LogStep() vagy LogTimeOut()
             log.PlannerPaths = new List<List<RobotOperation>>();
             log.ActualPaths = new List<List<RobotOperation>>();
+            for (int i = 0; i < teamSize; i++)
+            {
+                log.Events.Add(new List<TaskEvent>());
+                log.PlannerPaths.Add(new List<RobotOperation>());
+                log.ActualPaths.Add(new List<RobotOperation>());
+            }
+
             log.Errors = new List<OperationError>();
             log.PlannerTimes = new List<float>();
         }
@@ -55,12 +62,13 @@ namespace RobotokModel.Persistence.Loggers
         }
         public void LogTimeout()
         {
+            int round = simulationData.Step;
             log.Errors.Add(
                 new OperationError
                 {
                     robotId1 = -1,
                     robotId2 = -1,
-                    round = this.round,
+                    round = round,
                     errorType = OperationErrorType.timeout
                 }
             );
@@ -70,7 +78,6 @@ namespace RobotokModel.Persistence.Loggers
                 log.PlannerPaths[i].Add(RobotOperation.Timeout);
                 log.ActualPaths[i].Add(RobotOperation.Wait);
             }
-            round += 1;
         }
         public void LogEvent(TaskEvent taskEvent)
         {
@@ -90,13 +97,17 @@ namespace RobotokModel.Persistence.Loggers
                 log.Errors.Add(e);
             }
 
-            for(int i = 0; i < controllerOperations.Length; i++)
+            for (int i = 0; i < controllerOperations.Length; i++)
             {
                 log.PlannerPaths[i].Add(controllerOperations[i]);
                 log.ActualPaths[i].Add(robotOperations[i]);
             }
             log.PlannerTimes.Add(timeElapsed);
-            round += 1;
+        }
+
+        public ILogger NewInstance(SimulationData simulationData)
+        {
+            return new BasicLogger(simulationData);
         }
     }
 }
