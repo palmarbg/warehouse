@@ -52,7 +52,7 @@ namespace RobotokModel.Model.Mediators
 
         public void SaveSimulation(string filepath)
         {
-            //save
+            executor.SaveSimulation(filepath);
         }
 
         #endregion

@@ -96,5 +96,17 @@ namespace RobotokModel.Model.Extensions
             return new List<RobotOperation>(); 
         }
 
+        public static string ToChar(this Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => "N",
+                Direction.Down => "S",
+                Direction.Left => "W",
+                Direction.Right =>"E",
+                _ => throw new Exception()
+            };
+        }
+
     }
 }

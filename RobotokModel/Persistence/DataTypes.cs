@@ -32,7 +32,14 @@ namespace RobotokModel.Persistence
         assigned, finished
     }
 
-    public struct TaskEvent
+    public struct RobotState
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public Direction Rotation { get; set; }
+    }
+
+        public struct TaskEvent
     {
         public TaskEvent(int taskId, int step, TaskEventType eventType)
         {
@@ -68,7 +75,7 @@ namespace RobotokModel.Persistence
         public List<List<TaskEvent>> Events { get; set; } = null!;
         public List<Goal> Tasks { get; set; } = null!;
         public List<OperationError> Errors { get; set; } = null!;
-        public List<Robot> Start { get; set; } = null!;
+        public List<RobotState> Start { get; set; } = null!;
     }    
     public class ExternalLog
     {

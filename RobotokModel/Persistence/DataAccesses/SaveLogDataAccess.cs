@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using RobotokModel.Model;
+using RobotokModel.Model.Extensions;
 
 namespace RobotokModel.Persistence.DataAccesses
 {
@@ -43,6 +45,52 @@ namespace RobotokModel.Persistence.DataAccesses
                 Errors = null!,
                 Start = null!
             };
+
+            externalLog.Errors = new List<List<object>>();
+            foreach (var error in log.Errors)
+            {
+                externalLog.Errors.Add(new([
+                    error.robotId1, 
+                    error.robotId2, 
+                    error.round, 
+                    error.errorType.ToString()
+                    ]));
+            }
+
+            externalLog.Tasks = new();
+            foreach (var goal in log.Tasks)
+            {
+                externalLog.Tasks.Add(new([
+                    goal.Id,
+                    goal.Position.X,
+                    goal.Position.Y
+                ]));
+            }
+
+            externalLog.Events = new();
+            for(int i = 0; i < log.Events.Count; i++)
+            {
+                externalLog.Events.Add(new());
+                foreach (var evnt in log.Events[i])
+                {
+                    externalLog.Events[i].Add(new([
+                        evnt.taskId,
+                        evnt.step,
+                        evnt.eventType.ToString()
+                    ]));
+                }
+            }
+
+            externalLog.Start = new();
+            foreach (var robotState in log.Start)
+            {
+                externalLog.Start.Add(new([
+                    robotState.X,
+                    robotState.Y,
+                    robotState.Rotation.ToChar()
+                ]));
+            }
+
 
             var options = new JsonSerializerOptions();
             options.PropertyNameCaseInsensitive = true;

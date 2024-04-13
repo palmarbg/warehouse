@@ -1,4 +1,5 @@
 ﻿using RobotokModel.Model;
+using RobotokModel.Model.Extensions;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
 using System;
@@ -25,7 +26,19 @@ namespace RobotokModel.Persistence.Loggers
             // Konstruktorból inicializálva
             log.ActionModel = actionModel;
             log.TeamSize = teamSize;
-            log.Start = simulationData.Robots;
+
+            log.Start = [];
+
+            foreach (var robot in simulationData.Robots)
+            {
+                log.Start.Add(new RobotState
+                {
+                    Rotation = robot.Rotation,
+                    X = robot.Position.X,
+                    Y = robot.Position.Y
+                });
+            }
+
             log.Tasks = simulationData.Goals;
 
 
@@ -79,10 +92,9 @@ namespace RobotokModel.Persistence.Loggers
                 log.ActualPaths[i].Add(RobotOperation.Wait);
             }
         }
-        public void LogEvent(TaskEvent taskEvent)
+        public void LogEvent(TaskEvent taskEvent, int robotId)
         {
-            //log.Events[taskEvent.robotId].Add(taskEvent);
-            log.Events[taskEvent.step].Add(taskEvent);
+            log.Events[robotId].Add(taskEvent);
         }
 
         public void LogStep(

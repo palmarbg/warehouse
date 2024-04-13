@@ -38,6 +38,11 @@ namespace RobotokModel.Model.Executors
             return new DemoExecutor(simulationData);
         }
 
+        public void SaveSimulation(string filepath)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Timeout()
         {
             throw new NotImplementedException();

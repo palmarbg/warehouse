@@ -45,7 +45,8 @@ namespace RobotokModel.Persistence.Interfaces
         /// Logs when a task is assigned or completed. Called by the Distributor or Executor
         /// </summary>
         /// <param name="taskEvent"></param>
-        void LogEvent(TaskEvent taskEvent);
+        /// <param name="robotId"></param>
+        void LogEvent(TaskEvent taskEvent, int robotId);
 
         ILogger NewInstance(SimulationData simulationData);
     }

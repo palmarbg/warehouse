@@ -19,7 +19,6 @@ namespace RobotokModel.Model.Executors
         private readonly ILogger logger;
         private List<OperationError> errors = null!;
 
-        public ILogger Logger => logger;
         public DefaultExecutor(SimulationData simulationData, ILogger logger)
         {
             this.simulationData = simulationData;
@@ -198,16 +197,21 @@ namespace RobotokModel.Model.Executors
             OnTimeout();
         }
 
-        #region Private methods
-
-        private void OnTaskFinished(int taskId, int step)
+        public void SaveSimulation(string filepath)
         {
-            logger.LogEvent(new(taskId, step, TaskEventType.finished));
+            logger.SaveLog(filepath);
         }
 
-        private void OnTaskAssigned(int taskId, int step)
+        #region Private methods
+
+        private void OnTaskFinished(int taskId, int step, int robotId)
         {
-            logger.LogEvent(new(taskId, step, TaskEventType.assigned));
+            logger.LogEvent(new(taskId, step, TaskEventType.finished), robotId);
+        }
+
+        private void OnTaskAssigned(int taskId, int step, int robotId)
+        {
+            logger.LogEvent(new(taskId, step, TaskEventType.assigned), robotId);
         }
 
         private void OnWallHit(int robotId)

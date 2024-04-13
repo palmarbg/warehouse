@@ -175,10 +175,10 @@ namespace RobotokModel.Persistence.DataAccesses
                 {
                     throw new Exception("Position was null while trying to parse in array: start.");
                 }
-                Robot r = new Robot
+                RobotState r = new RobotState
                 {
-                    Id = robotIDStart,
-                    Position = new Position { X = int.Parse(x), Y = int.Parse(y) },
+                    X = int.Parse(x),
+                    Y = int.Parse(y),
                     Rotation = ToDirection(direction)
                 };
                 robotIDStart++;

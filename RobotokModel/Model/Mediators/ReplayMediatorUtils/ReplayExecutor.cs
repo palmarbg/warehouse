@@ -35,6 +35,11 @@ namespace RobotokModel.Model.Mediators.ReplayMediatorUtils
             return new ReplayExecutor(simulationData);
         }
 
+        public void SaveSimulation(string filepath)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Timeout()
         {
             

@@ -332,7 +332,7 @@ namespace Robotok.ViewModel
         {
             if (_simulation.Mediator is not ISimulationMediator)
                 return;
-            ISimulationMediator simulationMediator = (ISimulationMediator) _simulation;
+            ISimulationMediator simulationMediator = (ISimulationMediator) _simulation.Mediator;
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Naplófájl mentése";
             saveFileDialog.Filter = "Log file|*.json";

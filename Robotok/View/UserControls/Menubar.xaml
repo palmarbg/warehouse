@@ -22,7 +22,7 @@
                 <MenuItem Header="Szimuláció betöltése..."
                           x:Name="_loadSimulationMenuItem"/>
                 <MenuItem Header="Szimuláció mentése..."
-                          IsEnabled="False"/>
+                          x:Name="_saveSimulationMenuItem"/>
             </MenuItem>
             <MenuItem Header="Szimuláció" IsEnabled="False">
                 <MenuItem Header="" />
