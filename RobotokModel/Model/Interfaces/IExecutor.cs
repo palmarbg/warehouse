@@ -21,7 +21,7 @@ namespace RobotokModel.Model.Interfaces
         /// </summary>
         /// <param name="robotOperations">Robot operations returned by the Controller</param>
         /// <returns>Robot operations that were executed</returns>
-        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations);
+        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan);
 
         /// <summary>
         /// Clones the executor

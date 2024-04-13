@@ -28,6 +28,8 @@ namespace RobotokModel.Model.Mediators
 
         protected readonly Simulation simulation;
 
+        protected DateTime time;
+
         #endregion
 
         #region Properties
@@ -116,6 +118,7 @@ namespace RobotokModel.Model.Mediators
             simulationState = new SimulationState();
 
             simulationData = dataAccess.GetInitialSimulationData();
+            simulationData.ControllerName = controller.Name;
             taskDistributor = taskDistributor.NewInstance(simulationData);
             controller = controller.NewInstance();
             executor = executor.NewInstance(simulationData);
@@ -137,11 +140,10 @@ namespace RobotokModel.Model.Mediators
         private void OnTaskFinished(IControllerEventArgs e)
         {
             Debug.WriteLine("TASK FINISHED");
-
             simulationState.IsExecutingMoves = true;
             simulationState.IsLastTaskFinished = true;
 
-            executor.ExecuteOperations(e.robotOperations);
+            executor.ExecuteOperations(e.robotOperations, (float)(DateTime.Now - time).TotalSeconds);
             simulationState.IsExecutingMoves = false;
 
             simulationData.Step++;

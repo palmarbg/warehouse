@@ -17,12 +17,6 @@ namespace RobotokModel.Model.Mediators
 {
     internal class SimulationMediator : AbstractMediator, ISimulationMediator
     {
-        #region Private fields
-
-        protected ILogger logger = null!;
-
-        #endregion
-
         #region Constructor
 
         public SimulationMediator(Simulation simulation) : base(simulation)
@@ -73,6 +67,7 @@ namespace RobotokModel.Model.Mediators
             }
 
             simulationState.IsLastTaskFinished = false;
+            time = DateTime.Now;
             controller.CalculateOperations(TimeSpan.FromMilliseconds(interval));
 
         }

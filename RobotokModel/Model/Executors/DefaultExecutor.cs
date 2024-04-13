@@ -29,7 +29,7 @@ namespace RobotokModel.Model.Executors
         /// Doesn't handle deadlock
         /// </summary>
         /// <param name="robotOperations"></param>
-        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
+        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
             errors = new List<OperationError>();
             // Reset MovedThisTurn
@@ -57,7 +57,7 @@ namespace RobotokModel.Model.Executors
                 }
             }
 
-            OnStepFinished(robotOperations, executedOperations, errors.ToArray(), 0.5f);
+            OnStepFinished(robotOperations, executedOperations, errors.ToArray(), timeSpan);
 
             return robotOperations;
         }

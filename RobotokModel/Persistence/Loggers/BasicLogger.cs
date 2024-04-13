@@ -59,7 +59,7 @@ namespace RobotokModel.Persistence.Loggers
         }
         public void SaveLog(string path)
         {
-            log.AllValid = log.Errors.Count == 0 ? "Yes" : "No";
+            log.AllValid = !log.Errors.All(e=>e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
             foreach(List<TaskEvent> events in log.Events)
             {

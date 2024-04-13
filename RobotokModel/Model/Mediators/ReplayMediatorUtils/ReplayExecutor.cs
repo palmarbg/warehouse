@@ -18,7 +18,7 @@ namespace RobotokModel.Model.Mediators.ReplayMediatorUtils
             this.simulationData = simulationData;
         }
 
-        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations)
+        public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
