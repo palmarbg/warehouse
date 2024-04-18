@@ -1,15 +1,5 @@
 ﻿using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
-using System.Xml.Linq;
 
 namespace RobotokModel.Model.Controllers
 {
@@ -33,17 +23,20 @@ namespace RobotokModel.Model.Controllers
             robotsFinished = new bool[simulationData.Robots.Count];
             previousOperations = new RobotOperation[simulationData.Robots.Count];
             blockedCount = new int[simulationData.Robots.Count];
+
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
                 if (simulationData.Robots[i].CurrentGoal is null) robotsFinished[i] = true;
                 else robotsFinished[i] = false;
             }
+
             simulationData.Robots.ForEach(robot =>
             {
                 if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot);
 
             });
+
             Goal.OnGoalsChanged();
             _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
         }
@@ -52,92 +45,101 @@ namespace RobotokModel.Model.Controllers
             return new AStarController();
         }
 
-        // TODO: Final Prototype : 
         public void CalculateOperations(TimeSpan timeSpan)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             var result = new List<RobotOperation>();
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
-                var operationQueue = _plannedOperations[i];
                 var robot = SimulationData.Robots[i];
-                if (operationQueue.Count == 0)
+                // nincs utasítás a robot számára
+                if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
                 {
-                    if (robotsFinished[i])
-                    {
-                        SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
-                        previousOperations[i] = RobotOperation.Wait;
-                        result.Add(RobotOperation.Wait);
-                        continue;
-                    }
                     if (robot.CurrentGoal is null)
                     {
                         if (_taskDistributor.AllTasksAssigned)
                         {
-                            robotsFinished[i] = true;
-                            SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                            // TODO ha taskon áll el lehet küldeni valahova máshova
+                            result.Add(RobotOperation.Wait);
+                            robot.NextOperation = RobotOperation.Wait;
+                        }
+                        // Új task
+                        else
+                        {
+                            _taskDistributor.AssignNewTask(robot);
+                            Goal.OnGoalsChanged();
+                            _plannedOperations[i] = FindPath(robot);
+                            if (_plannedOperations[i].Count == 0)
+                            {
+                                robot.NextOperation = RobotOperation.Wait;
+                                previousOperations[i] = RobotOperation.Wait;
+                                result.Add(RobotOperation.Wait);
+                            }
+                            else
+                            {
+                                var nextOp = _plannedOperations[i].Dequeue();
+                                robot.NextOperation = nextOp;
+                                previousOperations[i] = nextOp;
+                                result.Add(nextOp);
+                            }
+
+                        }
+                    }
+                    //Van task de nincs út
+                    else
+                    {
+                        _plannedOperations[i] = FindPath(robot, true);
+                        if (_plannedOperations[i].Count == 0)
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
                             previousOperations[i] = RobotOperation.Wait;
                             result.Add(RobotOperation.Wait);
-                            continue;
+
                         }
                         else
                         {
-                            _taskDistributor.AssignNewTask(SimulationData.Robots[i]);
-                            Goal.OnGoalsChanged();
-
-                            _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
-                            var nextOp = NextOperation(i, robot);
-                            blockedCount[i] = 0;
-                            SimulationData.Robots[i].NextOperation = nextOp;
+                            var nextOp = _plannedOperations[i].Dequeue();
+                            robot.NextOperation = nextOp;
+                            previousOperations[i] = nextOp;
                             result.Add(nextOp);
                         }
                     }
                 }
                 else
                 {
-                    var nextOp = NextOperation(i, robot);
+                    //TODO : szebb deadlock
+                    if (robot.BlockedThisTurn)
+                    {
+                        blockedCount[i]++;
+                        if (blockedCount[i] >= 3)
+                        {
+                            _plannedOperations[i] = FindPath(robot, true);
+                            blockedCount[i] = 0;
+                            var nextOp = RobotOperation.Wait;
+                            robot.NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
+                        else
+                        {
+                            var nextOp = previousOperations[i];
+                            robot.NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
 
-                    SimulationData.Robots[i].NextOperation = nextOp;
-                    result.Add(nextOp);
+
+                    }
+                    else
+                    {
+                        var nextOp = _plannedOperations[i].Dequeue();
+                        robot.NextOperation = nextOp;
+                        previousOperations[i] = nextOp;
+                        result.Add(nextOp);
+                    }
                 }
             }
             OnTaskFinished([.. result]);
         }
-        // Deadlock
-        private RobotOperation NextOperation(int i, Robot robot)
-        {
-            RobotOperation nextOp;
-            //if(i == 3) { Debug.WriteLine(blockedCount[i]); Debug.WriteLine(robot.CurrentGoal.Position.ToString()); }
-            if (_plannedOperations[i].Count == 0)
-            {
-                robotsFinished[i] = true;
-                if (robot.CurrentGoal is not null)
-                {
-                    robot.CurrentGoal.IsAssigned = false;
-                    robot.CurrentGoal = null;
-                }
-                return RobotOperation.Wait;
-            }
-            if (robot.BlockedThisTurn)
-            {
-                if (blockedCount[i] >= 3)
-                {
-                    blockedCount[i] = 0;
-                    _plannedOperations[i] = FindPath(robot, true);
-                    previousOperations[i] = RobotOperation.Wait;
-                    return RobotOperation.Wait;
-                }
-                nextOp = previousOperations[i];
-                blockedCount[i]++;
-            }
-            else
-            {
-                blockedCount[i] = 0;
-                nextOp = _plannedOperations[i].Dequeue();
-            }
-            previousOperations[i] = nextOp;
-            return nextOp;
-        }
+
         #endregion
         #region Private Methods
         private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
@@ -190,7 +192,7 @@ namespace RobotokModel.Model.Controllers
                         neighbor.parent = current;
                         gScore[neighbor] = tentativeGScore;
                         neighbor.Direction = directionOnNewNode;
-                        fScore[neighbor] = tentativeGScore + Heuristic(current, neighbor) + Heuristic(neighbor, goal);
+                        fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
                         if (!openSet.Contains(neighbor))
                         {
                             openSet.Add(neighbor);
@@ -224,7 +226,7 @@ namespace RobotokModel.Model.Controllers
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             Queue<RobotOperation> Operations = new Queue<RobotOperation>();
             var robot = SimulationData.Map.GetAtPosition(path[0].Position);
-            Direction currentDirection = Direction.Right;
+            Direction currentDirection;
             if (robot is not Robot)
             {
                 throw new Exception("Path does not start at a robot");
@@ -281,7 +283,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot))
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot)))
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
@@ -304,11 +306,10 @@ namespace RobotokModel.Model.Controllers
             {
                 turns = 1;
             }
-            // Az első lépésnél tartja az irányt, de a végeredményen nem változtat
-            //if(a.Position.DirectionInPosition(b.Position) != a.Direction)
-            //{
-            //    turns += 1;
-            //}
+            if (a.Position.DirectionInPosition(b.Position) != a.Direction)
+            {
+                turns += 1;
+            }
             return dx + dy + turns;
         }
 

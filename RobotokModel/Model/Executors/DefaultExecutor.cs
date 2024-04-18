@@ -68,7 +68,7 @@ namespace RobotokModel.Model.Executors
                     if (simulationData.Map.GetAtPosition(newPos) is Block)
                     {
                         robot.MovedThisTurn = true;
-
+                        robot.BlockedThisTurn = true;
                         return false;
                     }
                     //newPos is blocked by another robot
@@ -144,6 +144,9 @@ namespace RobotokModel.Model.Executors
                     break;
                 case RobotOperation.Wait:
                     // TODO: Prototype 2 : Logging
+                    robot.MovedThisTurn = true;
+
+                    return false;
                     break;
             }
             return false;
