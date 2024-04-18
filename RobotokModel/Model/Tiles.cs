@@ -12,7 +12,7 @@ namespace RobotokModel.Model
     {
         public bool IsPassable { get; }
     }
-    elrontani model
+
     /// <summary>
     /// Represents an empty tile.
     /// <para/>

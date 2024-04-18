@@ -19,6 +19,7 @@ namespace Robotok.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        View nem megy most;
         #region Fields
 
         private ISimulation _simulation;
