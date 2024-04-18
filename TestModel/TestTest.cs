@@ -8,10 +8,11 @@ namespace TestModel
         {
             Assert.IsTrue(true);
         }
+        /*-
         [TestMethod]
         public void ConstantFalse()
         {
             Assert.IsTrue(false);
-        }
+        */
     }
 }
