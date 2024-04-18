@@ -22,7 +22,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
-  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+  image:  mcr.microsoft.com/dotnet/sdk:8.0
   script:
     - ls 
     - dotnet build Robotok.sln
