@@ -23,7 +23,6 @@ stages:          # List of stages for jobs, and their order of execution
 
 build_model:       # This job runs in the build stage, which runs first.
   stage: build
-  tags: [windows]
   script:
     - cd RobotokModel
     - dotnet build RobotokModel.csproj
@@ -31,7 +30,6 @@ build_model:       # This job runs in the build stage, which runs first.
 build_view:
   stage: build
   image: mcr.microsoft.com/dotnet/framework/sdk:8.0
-  tags: [windows]
   script:
     - cd ..
     - cd Robotok
