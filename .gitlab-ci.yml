@@ -24,14 +24,14 @@ build_model:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - cd RobotokModel
-    - dotnet build RobotokModel.sln
+    - dotnet build RobotokModel.csproj
 
 build_view:
   stage: build
   tags: [windows]
   image: mcr.microsoft.com/dotnet/sdk:6.0-windowsservercore-ltsc2019
   script:
-    - dotnet build Robotok.csproj
+    - dotnet build Robotok.sln
 
 
 
