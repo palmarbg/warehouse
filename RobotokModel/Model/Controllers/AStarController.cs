@@ -8,11 +8,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using System.Xml.Linq;
 
 namespace RobotokModel.Model.Controllers
 {
-    internal class AStarController : IController
+    public class AStarController : IController
     {
         public string Name => "AStarController";
         private SimulationData? SimulationData = null!;
@@ -44,7 +45,7 @@ namespace RobotokModel.Model.Controllers
 
             });
             Goal.OnGoalsChanged();
-            _plannedOperations = SimulationData.Robots.Select(f=>FindPath(f)).ToList();
+            _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
         }
         public IController NewInstance()
         {
@@ -121,8 +122,8 @@ namespace RobotokModel.Model.Controllers
             {
                 if (blockedCount[i] >= 3)
                 {
-                    blockedCount[i]=0;
-                    _plannedOperations[i] = FindPath(robot,true);
+                    blockedCount[i] = 0;
+                    _plannedOperations[i] = FindPath(robot, true);
                     previousOperations[i] = RobotOperation.Wait;
                     return RobotOperation.Wait;
                 }
@@ -139,15 +140,15 @@ namespace RobotokModel.Model.Controllers
         }
         #endregion
         #region Private Methods
-        private Queue<RobotOperation> FindPath(Robot robot,bool robotBlock = false)
+        private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
         {
             if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal"); }
             HashSet<Node> openSet = new HashSet<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
-            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
             Dictionary<Node, int> gScore = new Dictionary<Node, int>();
             Dictionary<Node, int> fScore = new Dictionary<Node, int>();
             var start = new Node(robot.Position);
+            start.Direction = robot.Rotation;
             var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
 
@@ -160,12 +161,14 @@ namespace RobotokModel.Model.Controllers
                 int lowestFScore = int.MaxValue;
                 foreach (var node in openSet)
                 {
-                    if (fScore.ContainsKey(node) && fScore[node] < lowestFScore)
+                    if (fScore.TryGetValue(node, out int value) && value < lowestFScore)
                     {
-                        lowestFScore = fScore[node];
+                        lowestFScore = value;
                         current = node;
                     }
                 }
+                if (current.Direction is null) throw new Exception();
+
 
                 if (current.Position.EqualsPosition(goal.Position))
                 {
@@ -177,13 +180,17 @@ namespace RobotokModel.Model.Controllers
 
                 foreach (var neighbor in GetNeighbors(current, robotBlock))
                 {
-                    Direction asd = current.Position.DirectionInPosition(neighbor.Position) ?? Direction.Down;
-                    int tentativeGScore = gScore[current] + EuclideanDistance(current, neighbor);
+                    // ! : GetNeighbours csak olyan pozíciót ad, amire nem null
+                    var directionOnNewNode = (Direction)(current.Position.DirectionInPosition(neighbor.Position)!);
+                    int rotationCost = ((Direction)current.Direction).RotateTo((Direction)(current.Position.DirectionInPosition(neighbor.Position)!)).Count;
+
+                    int tentativeGScore = gScore[current] + 1 + rotationCost;
                     if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
                     {
                         neighbor.parent = current;
                         gScore[neighbor] = tentativeGScore;
-                        fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
+                        neighbor.Direction = directionOnNewNode;
+                        fScore[neighbor] = tentativeGScore + Heuristic(current, neighbor) + Heuristic(neighbor, goal);
                         if (!openSet.Contains(neighbor))
                         {
                             openSet.Add(neighbor);
@@ -260,7 +267,7 @@ namespace RobotokModel.Model.Controllers
             }
             return Operations;
         }
-        private List<Node> GetNeighbors(Node node,bool robotBlock)
+        private List<Node> GetNeighbors(Node node, bool robotBlock)
         {
             List<Node> neighbors = new List<Node>();
 
@@ -274,7 +281,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && (SimulationData.Map[checkX, checkY] is EmptyTile || robotBlock ? !(SimulationData.Map[checkX, checkY] is Robot) : SimulationData.Map[checkX, checkY] is Robot) )
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot))
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
@@ -284,16 +291,25 @@ namespace RobotokModel.Model.Controllers
             return neighbors;
         }
 
-
-
         private int Heuristic(Node a, Node b)
         {
-            return Math.Abs(a.Position.X - b.Position.X) + Math.Abs(a.Position.X - b.Position.X);
-        }
-
-        private int EuclideanDistance(Node a, Node b)
-        {
-            return (int)Math.Sqrt(Math.Pow(a.Position.X - b.Position.X, 2) + Math.Pow(a.Position.X - b.Position.X, 2));
+            int dx = Math.Abs(a.Position.X - b.Position.X);
+            int dy = Math.Abs(a.Position.Y - b.Position.Y);
+            int turns = 0;
+            if (a.Position.X != b.Position.X && a.Position.Y != b.Position.Y)
+            {
+                turns = 2;
+            }
+            else if (a.Position.X != b.Position.X || a.Position.Y != b.Position.Y)
+            {
+                turns = 1;
+            }
+            // Az első lépésnél tartja az irányt, de a végeredményen nem változtat
+            //if(a.Position.DirectionInPosition(b.Position) != a.Direction)
+            //{
+            //    turns += 1;
+            //}
+            return dx + dy + turns;
         }
 
         private void OnTaskFinished(RobotOperation[] result)
@@ -309,6 +325,7 @@ namespace RobotokModel.Model.Controllers
             public int hCost;
             public int fCost => gCost + hCost;
             public Node? parent;
+            public Direction? Direction { get; set; } = null;
             public Node(Position pos)
             {
                 this.Position = pos;
@@ -327,7 +344,7 @@ namespace RobotokModel.Model.Controllers
             // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
             public override int GetHashCode()
             {
-                unchecked // overflow 
+                unchecked // overflow működésben nem okoz hibát, de exception dobna
                 {
                     int hash = 13;
                     hash = hash * 3 + Position.X.GetHashCode();
