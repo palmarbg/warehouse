@@ -24,8 +24,8 @@ stages:          # List of stages for jobs, and their order of execution
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
-    - ls 
-    - dotnet build Robotok.sln p:EnableWindowsTargeting=true
+    - cd RobotokModel
+    - dotnet build RobotokModel.sln p:EnableWindowsTargeting=true
 
 
 unit-test-job:   # This job runs in the test stage.
