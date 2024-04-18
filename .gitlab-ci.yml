@@ -26,6 +26,7 @@ build-job:       # This job runs in the build stage, which runs first.
   image: mcr.microsoft.com/dotnet/framework/sdk:4.8
   tags: [windows]
   script:
+    - ls 
     - dotnet build Robotok
 
 
