@@ -19,7 +19,6 @@ image: mcr.microsoft.com/dotnet/sdk:8.0
 
 stages:          # List of stages for jobs, and their order of execution
   - build
-  - test
 
 build_model:       # This job runs in the build stage, which runs first.
   stage: build
@@ -29,7 +28,7 @@ build_model:       # This job runs in the build stage, which runs first.
 
 build_view:
   stage: build
-  image: mcr.microsoft.com/dotnet/framework/sdk:8.0
+  image: mcr.microsoft.com/dotnet/sdk:6.0-windowsservercore-ltsc2019
   script:
     - cd ..
     - cd Robotok
@@ -37,17 +36,5 @@ build_view:
 
 
 
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
-  script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
 
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
-  script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
 
