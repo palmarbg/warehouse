@@ -1,18 +1,9 @@
 ﻿using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace RobotokModel.Model.Controllers
 {
-    internal class AStarController : IController
+    public class AStarController : IController
     {
         public string Name => "AStarController";
         private SimulationData? SimulationData = null!;
@@ -32,122 +23,134 @@ namespace RobotokModel.Model.Controllers
             robotsFinished = new bool[simulationData.Robots.Count];
             previousOperations = new RobotOperation[simulationData.Robots.Count];
             blockedCount = new int[simulationData.Robots.Count];
+
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
                 if (simulationData.Robots[i].CurrentGoal is null) robotsFinished[i] = true;
                 else robotsFinished[i] = false;
             }
+
             simulationData.Robots.ForEach(robot =>
             {
                 if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot);
 
             });
+
             Goal.OnGoalsChanged();
-            _plannedOperations = SimulationData.Robots.Select(f=>FindPath(f)).ToList();
+            _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
         }
         public IController NewInstance()
         {
             return new AStarController();
         }
 
-        // TODO: Final Prototype : 
         public void CalculateOperations(TimeSpan timeSpan)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             var result = new List<RobotOperation>();
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
-                var operationQueue = _plannedOperations[i];
                 var robot = SimulationData.Robots[i];
-                if (operationQueue.Count == 0)
+                // nincs utasítás a robot számára
+                if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
                 {
-                    if (robotsFinished[i])
-                    {
-                        SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
-                        previousOperations[i] = RobotOperation.Wait;
-                        result.Add(RobotOperation.Wait);
-                        continue;
-                    }
                     if (robot.CurrentGoal is null)
                     {
                         if (_taskDistributor.AllTasksAssigned)
                         {
-                            robotsFinished[i] = true;
-                            SimulationData.Robots[i].NextOperation = RobotOperation.Wait;
+                            // TODO ha taskon áll el lehet küldeni valahova máshova
+                            result.Add(RobotOperation.Wait);
+                            robot.NextOperation = RobotOperation.Wait;
+                        }
+                        // Új task
+                        else
+                        {
+                            _taskDistributor.AssignNewTask(robot);
+                            Goal.OnGoalsChanged();
+                            _plannedOperations[i] = FindPath(robot);
+                            if (_plannedOperations[i].Count == 0)
+                            {
+                                robot.NextOperation = RobotOperation.Wait;
+                                previousOperations[i] = RobotOperation.Wait;
+                                result.Add(RobotOperation.Wait);
+                            }
+                            else
+                            {
+                                var nextOp = _plannedOperations[i].Dequeue();
+                                robot.NextOperation = nextOp;
+                                previousOperations[i] = nextOp;
+                                result.Add(nextOp);
+                            }
+
+                        }
+                    }
+                    //Van task de nincs út
+                    else
+                    {
+                        _plannedOperations[i] = FindPath(robot, true);
+                        if (_plannedOperations[i].Count == 0)
+                        {
+                            robot.NextOperation = RobotOperation.Wait;
                             previousOperations[i] = RobotOperation.Wait;
                             result.Add(RobotOperation.Wait);
-                            continue;
+
                         }
                         else
                         {
-                            _taskDistributor.AssignNewTask(SimulationData.Robots[i]);
-                            Goal.OnGoalsChanged();
-
-                            _plannedOperations[i] = FindPath(SimulationData.Robots[i]);
-                            var nextOp = NextOperation(i, robot);
-                            blockedCount[i] = 0;
-                            SimulationData.Robots[i].NextOperation = nextOp;
+                            var nextOp = _plannedOperations[i].Dequeue();
+                            robot.NextOperation = nextOp;
+                            previousOperations[i] = nextOp;
                             result.Add(nextOp);
                         }
                     }
                 }
                 else
                 {
-                    var nextOp = NextOperation(i, robot);
+                    //TODO : szebb deadlock
+                    if (robot.BlockedThisTurn)
+                    {
+                        blockedCount[i]++;
+                        if (blockedCount[i] >= 3)
+                        {
+                            _plannedOperations[i] = FindPath(robot, true);
+                            blockedCount[i] = 0;
+                            var nextOp = RobotOperation.Wait;
+                            robot.NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
+                        else
+                        {
+                            var nextOp = previousOperations[i];
+                            robot.NextOperation = nextOp;
+                            result.Add(nextOp);
+                        }
 
-                    SimulationData.Robots[i].NextOperation = nextOp;
-                    result.Add(nextOp);
+
+                    }
+                    else
+                    {
+                        var nextOp = _plannedOperations[i].Dequeue();
+                        robot.NextOperation = nextOp;
+                        previousOperations[i] = nextOp;
+                        result.Add(nextOp);
+                    }
                 }
             }
             OnTaskFinished([.. result]);
         }
-        // Deadlock
-        private RobotOperation NextOperation(int i, Robot robot)
-        {
-            RobotOperation nextOp;
-            //if(i == 3) { Debug.WriteLine(blockedCount[i]); Debug.WriteLine(robot.CurrentGoal.Position.ToString()); }
-            if (_plannedOperations[i].Count == 0)
-            {
-                robotsFinished[i] = true;
-                if (robot.CurrentGoal is not null)
-                {
-                    robot.CurrentGoal.IsAssigned = false;
-                    robot.CurrentGoal = null;
-                }
-                return RobotOperation.Wait;
-            }
-            if (robot.BlockedThisTurn)
-            {
-                if (blockedCount[i] >= 3)
-                {
-                    blockedCount[i]=0;
-                    _plannedOperations[i] = FindPath(robot,true);
-                    previousOperations[i] = RobotOperation.Wait;
-                    return RobotOperation.Wait;
-                }
-                nextOp = previousOperations[i];
-                blockedCount[i]++;
-            }
-            else
-            {
-                blockedCount[i] = 0;
-                nextOp = _plannedOperations[i].Dequeue();
-            }
-            previousOperations[i] = nextOp;
-            return nextOp;
-        }
+
         #endregion
         #region Private Methods
-        private Queue<RobotOperation> FindPath(Robot robot,bool robotBlock = false)
+        private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
         {
             if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal"); }
             HashSet<Node> openSet = new HashSet<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
-            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
             Dictionary<Node, int> gScore = new Dictionary<Node, int>();
             Dictionary<Node, int> fScore = new Dictionary<Node, int>();
             var start = new Node(robot.Position);
+            start.Direction = robot.Rotation;
             var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
 
@@ -160,12 +163,14 @@ namespace RobotokModel.Model.Controllers
                 int lowestFScore = int.MaxValue;
                 foreach (var node in openSet)
                 {
-                    if (fScore.ContainsKey(node) && fScore[node] < lowestFScore)
+                    if (fScore.TryGetValue(node, out int value) && value < lowestFScore)
                     {
-                        lowestFScore = fScore[node];
+                        lowestFScore = value;
                         current = node;
                     }
                 }
+                if (current.Direction is null) throw new Exception();
+
 
                 if (current.Position.EqualsPosition(goal.Position))
                 {
@@ -177,12 +182,16 @@ namespace RobotokModel.Model.Controllers
 
                 foreach (var neighbor in GetNeighbors(current, robotBlock))
                 {
-                    Direction asd = current.Position.DirectionInPosition(neighbor.Position) ?? Direction.Down;
-                    int tentativeGScore = gScore[current] + EuclideanDistance(current, neighbor);
+                    // ! : GetNeighbours csak olyan pozíciót ad, amire nem null
+                    var directionOnNewNode = (Direction)(current.Position.DirectionInPosition(neighbor.Position)!);
+                    int rotationCost = ((Direction)current.Direction).RotateTo((Direction)(current.Position.DirectionInPosition(neighbor.Position)!)).Count;
+
+                    int tentativeGScore = gScore[current] + 1 + rotationCost;
                     if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
                     {
                         neighbor.parent = current;
                         gScore[neighbor] = tentativeGScore;
+                        neighbor.Direction = directionOnNewNode;
                         fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
                         if (!openSet.Contains(neighbor))
                         {
@@ -217,7 +226,7 @@ namespace RobotokModel.Model.Controllers
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             Queue<RobotOperation> Operations = new Queue<RobotOperation>();
             var robot = SimulationData.Map.GetAtPosition(path[0].Position);
-            Direction currentDirection = Direction.Right;
+            Direction currentDirection;
             if (robot is not Robot)
             {
                 throw new Exception("Path does not start at a robot");
@@ -260,7 +269,7 @@ namespace RobotokModel.Model.Controllers
             }
             return Operations;
         }
-        private List<Node> GetNeighbors(Node node,bool robotBlock)
+        private List<Node> GetNeighbors(Node node, bool robotBlock)
         {
             List<Node> neighbors = new List<Node>();
 
@@ -274,7 +283,7 @@ namespace RobotokModel.Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && (SimulationData.Map[checkX, checkY] is EmptyTile || robotBlock ? !(SimulationData.Map[checkX, checkY] is Robot) : SimulationData.Map[checkX, checkY] is Robot) )
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot)))
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
@@ -284,16 +293,24 @@ namespace RobotokModel.Model.Controllers
             return neighbors;
         }
 
-
-
         private int Heuristic(Node a, Node b)
         {
-            return Math.Abs(a.Position.X - b.Position.X) + Math.Abs(a.Position.X - b.Position.X);
-        }
-
-        private int EuclideanDistance(Node a, Node b)
-        {
-            return (int)Math.Sqrt(Math.Pow(a.Position.X - b.Position.X, 2) + Math.Pow(a.Position.X - b.Position.X, 2));
+            int dx = Math.Abs(a.Position.X - b.Position.X);
+            int dy = Math.Abs(a.Position.Y - b.Position.Y);
+            int turns = 0;
+            if (a.Position.X != b.Position.X && a.Position.Y != b.Position.Y)
+            {
+                turns = 2;
+            }
+            else if (a.Position.X != b.Position.X || a.Position.Y != b.Position.Y)
+            {
+                turns = 1;
+            }
+            if (a.Position.DirectionInPosition(b.Position) != a.Direction)
+            {
+                turns += 1;
+            }
+            return dx + dy + turns;
         }
 
         private void OnTaskFinished(RobotOperation[] result)
@@ -309,6 +326,7 @@ namespace RobotokModel.Model.Controllers
             public int hCost;
             public int fCost => gCost + hCost;
             public Node? parent;
+            public Direction? Direction { get; set; } = null;
             public Node(Position pos)
             {
                 this.Position = pos;
@@ -327,7 +345,7 @@ namespace RobotokModel.Model.Controllers
             // https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden
             public override int GetHashCode()
             {
-                unchecked // overflow 
+                unchecked // overflow működésben nem okoz hibát, de exception dobna
                 {
                     int hash = 13;
                     hash = hash * 3 + Position.X.GetHashCode();

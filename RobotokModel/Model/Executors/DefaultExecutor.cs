@@ -1,4 +1,4 @@
-﻿using RobotokModel.Model.Extensions;
+using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence;
 using RobotokModel.Persistence.Interfaces;
@@ -90,6 +90,7 @@ namespace RobotokModel.Model.Executors
                     if (simulationData.Map.GetAtPosition(newPos) is Block)
                     {
                         robot.MovedThisTurn = true;
+                        robot.BlockedThisTurn = true;
                         OnWallHit(robot.Id);
                         return false;
                     }
@@ -171,6 +172,9 @@ namespace RobotokModel.Model.Executors
                     break;
                 case RobotOperation.Wait:
                     // TODO: Prototype 2 : Logging
+                    robot.MovedThisTurn = true;
+
+                    return false;
                     break;
             }
             return false;
