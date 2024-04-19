@@ -6,6 +6,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using RobotokModel.Model;
+using RobotokModel.Model.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RobotokModel.Persistence.DataAccesses
 {
@@ -23,10 +26,6 @@ namespace RobotokModel.Persistence.DataAccesses
         public List<Robot> Start { get; set; } = null!;
              */
 
-            List<string> actualPaths = new List<string>();
-            List<string> plannedPaths = new List<string>();
-
-
             ExternalLog externalLog = new ExternalLog
             {
                 ActionModel = log.ActionModel,
@@ -35,14 +34,84 @@ namespace RobotokModel.Persistence.DataAccesses
                 NumTaskFinished = log.NumTaskFinished,
                 SumOfCost = log.SumOfCost,
                 MakeSpan = log.MakeSpan,
-                ActualPaths = actualPaths,
-                PlannerPaths = plannedPaths,
+                ActualPaths = null!,
+                PlannerPaths = null!,
                 PlannerTimes = log.PlannerTimes,
                 Events = null!,
                 Tasks = null!,
                 Errors = null!,
                 Start = null!
             };
+
+            externalLog.Errors = new List<List<object>>();
+            foreach (var error in log.Errors)
+            {
+                externalLog.Errors.Add(new([
+                    error.robotId1, 
+                    error.robotId2, 
+                    error.round, 
+                    error.errorType.ToString()
+                    ]));
+            }
+
+            externalLog.Tasks = new();
+            foreach (var goal in log.Tasks)
+            {
+                externalLog.Tasks.Add(new([
+                    goal.Id,
+                    goal.Position.Y,
+                    goal.Position.X //it has to be in this order!!!
+                ]));
+            }
+
+            externalLog.Events = new();
+            for(int i = 0; i < log.Events.Count; i++)
+            {
+                externalLog.Events.Add(new());
+                foreach (var evnt in log.Events[i])
+                {
+                    externalLog.Events[i].Add(new([
+                        evnt.taskId,
+                        evnt.step,
+                        evnt.eventType.ToString()
+                    ]));
+                }
+            }
+
+            externalLog.Start = new();
+            foreach (var robotState in log.Start)
+            {
+                externalLog.Start.Add(new([
+                    robotState.X,
+                    robotState.Y,
+                    robotState.Rotation.ToChar()
+                ]));
+            }
+
+            externalLog.ActualPaths = new();
+            foreach(var robotPathList in log.ActualPaths)
+            {
+                string str = "";
+                foreach (var robotPath in robotPathList)
+                {
+                    str += robotPath.ToChar() + ",";
+                }
+                str = str.Remove(str.Length - 1);
+                externalLog.ActualPaths.Add(str);
+            }
+
+            externalLog.PlannerPaths = new();
+            foreach (var robotPathList in log.PlannerPaths)
+            {
+                string str = "";
+                foreach (var robotPath in robotPathList)
+                {
+                    str += robotPath.ToChar() + ",";
+                }
+                str = str.Remove(str.Length - 1);
+                externalLog.PlannerPaths.Add(str);
+            }
+
 
             var options = new JsonSerializerOptions();
             options.PropertyNameCaseInsensitive = true;
