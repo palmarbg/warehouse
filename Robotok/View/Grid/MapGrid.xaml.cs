@@ -50,7 +50,9 @@ namespace Robotok.View.Grid
             RobotLayer.SetDataContext(viewModel);
             GoalLayer.SetDataContext(viewModel);
             BlockLayer.SetDataContext(viewModel);
-            viewModel.MapLoaded += new EventHandler(DrawLines);
+            viewModel.MapLoaded += new EventHandler(
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { DrawLines(s, e); })
+                );
         }
 
         #region Private methods

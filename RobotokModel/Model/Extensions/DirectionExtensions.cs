@@ -108,5 +108,17 @@ namespace RobotokModel.Model.Extensions
             };
         }
 
+        public static Direction ToDirection(this string direction)
+        {
+            return direction switch
+            {
+                "W" => Direction.Left,
+                "N" => Direction.Up,
+                "E" => Direction.Right,
+                "S" => Direction.Down,
+                _ => throw new Exception(),
+            };
+        }
+
     }
 }

@@ -169,7 +169,7 @@ namespace RobotokModel.Persistence.DataAccesses
                 {
                     X = int.Parse(x),
                     Y = int.Parse(y),
-                    Rotation = ToDirection(direction)
+                    Rotation = direction.ToDirection()
                 };
                 robotIDStart++;
                 log.Start.Add(r);
@@ -205,18 +205,5 @@ namespace RobotokModel.Persistence.DataAccesses
 
         #endregion
 
-        #region Private methods
-        public Direction ToDirection(string rawDirection)
-        {
-            return rawDirection switch
-            {
-                "W" => Direction.Left,
-                "N" => Direction.Up,
-                "E" => Direction.Right,
-                "S" => Direction.Down,
-                _ => throw new Exception("Parsing in direction was not succesful!"),
-            };
-        }
-        #endregion
     }
 }
