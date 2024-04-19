@@ -1,4 +1,5 @@
 ﻿using RobotokModel.Model;
+using RobotokModel.Model.Extensions;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
 using System;
@@ -14,32 +15,52 @@ namespace RobotokModel.Persistence.Loggers
     {
         private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
         private Log log = new Log();
-        private int round = 0;
-        public BasicLogger(string actionModel, int teamSize, SimulationData simulationData)
+        private SimulationData simulationData;
+        public BasicLogger(SimulationData simulationData)
         {
+            string actionModel = simulationData.ControllerName ?? string.Empty;
+            int teamSize = simulationData.Robots.Count;
+
+            this.simulationData = simulationData;
+
             // Konstruktorból inicializálva
             log.ActionModel = actionModel;
             log.TeamSize = teamSize;
-            log.Start = simulationData.Robots;
-            log.Tasks = simulationData.Goals;
+
+            log.Start = [];
+
+            foreach (var robot in simulationData.Robots)
+            {
+                log.Start.Add(new RobotState
+                {
+                    Rotation = robot.Rotation,
+                    X = robot.Position.X,
+                    Y = robot.Position.Y
+                });
+            }
+
+            
 
 
             // LogEvent()
             log.Events = new List<List<TaskEvent>>();
-            for(int i = 0; i < teamSize; i++)
-            {
-                log.Events.Add(new List<TaskEvent>());
-            }
-
             // LogStep() vagy LogTimeOut()
             log.PlannerPaths = new List<List<RobotOperation>>();
             log.ActualPaths = new List<List<RobotOperation>>();
+            for (int i = 0; i < teamSize; i++)
+            {
+                log.Events.Add(new List<TaskEvent>());
+                log.PlannerPaths.Add(new List<RobotOperation>());
+                log.ActualPaths.Add(new List<RobotOperation>());
+            }
+
             log.Errors = new List<OperationError>();
             log.PlannerTimes = new List<float>();
         }
         public void SaveLog(string path)
         {
-            log.AllValid = log.Errors.Count == 0 ? "Yes" : "No";
+            log.Tasks = simulationData.Goals;
+            log.AllValid = !log.Errors.All(e=>e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
             foreach(List<TaskEvent> events in log.Events)
             {
@@ -55,12 +76,13 @@ namespace RobotokModel.Persistence.Loggers
         }
         public void LogTimeout()
         {
+            int round = simulationData.Step;
             log.Errors.Add(
                 new OperationError
                 {
                     robotId1 = -1,
                     robotId2 = -1,
-                    round = this.round,
+                    round = round,
                     errorType = OperationErrorType.timeout
                 }
             );
@@ -70,11 +92,10 @@ namespace RobotokModel.Persistence.Loggers
                 log.PlannerPaths[i].Add(RobotOperation.Timeout);
                 log.ActualPaths[i].Add(RobotOperation.Wait);
             }
-            round += 1;
         }
-        public void LogEvent(TaskEvent taskEvent)
+        public void LogEvent(TaskEvent taskEvent, int robotId)
         {
-            log.Events[taskEvent.robotId].Add(taskEvent);
+            log.Events[robotId].Add(taskEvent);
         }
 
         public void LogStep(
@@ -89,13 +110,17 @@ namespace RobotokModel.Persistence.Loggers
                 log.Errors.Add(e);
             }
 
-            for(int i = 0; i < controllerOperations.Length; i++)
+            for (int i = 0; i < controllerOperations.Length; i++)
             {
                 log.PlannerPaths[i].Add(controllerOperations[i]);
                 log.ActualPaths[i].Add(robotOperations[i]);
             }
             log.PlannerTimes.Add(timeElapsed);
-            round += 1;
+        }
+
+        public ILogger NewInstance(SimulationData simulationData)
+        {
+            return new BasicLogger(simulationData);
         }
     }
 }

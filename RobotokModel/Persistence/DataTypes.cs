@@ -9,6 +9,13 @@ namespace RobotokModel.Persistence
 {
     public struct OperationError
     {
+        public OperationError(int robotId1, int robotId2, int round, OperationErrorType errorType)
+        {
+            this.robotId1 = robotId1;
+            this.robotId2 = robotId2;
+            this.round = round;
+            this.errorType = errorType;
+        }
         public int robotId1;
         public int robotId2;
         public int round;
@@ -25,16 +32,23 @@ namespace RobotokModel.Persistence
         assigned, finished
     }
 
-    public struct TaskEvent
+    public struct RobotState
     {
-        public TaskEvent(int taskId, int robotId, TaskEventType eventType)
+        public int X { get; set; }
+        public int Y { get; set; }
+        public Direction Rotation { get; set; }
+    }
+
+        public struct TaskEvent
+    {
+        public TaskEvent(int taskId, int step, TaskEventType eventType)
         {
             this.taskId = taskId;
-            this.robotId = robotId;
+            this.step = step;
             this.eventType = eventType;
         }
         public int taskId;
-        public int robotId;
+        public int step;
         public TaskEventType eventType;
     }
 
@@ -61,7 +75,7 @@ namespace RobotokModel.Persistence
         public List<List<TaskEvent>> Events { get; set; } = null!;
         public List<Goal> Tasks { get; set; } = null!;
         public List<OperationError> Errors { get; set; } = null!;
-        public List<Robot> Start { get; set; } = null!;
+        public List<RobotState> Start { get; set; } = null!;
     }    
     public class ExternalLog
     {

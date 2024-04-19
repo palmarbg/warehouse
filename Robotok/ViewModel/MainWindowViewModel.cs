@@ -160,6 +160,9 @@ namespace Robotok.ViewModel
         /// <summary> Load a config file </summary>
         public DelegateCommand LoadSimulation { get; set; }
 
+        /// <summary> Save a log file </summary>
+        public DelegateCommand SaveSimulation { get; set; }
+
         #endregion
 
         #region Constructor
@@ -186,8 +189,9 @@ namespace Robotok.ViewModel
             PreviousStep = new DelegateCommand(param => OnPreviousStep());
             NextStep = new DelegateCommand(param => OnNextStep());
             FinalPosition = new DelegateCommand(param => OnFinalPosition());
-
+           
             LoadSimulation = new(param => OnLoadSimulation());
+            SaveSimulation = new DelegateCommand(param => OnSaveSimulation());
 
             OnSimulationLoaded();
         }
@@ -321,6 +325,20 @@ namespace Robotok.ViewModel
             if (openFileDialog.ShowDialog() == true)
             {
                 _simulation.Mediator.LoadSimulation(openFileDialog.FileName);
+            }
+        }
+
+        private void OnSaveSimulation()
+        {
+            if (_simulation.Mediator is not ISimulationMediator)
+                return;
+            ISimulationMediator simulationMediator = (ISimulationMediator) _simulation.Mediator;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Naplófájl mentése";
+            saveFileDialog.Filter = "Log file|*.json";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                simulationMediator.SaveSimulation(saveFileDialog.FileName);
             }
         }
 

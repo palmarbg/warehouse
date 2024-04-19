@@ -19,15 +19,20 @@ namespace RobotokModel.Persistence.DataAccesses
 
         private Uri baseUri;
         private string path;
-        private SimulationData simulationData = null!;
+        private SimulationData simulationData;
         private Log log;
+        private IDataAccess dataAccess;
         #endregion
 
         #region Constructor
-        public LoadLogDataAccess(string path)
+        public LoadLogDataAccess(string path, IDataAccess dataAccess)
         {
             this.path = path;
             baseUri = new(path);
+            
+            this.dataAccess = dataAccess;
+            simulationData = dataAccess.GetInitialSimulationData();
+
             log = LoadLog(path);
         }
 
@@ -36,8 +41,11 @@ namespace RobotokModel.Persistence.DataAccesses
         #region Public methods
         public SimulationData GetInitialSimulationData()
         {
-            // azt még nemtom hogy ezt honnan kapjuk meg
-            throw new NotImplementedException();
+            simulationData = dataAccess.GetInitialSimulationData();
+            //TODO: replace robots on map according to log file
+            simulationData.Goals = log.Tasks;
+            return simulationData;
+
         }
 
         public RobotOperation[] GetRobotOperations(int step)
@@ -50,29 +58,19 @@ namespace RobotokModel.Persistence.DataAccesses
             return operations.ToArray();
         }
 
-        public TaskEvent[] GetTaskEvents()
+        public List<TaskEvent[]> GetTaskEvents()
         {
-            int i = 0;
-            int count = 0;
-            foreach(List<TaskEvent> t in log.Events)
+            List<TaskEvent[]> taskEvents = new ();
+            for (int i = 0; i < log.Events.Count; i++)
             {
-                count += t.Count;
-            }
-            TaskEvent[] taskEvents = new TaskEvent[count];
-            foreach (List<TaskEvent> ts in log.Events)
-            {
-                foreach (TaskEvent task in ts)
-                {
-                    taskEvents[i] = task;
-                    i++;
-                }
+                taskEvents.Add(log.Events[i].ToArray());
             }
             return taskEvents;
         }
 
         public IDataAccess NewInstance(string filePath)
         {
-            return new LoadLogDataAccess(filePath);
+            return new LoadLogDataAccess(filePath, dataAccess);
         }
 
         public Log LoadLog(string path) // TODO: remove unnecessary elements
@@ -92,6 +90,9 @@ namespace RobotokModel.Persistence.DataAccesses
             log.MakeSpan = externalLog.MakeSpan;
             log.ActualPaths = new List<List<RobotOperation>>();
             log.PlannerPaths = new List<List<RobotOperation>>();
+            log.Tasks = new();
+            log.Start = new();
+
             foreach (string robot in externalLog.ActualPaths)
             {
                 List<RobotOperation> robotOperation = new List<RobotOperation>();
@@ -128,14 +129,14 @@ namespace RobotokModel.Persistence.DataAccesses
                     }
 
                     int taskID = int.Parse(t0);
-                    int robotID = int.Parse(t1);
+                    int step = int.Parse(t1);
                     if (task[2].ToString() == "finished")
                     {
-                        taskEvents.Add(new TaskEvent(taskID, robotID, TaskEventType.finished));
+                        taskEvents.Add(new TaskEvent(taskID, step, TaskEventType.finished));
                     }
                     else
                     {
-                        taskEvents.Add(new TaskEvent(taskID, robotID, TaskEventType.assigned));
+                        taskEvents.Add(new TaskEvent(taskID, step, TaskEventType.assigned));
                     }
 
                 }
@@ -146,7 +147,7 @@ namespace RobotokModel.Persistence.DataAccesses
                 Goal g = new Goal
                 {
                     Id = task[0],
-                    Position = new Position { X = task[1], Y = task[2] },
+                    Position = new Position { X = task[2], Y = task[1] },//it has to be in this order!!!
                 };
                 log.Tasks.Add(g);
             }
@@ -164,10 +165,10 @@ namespace RobotokModel.Persistence.DataAccesses
                 {
                     throw new Exception("Position was null while trying to parse in array: start.");
                 }
-                Robot r = new Robot
+                RobotState r = new RobotState
                 {
-                    Id = robotIDStart,
-                    Position = new Position { X = int.Parse(x), Y = int.Parse(y) },
+                    X = int.Parse(x),
+                    Y = int.Parse(y),
                     Rotation = ToDirection(direction)
                 };
                 robotIDStart++;

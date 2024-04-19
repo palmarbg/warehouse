@@ -40,6 +40,7 @@ namespace Robotok.View.UserControls
             SetCommandBinding(_endButton,   "FinalPosition",    viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, "LoadSimulation", viewModel);
+            SetCommandBinding(_saveSimulationMenuItem, "SaveSimulation", viewModel);
 
             _playButton.Click += new RoutedEventHandler((_,_) => {
                 _playButton.IconSrc = _playButton.IconSrc == "Icons/pause.png" ? "Icons/play.png" : "Icons/pause.png";
