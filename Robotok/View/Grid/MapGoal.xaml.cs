@@ -34,7 +34,9 @@ namespace Robotok.View.Grid
         public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
-            viewModel.GoalsChanged += new EventHandler(RefreshGoals);
+            viewModel.GoalsChanged += new EventHandler(
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshGoals(s, e); })
+                );
         }
 
         #region Private methods

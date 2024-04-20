@@ -39,8 +39,12 @@ namespace Robotok.View.Grid
         {
             _viewModel = viewModel;
             this.DataContext = viewModel;
-            viewModel.RobotsChanged += new EventHandler(AddRobots);
-            viewModel.RobotsMoved += new EventHandler(RefreshRobots);
+            viewModel.RobotsChanged += new EventHandler(
+                (s,e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s,e); })
+                );
+            viewModel.RobotsMoved += new EventHandler(
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, e); })
+                );
         }
 
         #region Private Methods
@@ -48,6 +52,7 @@ namespace Robotok.View.Grid
         {
             if (sender == null)
                 return;
+
             List<Robot> robots = (List<Robot>)sender;
 
             MapCanvas.Children.Clear();

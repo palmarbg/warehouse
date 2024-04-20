@@ -35,7 +35,9 @@ namespace Robotok.View.Grid
         public void SetDataContext(MainWindowViewModel viewModel)
         {
             this.DataContext = viewModel;
-            viewModel.MapLoaded += new EventHandler(RefreshMap);
+            viewModel.MapLoaded += new EventHandler(
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshMap(s, e); })
+                );
         }
 
         #region Private methods

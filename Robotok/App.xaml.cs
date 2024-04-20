@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 using RobotokModel.Model.Extensions;
+using Microsoft.Win32;
+using RobotokModel.Model.Interfaces;
 
 namespace Robotok
 {
@@ -42,6 +44,8 @@ namespace Robotok
 
             // create viewModel
             _viewModel = new MainWindowViewModel(_simulation);
+            _viewModel.LoadSimulation += new EventHandler((_,_) => ViewModel_LoadSimulation());
+            _viewModel.SaveSimulation += new EventHandler((_,_) => ViewModel_LoadSimulation());
 
             // create view
             _view = new MainWindow();
@@ -57,6 +61,36 @@ namespace Robotok
         }
 
         #endregion
+
+        #region ViewModel event handlers
+
+        private void ViewModel_LoadSimulation()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Konfigurációs fájl betöltése";
+            openFileDialog.Filter = "Config file|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _simulation.Mediator.LoadSimulation(openFileDialog.FileName);
+            }
+        }
+
+        private void ViewModel_SaveSimulation()
+        {
+            if (_simulation.Mediator is not ISimulationMediator)
+                return;
+            ISimulationMediator simulationMediator = (ISimulationMediator)_simulation.Mediator;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Naplófájl mentése";
+            saveFileDialog.Filter = "Log file|*.json";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                simulationMediator.SaveSimulation(saveFileDialog.FileName);
+            }
+        }
+
+        #endregion
+
     }
 
 }

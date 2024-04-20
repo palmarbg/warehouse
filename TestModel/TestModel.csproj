@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -18,6 +18,25 @@
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MockClasses\Executors\" />
+    <Folder Include="MockClasses\Controllers\" />
+    <Folder Include="MockClasses\Distributors\" />
+    <Folder Include="MockClasses\Mediators\" />
+    <Folder Include="MockClasses\Simulations\" />
+    <Folder Include="ModelTests\ControllerTests\" />
+    <Folder Include="ModelTests\DistributorTests\" />
+    <Folder Include="ModelTests\ExecutorTests\" />
+    <Folder Include="ModelTests\MediatorTests\" />
+    <Folder Include="ModelTests\SimulationTests\" />
+    <Folder Include="PersistenceTests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RobotokModel\RobotokModel.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
 </Project>

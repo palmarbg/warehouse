@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using Robotok.MVVM;
-using Robotok.View.Grid;
 using RobotokModel.Model;
 using RobotokModel.Model.Interfaces;
 using System;
@@ -9,10 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Robotok.ViewModel
@@ -105,24 +102,27 @@ namespace Robotok.ViewModel
         #region Events
 
         /// <summary>
-        /// Fire with <see cref="OnRobotsChanged" />
+        /// Fire with <see cref="Model_RobotsChanged" />
         /// </summary>
         public event EventHandler? RobotsChanged;
 
         /// <summary>
-        /// Fire with <see cref="OnRobotsMoved" />
+        /// Fire with <see cref="Model_RobotsMoved" />
         /// </summary>
         public event EventHandler? RobotsMoved;
 
         /// <summary>
-        /// Fire with <see cref="OnGoalsChanged"/>
+        /// Fire with <see cref="Model_GoalsChanged"/>
         /// </summary>
         public event EventHandler? GoalsChanged;
 
         /// <summary>
-        /// Fire with <see cref="OnMapLoaded"/>
+        /// Fire with <see cref="Model_MapLoaded"/>
         /// </summary>
         public event EventHandler? MapLoaded;
+
+        public event EventHandler? LoadSimulation;
+        public event EventHandler? SaveSimulation;
 
         #endregion
 
@@ -136,32 +136,32 @@ namespace Robotok.ViewModel
         #region DelegateCommands
 
         /// <summary> Start or pause the simulation </summary>
-        public DelegateCommand ToggleSimulation { get; set; }
+        public DelegateCommand ToggleSimulationCommand { get; set; }
 
         /// <summary> Stop the simulation </summary>
-        public DelegateCommand StopSimulation { get; set; }
+        public DelegateCommand StopSimulationCommand { get; set; }
 
         /// <summary> Pause the simulation </summary>
-        public DelegateCommand PauseSimulation { get; set; }
+        public DelegateCommand PauseSimulationCommand { get; set; }
 
         /// <summary> Go to the start of the simulation </summary>
-        public DelegateCommand InitialPosition { get; set; }
+        public DelegateCommand InitialPositionCommand { get; set; }
 
         /// <summary> Take one step backward in the simulation </summary>
-        public DelegateCommand PreviousStep { get; set; }
+        public DelegateCommand PreviousStepCommand { get; set; }
 
         /// <summary> Take one step forward in the simulation </summary>
-        public DelegateCommand NextStep { get; set; }
+        public DelegateCommand NextStepCommand { get; set; }
 
         /// <summary> Display the map after the simulation is over </summary>
-        public DelegateCommand FinalPosition { get; set; }
+        public DelegateCommand FinalPositionCommand { get; set; }
 
 
         /// <summary> Load a config file </summary>
-        public DelegateCommand LoadSimulation { get; set; }
+        public DelegateCommand LoadSimulationCommand { get; set; }
 
         /// <summary> Save a log file </summary>
-        public DelegateCommand SaveSimulation { get; set; }
+        public DelegateCommand SaveSimulationCommand { get; set; }
 
         #endregion
 
@@ -178,22 +178,22 @@ namespace Robotok.ViewModel
             Robots = [];
             Goals = [];
 
-            simulation.RobotsMoved += new EventHandler((_,_) => OnRobotsMoved());
-            simulation.GoalsChanged += new EventHandler((_,_) => OnGoalsChanged());
-            simulation.SimulationLoaded += new EventHandler((_, _) => OnSimulationLoaded());            
+            simulation.RobotsMoved += new EventHandler((_,_) => Model_RobotsMoved());
+            simulation.GoalsChanged += new EventHandler((_,_) => Model_GoalsChanged());
+            simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
 
-            ToggleSimulation = new DelegateCommand(param => OnToggleSimulation());
-            StopSimulation = new DelegateCommand(param => OnSimulationStop());
-            PauseSimulation = new DelegateCommand(param => OnSimulationPause());
-            InitialPosition = new DelegateCommand(param => OnInitialPosition());
-            PreviousStep = new DelegateCommand(param => OnPreviousStep());
-            NextStep = new DelegateCommand(param => OnNextStep());
-            FinalPosition = new DelegateCommand(param => OnFinalPosition());
-           
-            LoadSimulation = new(param => OnLoadSimulation());
-            SaveSimulation = new DelegateCommand(param => OnSaveSimulation());
+            ToggleSimulationCommand = new DelegateCommand(param => OnToggleSimulation());
+            StopSimulationCommand = new DelegateCommand(param => OnSimulationStop());
+            PauseSimulationCommand = new DelegateCommand(param => OnSimulationPause());
+            InitialPositionCommand = new DelegateCommand(param => OnInitialPosition());
+            PreviousStepCommand = new DelegateCommand(param => OnPreviousStep());
+            NextStepCommand = new DelegateCommand(param => OnNextStep());
+            FinalPositionCommand = new DelegateCommand(param => OnFinalPosition());
 
-            OnSimulationLoaded();
+            LoadSimulationCommand = new(param => OnLoadSimulation());
+            SaveSimulationCommand = new DelegateCommand(param => OnSaveSimulation());
+
+            Model_SimulationLoaded();
         }
 
         #endregion
@@ -203,53 +203,42 @@ namespace Robotok.ViewModel
         /// <summary>
         /// Call when the robot collection changed
         /// </summary>
-        private void OnRobotsChanged()
+        private void Model_RobotsChanged()
         {
-            App.Current?.Dispatcher.Invoke((Action)delegate
-            {
-                RobotsChanged?.Invoke(Robots, new EventArgs());
-            });
+            RobotsChanged?.Invoke(Robots, new EventArgs());
+            Debug.WriteLine("333333333333");
         }
 
         /// <summary>
         /// Call it when the robots moved, but the collection didn't change
         /// <para />
-        /// If the collection changed call <see cref="OnRobotsChanged"/>
+        /// If the collection changed call <see cref="Model_RobotsChanged"/>
         /// </summary>
-        private void OnRobotsMoved()
+        private void Model_RobotsMoved()
         {
-            App.Current?.Dispatcher.Invoke((Action)delegate
-            {
-                RobotsMoved?.Invoke(Robots, new EventArgs());
-            });
+            RobotsMoved?.Invoke(Robots, new EventArgs());
         }
 
         /// <summary>
         /// Call when new goals have been assigned or finished
         /// </summary>
-        private void OnGoalsChanged()
+        private void Model_GoalsChanged()
         {
-            App.Current?.Dispatcher.Invoke((Action)delegate
-            {
-                GoalsChanged?.Invoke(Goals, new EventArgs());
-            });
+            GoalsChanged?.Invoke(Goals, new EventArgs());
         }
 
         /// <summary>
         /// Call when blocks on map have been changed
         /// </summary>
-        private void OnMapLoaded()
+        private void Model_MapLoaded()
         {
-            App.Current?.Dispatcher.Invoke((Action)delegate
-            {
-                MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
-            });
+            MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
         }
 
         /// <summary>
         /// Call when new simulation data have been loaded
         /// </summary>
-        private void OnSimulationLoaded()
+        private void Model_SimulationLoaded()
         {
             RowCount = _simulation.SimulationData.Map.GetLength(1);
             ColumnCount = _simulation.SimulationData.Map.GetLength(0);
@@ -257,10 +246,12 @@ namespace Robotok.ViewModel
             Robots = _simulation.SimulationData.Robots;
             Goals = _simulation.SimulationData.Goals;
 
-            OnMapLoaded();
-            OnRobotsChanged();
-            OnGoalsChanged();
+            Model_MapLoaded();
+            Model_RobotsChanged();
+            Model_GoalsChanged();
         }
+
+        
 
         #endregion
 
@@ -271,9 +262,9 @@ namespace Robotok.ViewModel
         /// </summary>
         public void OnSetDataContext()
         {
-            OnRobotsChanged();
-            OnGoalsChanged();
-            OnMapLoaded();
+            Model_RobotsChanged();
+            Model_GoalsChanged();
+            Model_MapLoaded();
         }
 
         private void OnToggleSimulation()
@@ -316,30 +307,14 @@ namespace Robotok.ViewModel
             Debug.WriteLine("last step");
         }
 
-
         private void OnLoadSimulation()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "Konfigurációs fájl betöltése";
-            openFileDialog.Filter = "Config file|*.json";
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _simulation.Mediator.LoadSimulation(openFileDialog.FileName);
-            }
+            LoadSimulation?.Invoke(null, new());
         }
 
         private void OnSaveSimulation()
         {
-            if (_simulation.Mediator is not ISimulationMediator)
-                return;
-            ISimulationMediator simulationMediator = (ISimulationMediator) _simulation.Mediator;
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Title = "Naplófájl mentése";
-            saveFileDialog.Filter = "Log file|*.json";
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                simulationMediator.SaveSimulation(saveFileDialog.FileName);
-            }
+            SaveSimulation?.Invoke(null, new());
         }
 
         #endregion
