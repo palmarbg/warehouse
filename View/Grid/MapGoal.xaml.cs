@@ -1,8 +1,8 @@
 ﻿using Persistence.DataTypes;
-using ViewModel.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {
@@ -27,7 +27,7 @@ namespace View.Grid
         #region Private methods
         private void RefreshGoals(object? sender, EventArgs e)
         {
-            if(sender == null)
+            if (sender == null)
                 return;
             List<Goal> goals = (List<Goal>)sender;
 
@@ -36,9 +36,9 @@ namespace View.Grid
             SolidColorBrush brush = new(Color.FromRgb(251, 171, 9));
             brush.Freeze();
 
-            foreach(Goal goal in goals)
+            foreach (Goal goal in goals)
             {
-                if(!goal.IsAssigned)
+                if (!goal.IsAssigned)
                     continue;
                 System.Windows.Controls.Grid grid = new()
                 {

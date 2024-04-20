@@ -6,7 +6,7 @@ namespace Persistence.DataAccesses
     public class MockLoadLogDataAccess : ILoadLogDataAccess
     {
         #region Private fields
-        
+
         private readonly DemoDataAccess _demoDataAccess;
         private readonly List<RobotOperation[]> _robotOperations;
         private readonly List<TaskEvent[]> _taskEvents;
@@ -45,7 +45,7 @@ namespace Persistence.DataAccesses
                 Array.Copy(_taskEvents[i], taskEvents, _taskEvents[i].Length);
                 toreturn.Add(taskEvents);
             }
-            
+
             return toreturn;
         }
 

@@ -1,7 +1,7 @@
-﻿using ViewModel.MVVM;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using ViewModel.MVVM;
 namespace View.Grid
 {
     #region Numberstrip converters 

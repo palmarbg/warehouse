@@ -1,16 +1,18 @@
-﻿using Persistence.DataTypes;
-using Persistence.DataAccesses;
+﻿using Persistence.DataAccesses;
+using Persistence.DataTypes;
 using Persistence.Interfaces;
 
 namespace Persistence.Loggers
 {
     public class BasicLogger : ILogger
     {
-        private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
+        private ISaveLogDataAccess _saveLogDataAccess;
         private Log log = new Log();
         private SimulationData simulationData;
-        public BasicLogger(SimulationData simulationData)
+        public BasicLogger(SimulationData simulationData, ISaveLogDataAccess saveLogDataAccess)
         {
+            _saveLogDataAccess = saveLogDataAccess;
+
             string actionModel = simulationData.ControllerName ?? string.Empty;
             int teamSize = simulationData.Robots.Count;
 
@@ -32,7 +34,7 @@ namespace Persistence.Loggers
                 });
             }
 
-            
+
 
 
             // LogEvent()
@@ -53,11 +55,11 @@ namespace Persistence.Loggers
         public void SaveLog(string path)
         {
             log.Tasks = simulationData.Goals;
-            log.AllValid = !log.Errors.All(e=>e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
+            log.AllValid = !log.Errors.All(e => e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
-            foreach(List<TaskEvent> events in log.Events)
+            foreach (List<TaskEvent> events in log.Events)
             {
-                foreach(TaskEvent v in events)
+                foreach (TaskEvent v in events)
                 {
                     if (v.eventType == TaskEventType.assigned)
                         log.NumTaskFinished += 1;
@@ -65,7 +67,7 @@ namespace Persistence.Loggers
             }
             log.MakeSpan = log.ActualPaths[0].Count;
             log.SumOfCost = log.ActualPaths.Count * log.ActualPaths[0].Count;
-            dataAccess.SaveLogData(path, log);
+            _saveLogDataAccess.SaveLogData(path, log);
         }
         public void LogTimeout()
         {
@@ -113,7 +115,7 @@ namespace Persistence.Loggers
 
         public ILogger NewInstance(SimulationData simulationData)
         {
-            return new BasicLogger(simulationData);
+            return new BasicLogger(simulationData, _saveLogDataAccess);
         }
     }
 }

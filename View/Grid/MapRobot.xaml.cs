@@ -1,9 +1,9 @@
 ﻿using Persistence.DataTypes;
-using ViewModel.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {
@@ -23,7 +23,7 @@ namespace View.Grid
             _viewModel = viewModel;
             this.DataContext = viewModel;
             viewModel.RobotsChanged += new EventHandler(
-                (s,e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s,e); })
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); })
                 );
             viewModel.RobotsMoved += new EventHandler(
                 (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, e); })
@@ -100,7 +100,7 @@ namespace View.Grid
                 return;
             List<Robot> robots = (List<Robot>)sender;
 
-            for(int i=0; i< MapCanvas.Children.Count;i++)
+            for (int i = 0; i < MapCanvas.Children.Count; i++)
             {
                 var element = MapCanvas.Children[i];
                 if (element is System.Windows.Controls.Grid grid)

@@ -1,7 +1,7 @@
-﻿using Persistence.DataTypes;
-using ViewModel.MVVM;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 using System.Diagnostics;
+using ViewModel.MVVM;
 
 namespace ViewModel.ViewModel
 {
@@ -169,8 +169,8 @@ namespace ViewModel.ViewModel
             Robots = [];
             Goals = [];
 
-            simulation.RobotsMoved += new EventHandler((_,_) => Model_RobotsMoved());
-            simulation.GoalsChanged += new EventHandler((_,_) => Model_GoalsChanged());
+            simulation.RobotsMoved += new EventHandler((_, _) => Model_RobotsMoved());
+            simulation.GoalsChanged += new EventHandler((_, _) => Model_GoalsChanged());
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
 
             ToggleSimulationCommand = new DelegateCommand(param => OnToggleSimulation());
@@ -241,7 +241,7 @@ namespace ViewModel.ViewModel
             Model_GoalsChanged();
         }
 
-        
+
 
         #endregion
 

@@ -41,9 +41,9 @@ namespace Persistence.DataAccesses
             foreach (var error in log.Errors)
             {
                 externalLog.Errors.Add(new([
-                    error.robotId1, 
-                    error.robotId2, 
-                    error.round, 
+                    error.robotId1,
+                    error.robotId2,
+                    error.round,
                     error.errorType.ToString()
                     ]));
             }
@@ -59,7 +59,7 @@ namespace Persistence.DataAccesses
             }
 
             externalLog.Events = new();
-            for(int i = 0; i < log.Events.Count; i++)
+            for (int i = 0; i < log.Events.Count; i++)
             {
                 externalLog.Events.Add(new());
                 foreach (var evnt in log.Events[i])
@@ -83,7 +83,7 @@ namespace Persistence.DataAccesses
             }
 
             externalLog.ActualPaths = new();
-            foreach(var robotPathList in log.ActualPaths)
+            foreach (var robotPathList in log.ActualPaths)
             {
                 string str = "";
                 foreach (var robotPath in robotPathList)

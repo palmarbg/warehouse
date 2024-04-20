@@ -10,4 +10,13 @@
         public bool IsSimulationPaused => !IsSimulationRunning && !IsSimulationEnded;
     }
 
+    //public class SimulationEvents
+    //{
+    //    public event EventHandler? ControllerTimeout;
+    //    public event EventHandler? ControllerTaskFinished;
+    //    public event EventHandler? ExecutorFinished;
+    //    public event EventHandler? TaskFinished;
+    //    //public event EventHandler? TaskAssigned;
+    //}
+
 }

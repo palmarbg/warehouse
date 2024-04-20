@@ -1,6 +1,7 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
 using Model.Mediators;
+using Persistence.DataTypes;
+using System.Diagnostics;
 
 namespace Model
 {
@@ -41,12 +42,13 @@ namespace Model
 
         #region Constructor
 
-        public Simulation()
+        public Simulation(IServiceLocator serviceLocator)
         {
 
-            Goal.GoalsChanged += new EventHandler((_, _) => OnGoalsChanged());
+            Robot.TaskAssigned += new EventHandler<Goal>((_, _) => OnGoalsChanged());
+            Robot.TaskFinished += new EventHandler<Goal>((_, _) => OnGoalsChanged());
 
-            Mediator = new SimulationMediator(this);
+            Mediator = serviceLocator.GetSimulationMediator(this);
         }
 
         #endregion

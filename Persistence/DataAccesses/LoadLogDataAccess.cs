@@ -24,7 +24,7 @@ namespace Persistence.DataAccesses
         {
             this.path = path;
             baseUri = new(path);
-            
+
             this.dataAccess = dataAccess;
             simulationData = dataAccess.GetInitialSimulationData();
 
@@ -46,7 +46,7 @@ namespace Persistence.DataAccesses
         public RobotOperation[] GetRobotOperations(int step)
         {
             List<RobotOperation> operations = new List<RobotOperation>();
-            foreach(List<RobotOperation> robotPath in log.ActualPaths)
+            foreach (List<RobotOperation> robotPath in log.ActualPaths)
             {
                 operations.Add(robotPath[step]);
             }
@@ -55,7 +55,7 @@ namespace Persistence.DataAccesses
 
         public List<TaskEvent[]> GetTaskEvents()
         {
-            List<TaskEvent[]> taskEvents = new ();
+            List<TaskEvent[]> taskEvents = new();
             for (int i = 0; i < log.Events.Count; i++)
             {
                 taskEvents.Add(log.Events[i].ToArray());

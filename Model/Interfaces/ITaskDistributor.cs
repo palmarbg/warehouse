@@ -13,8 +13,6 @@ namespace Model.Interfaces
         /// <param name="robot">The robot, that should get a new goal</param>
         public void AssignNewTask(Robot robot);
 
-        public event EventHandler<(Robot, Goal)>? TaskAssigned;
-
         public bool AllTasksAssigned { get; }
 
         public ITaskDistributor NewInstance(SimulationData simulationData);

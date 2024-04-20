@@ -80,16 +80,16 @@ namespace View.Grid
         {
             return offset - (int)Math.Round(GridConverterFunctions.LabelLength(zoom) * GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
         }
-        
+
 
 
 
         /// <param name="array"></param>
         /// <param name="length"></param>
         /// <returns>If array doesn't contain null or UnsetValue</returns>
-        public static bool ValidateArray(object[] array, int? length=null)
+        public static bool ValidateArray(object[] array, int? length = null)
         {
-            if(length != null && array.Length != length)
+            if (length != null && array.Length != length)
                 return false;
             return !array.Any(e => e == null || e == DependencyProperty.UnsetValue);
         }

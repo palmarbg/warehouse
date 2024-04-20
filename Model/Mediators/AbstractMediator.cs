@@ -1,18 +1,21 @@
-﻿using Persistence.DataTypes;
+﻿using Model.Controllers;
+using Model.Executors;
 using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Interfaces;
+using Persistence.Loggers;
 using System.Diagnostics;
 
 namespace Model.Mediators
 {
     public abstract class AbstractMediator : IMediator
     {
+
         #region Protected Fields
 
         protected readonly System.Timers.Timer Timer;
 
         protected IDataAccess dataAccess = null!;
-        protected ITaskDistributor taskDistributor = null!;
         protected IController controller = null!;
         protected IExecutor executor = null!;
 
@@ -26,6 +29,8 @@ namespace Model.Mediators
 
         protected DateTime time;
 
+        protected readonly IServiceLocator _serviceLocator;
+
         #endregion
 
         #region Properties
@@ -38,8 +43,10 @@ namespace Model.Mediators
 
         #region Constructor
 
-        public AbstractMediator(Simulation simulation)
+        public AbstractMediator(Simulation simulation, IServiceLocator serviceLocator)
         {
+            _serviceLocator = serviceLocator;
+
             this.simulation = simulation;
 
             interval = 500;
@@ -51,6 +58,7 @@ namespace Model.Mediators
             Timer.Stop();
 
             simulationState = new SimulationState();
+
         }
 
         #endregion
@@ -74,14 +82,14 @@ namespace Model.Mediators
             simulationState.IsSimulationRunning = true;
             simulationState.IsSimulationEnded = false;
 
-            taskDistributor.TaskAssigned += new EventHandler<(Robot, Goal)>((_, robotAndGoal) => OnTaskAssigned(robotAndGoal.Item1.Id, robotAndGoal.Item2.Id));
-
             controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
             {
                 if (controller != sender)
                     return;
                 OnTaskFinished(e);
             });
+
+            var taskDistributor = _serviceLocator.GetTaskDistributor(simulationData);
 
             controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
 
@@ -115,7 +123,7 @@ namespace Model.Mediators
 
             simulationData = dataAccess.GetInitialSimulationData();
             simulationData.ControllerName = controller.Name;
-            taskDistributor = taskDistributor.NewInstance(simulationData);
+
             controller = controller.NewInstance();
             executor = executor.NewInstance(simulationData);
 
@@ -149,13 +157,5 @@ namespace Model.Mediators
 
         #endregion
 
-        #region Protected methods
-
-        protected virtual void OnTaskAssigned(int robotId, int taskId)
-        {
-
-        }
-
-        #endregion
     }
 }

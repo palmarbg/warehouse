@@ -1,9 +1,9 @@
-﻿using ViewModel.MVVM;
-using ViewModel.ViewModel;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using ViewModel.MVVM;
+using ViewModel.ViewModel;
 
 
 namespace View.Grid
@@ -33,8 +33,8 @@ namespace View.Grid
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             // offset zoom
-            if (!GridConverterFunctions.ValidateArray(values,2))
-                return new Thickness(0,0,0,0);
+            if (!GridConverterFunctions.ValidateArray(values, 2))
+                return new Thickness(0, 0, 0, 0);
             int offset = (int)values[0];
             double zoom = (double)values[1];
 

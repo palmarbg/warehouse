@@ -1,9 +1,10 @@
 ﻿using Microsoft.Win32;
-using ViewModel.ViewModel;
 using Model;
 using Model.Interfaces;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
+using ViewModel.ViewModel;
 
 namespace View
 {
@@ -14,7 +15,8 @@ namespace View
     {
         #region Fields
 
-        private Simulation _simulation = null!;
+        private IServiceLocator _serviceLocator = null!;
+        private ISimulation _simulation = null!;
         private MainWindowViewModel _viewModel = null!;
         private MainWindow _view = null!;
 
@@ -24,7 +26,13 @@ namespace View
 
         public App()
         {
-            Startup += new StartupEventHandler(App_Startup);
+            try
+            {
+                Startup += new StartupEventHandler(App_Startup);
+            } catch
+            {
+                Debug.WriteLine("Ezen a ponton lezárhatod a géped és elgondolkodhatsz az életeden mit csinálsz");
+            }
         }
 
         #endregion
@@ -33,13 +41,16 @@ namespace View
 
         private void App_Startup(object? sender, StartupEventArgs e)
         {
+            //create service locator
+            _serviceLocator = new ServiceLocator();
+
             //create simulation
-            _simulation = new Simulation();
+            _simulation = new Simulation(_serviceLocator);
 
             // create viewModel
             _viewModel = new MainWindowViewModel(_simulation);
-            _viewModel.LoadSimulation += new EventHandler((_,_) => ViewModel_LoadSimulation());
-            _viewModel.SaveSimulation += new EventHandler((_,_) => ViewModel_LoadSimulation());
+            _viewModel.LoadSimulation += new EventHandler((_, _) => ViewModel_LoadSimulation());
+            _viewModel.SaveSimulation += new EventHandler((_, _) => ViewModel_SaveSimulation());
 
             // create view
             _view = new MainWindow();

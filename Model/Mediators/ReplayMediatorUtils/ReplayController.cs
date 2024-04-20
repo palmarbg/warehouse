@@ -1,5 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Interfaces;
 
 namespace Model.Mediators.ReplayMediatorUtils
@@ -24,12 +24,17 @@ namespace Model.Mediators.ReplayMediatorUtils
         {
             for (int i = 0; i < taskEventIterator.Length; i++)
             {
+                var robot = simulationData.Robots[i];
                 while (taskEventIterator[i] < taskEvents[i].Length && taskEvents[i][taskEventIterator[i]].step <= simulationData.Step)
                 {
                     TaskEvent taskEvent = taskEvents[i][taskEventIterator[i]];
                     Goal goal = simulationData.Goals[taskEvent.taskId];
-                    goal.IsAssigned = taskEvent.eventType == TaskEventType.assigned;
-                    Goal.OnGoalsChanged();
+                    if(taskEvent.eventType == TaskEventType.assigned)
+                        robot.CurrentGoal = goal;
+                    else
+                        robot.CurrentGoal = null;
+                    
+                    //Goal.OnGoalsChanged();
                     taskEventIterator[i]++;
                 }
             }

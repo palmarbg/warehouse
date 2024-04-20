@@ -12,7 +12,6 @@ namespace Model.Interfaces
 
         #endregion
 
-
         #region Methods
 
         void StartSimulation();

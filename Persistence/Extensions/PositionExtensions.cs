@@ -33,7 +33,8 @@ namespace Persistence.Extensions
             return position1.X == position2.X && position1.Y == position2.Y;
         }
         // Gives null if positions are not on the same y or x coordinate
-        public static Direction? DirectionInPosition(this Position start, Position end) {
+        public static Direction? DirectionInPosition(this Position start, Position end)
+        {
             if (start.X == end.X)
             {
                 if (start.Y == end.Y)
@@ -42,7 +43,8 @@ namespace Persistence.Extensions
                     return Direction.Up;
                 if (start.Y < end.Y)
                     return Direction.Down;
-            }else if(start.Y == end.Y)
+            }
+            else if (start.Y == end.Y)
             {
                 if (start.X > end.X)
                     return Direction.Left;

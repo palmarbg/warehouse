@@ -25,7 +25,7 @@ namespace Persistence.Extensions
 
         public static (int, int) ToXY<T>(this int n, T[,] matrix)
         {
-            return (n % matrix.GetWidth(),n / matrix.GetWidth());
+            return (n % matrix.GetWidth(), n / matrix.GetWidth());
         }
 
         public static int ToInt<T>(this (int, int) xy, T[,] matrix)

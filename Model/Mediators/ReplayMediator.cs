@@ -1,8 +1,8 @@
 ﻿using Model.Interfaces;
+using Model.Mediators.ReplayMediatorUtils;
 using Persistence.DataAccesses;
 using Persistence.Interfaces;
 using System.Diagnostics;
-using Model.Mediators.ReplayMediatorUtils;
 
 namespace Model.Mediators
 {
@@ -10,23 +10,22 @@ namespace Model.Mediators
     {
         #region Constructor
 
-        public ReplayMediator(Simulation simulation) : base(simulation)
+        public ReplayMediator(Simulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("View"));
-            IDataAccess mapDataAccess = new ConfigDataAccess(path + "sample_files\\random_20_config.json");//random_20_config
-            //dataAccess = new MockLoadLogDataAccess();
-            dataAccess = new LoadLogDataAccess(path + "sample_files\\random_20_log.json", mapDataAccess);//random_20_log
+
+            var mapDataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\astar1test.json");//random_20_config
+            dataAccess = _serviceLocator.GetLoadLogDataAccess(path + "sample_files\\log.json", mapDataAccess);//random_20_log
 
             simulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new ReplayController((ILoadLogDataAccess)dataAccess);
-            taskDistributor = new ReplayDistributor();
-            executor = new ReplayExecutor(simulationData);
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+            controller = serviceLocator.GetReplayController((ILoadLogDataAccess)dataAccess);
+
+            executor = _serviceLocator.GetReplayExecutor(simulationData);
 
         }
 

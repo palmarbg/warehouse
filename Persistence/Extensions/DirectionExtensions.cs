@@ -89,7 +89,7 @@ namespace Persistence.Extensions
                     break;
             }
 
-            return new List<RobotOperation>(); 
+            return new List<RobotOperation>();
         }
 
         public static string ToChar(this Direction direction)
@@ -99,7 +99,7 @@ namespace Persistence.Extensions
                 Direction.Up => "N",
                 Direction.Down => "S",
                 Direction.Left => "W",
-                Direction.Right =>"E",
+                Direction.Right => "E",
                 _ => throw new Exception()
             };
         }

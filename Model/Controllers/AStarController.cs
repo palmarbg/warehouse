@@ -1,5 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Extensions;
 
 namespace Model.Controllers
@@ -38,7 +38,7 @@ namespace Model.Controllers
 
             });
 
-            Goal.OnGoalsChanged();
+            //Goal.OnGoalsChanged();
             _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
         }
         public IController NewInstance()
@@ -68,7 +68,7 @@ namespace Model.Controllers
                         else
                         {
                             _taskDistributor.AssignNewTask(robot);
-                            Goal.OnGoalsChanged();
+                            //Goal.OnGoalsChanged();
                             _plannedOperations[i] = FindPath(robot);
                             if (_plannedOperations[i].Count == 0)
                             {

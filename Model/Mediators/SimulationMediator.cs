@@ -14,24 +14,21 @@ namespace Model.Mediators
     {
         #region Constructor
 
-        public SimulationMediator(Simulation simulation) : base(simulation)
+        public SimulationMediator(Simulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
 
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("View"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
+
+            dataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\astar1test.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new AStarController();
-            taskDistributor = new DemoDistributor(simulationData);
+            controller = serviceLocator.GetController();
 
-            ILogger logger = new BasicLogger(simulationData);
-            executor = new DefaultExecutor(simulationData, logger);
-
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+            executor = _serviceLocator.GetExecutor(simulationData);
 
         }
 
@@ -72,15 +69,6 @@ namespace Model.Mediators
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             executor.Timeout();
             simulationData.Step++;
-        }
-
-        #endregion
-
-        #region Protected methods
-
-        protected override void OnTaskAssigned(int robotId, int taskId)
-        {
-            executor.TaskAssigned(taskId, robotId);
         }
 
         #endregion

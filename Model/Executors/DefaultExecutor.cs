@@ -1,7 +1,8 @@
-using Persistence.DataTypes;
 using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Model.Executors
 {
@@ -15,6 +16,8 @@ namespace Model.Executors
         {
             this.simulationData = simulationData;
             this.logger = logger;
+
+            Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnTaskAssigned(((Robot)robot!).Id, goal.Id));
         }
 
         /// <summary>
@@ -129,7 +132,7 @@ namespace Model.Executors
                         robot.CurrentGoal.IsAssigned = false;
                         OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                         robot.CurrentGoal = null;
-                        Goal.OnGoalsChanged();
+                        //Goal.OnGoalsChanged();
                         //TODO: Robotnak új goal-t kell adni
                         //robot.CurrentGoal = null;
                         //Distributor.AssignNewTask(robot);
@@ -180,6 +183,7 @@ namespace Model.Executors
         /// <param name="operaition"></param>
         private void MoveRobotToNewPosition(Robot robot, Position newPosition, RobotOperation operaition)
         {
+            Debug.WriteLine("eeeeeeeeeeeeeeeeeeeee");
             var map = simulationData.Map;
             map.SetAtPosition(newPosition, robot);
             map.SetAtPosition(robot.Position, EmptyTile.Instance);
@@ -196,10 +200,7 @@ namespace Model.Executors
             OnTimeout();
         }
 
-        public void TaskAssigned(int taskId, int robotId)
-        {
-            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
-        }
+        
 
         public void SaveSimulation(string filepath)
         {
@@ -242,6 +243,11 @@ namespace Model.Executors
                 errors,
                 timeElapsed
             );
+        }
+
+        private void OnTaskAssigned(int taskId, int robotId)
+        {
+            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
         }
 
         #endregion

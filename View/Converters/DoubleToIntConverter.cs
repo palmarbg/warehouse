@@ -8,7 +8,7 @@ namespace View.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value == null || value == DependencyProperty.UnsetValue)
+            if (value == null || value == DependencyProperty.UnsetValue)
                 return 0;
             return (int)((double)value);
         }

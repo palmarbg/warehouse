@@ -1,5 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Extensions;
 
 namespace Model.Executors
