@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RobotokModel\RobotokModel.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
 </Project>
