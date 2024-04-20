@@ -20,7 +20,7 @@ build_viewmodel:
   stage: build
   script:
     - cd ViewModel
-    - dotnet build RobotokModel.csproj
+    - dotnet build ViewModel.csproj
 
 
 build_view:
