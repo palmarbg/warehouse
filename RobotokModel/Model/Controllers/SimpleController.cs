@@ -1,10 +1,5 @@
-﻿using RobotokModel.Model.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Persistence.DataTypes;
+using RobotokModel.Model.Interfaces;
 
 namespace RobotokModel.Model.Controllers
 {

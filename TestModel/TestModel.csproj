@@ -31,10 +31,10 @@
     <Folder Include="ModelTests\ExecutorTests\" />
     <Folder Include="ModelTests\MediatorTests\" />
     <Folder Include="ModelTests\SimulationTests\" />
-    <Folder Include="PersistenceTests\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\RobotokModel\RobotokModel.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>

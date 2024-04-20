@@ -5,17 +5,12 @@ using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
 using RobotokModel.Persistence.Loggers;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace RobotokModel.Model.Mediators
 {
-    internal class SimulationMediator : AbstractMediator, ISimulationMediator
+    public class SimulationMediator : AbstractMediator, ISimulationMediator
     {
         #region Constructor
 

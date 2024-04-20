@@ -1,14 +1,6 @@
-﻿using RobotokModel.Model.Controllers;
-using RobotokModel.Model.Distributors;
-using RobotokModel.Model.Executors;
+﻿using Persistence.DataTypes;
 using RobotokModel.Model.Interfaces;
 using RobotokModel.Model.Mediators;
-using RobotokModel.Persistence;
-using RobotokModel.Persistence.DataAccesses;
-using RobotokModel.Persistence.Interfaces;
-using RobotokModel.Persistence.Loggers;
-using System.Diagnostics;
-using System.Timers;
 
 namespace RobotokModel.Model
 {

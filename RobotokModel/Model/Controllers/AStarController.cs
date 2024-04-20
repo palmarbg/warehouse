@@ -1,4 +1,5 @@
-﻿using RobotokModel.Model.Extensions;
+﻿using Persistence.DataTypes;
+using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
 
 namespace RobotokModel.Model.Controllers

@@ -1,15 +1,7 @@
+using Persistence.DataTypes;
 using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
-using RobotokModel.Persistence;
 using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RobotokModel.Model.Executors
 {

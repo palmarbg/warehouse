@@ -1,17 +1,10 @@
-﻿using RobotokModel.Model;
-using RobotokModel.Model.Extensions;
+﻿using Persistence.DataTypes;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotokModel.Persistence.Loggers
 {
-    class BasicLogger : ILogger
+    public class BasicLogger : ILogger
     {
         private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
         private Log log = new Log();

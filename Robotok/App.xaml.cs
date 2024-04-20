@@ -1,15 +1,10 @@
-﻿using Robotok.View;
+﻿using Microsoft.Win32;
+using Robotok.View;
 using Robotok.ViewModel;
 using RobotokModel.Model;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Threading;
-using RobotokModel.Model.Extensions;
-using Microsoft.Win32;
 using RobotokModel.Model.Interfaces;
+using System.ComponentModel;
+using System.Windows;
 
 namespace Robotok
 {

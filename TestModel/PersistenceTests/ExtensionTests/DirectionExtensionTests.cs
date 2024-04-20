@@ -1,12 +1,7 @@
-﻿using RobotokModel.Model;
+﻿using Persistence.DataTypes;
 using RobotokModel.Model.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TestModel.ModelTests.ExtensionTests
+namespace TestModel.PersistenceTests.ExtensionTests
 {
     [TestClass]
     public class DirectionExtensionTests

@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Robotok.MVVM;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows;
-using Robotok.MVVM;
-using System.Diagnostics;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
+using System.Windows.Data;
 namespace Robotok.View.Grid
 {
     #region Numberstrip converters 

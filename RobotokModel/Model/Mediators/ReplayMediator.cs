@@ -1,16 +1,8 @@
-﻿using RobotokModel.Model.Controllers;
-using RobotokModel.Model.Distributors;
-using RobotokModel.Model.Executors;
-using RobotokModel.Model.Interfaces;
+﻿using RobotokModel.Model.Interfaces;
 using RobotokModel.Model.Mediators.ReplayMediatorUtils;
 using RobotokModel.Persistence.DataAccesses;
 using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotokModel.Model.Mediators
 {

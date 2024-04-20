@@ -1,12 +1,6 @@
-﻿using RobotokModel.Model.Extensions;
+﻿using Persistence.DataTypes;
+using RobotokModel.Model.Extensions;
 using RobotokModel.Model.Interfaces;
-using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotokModel.Model.Executors
 {

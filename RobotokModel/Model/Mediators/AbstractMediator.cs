@@ -1,11 +1,7 @@
-﻿using RobotokModel.Model.Interfaces;
+﻿using Persistence.DataTypes;
+using RobotokModel.Model.Interfaces;
 using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotokModel.Model.Mediators
 {

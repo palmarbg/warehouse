@@ -1,14 +1,8 @@
-﻿using RobotokModel.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Threading.Tasks;
-using RobotokModel.Model;
+﻿using Persistence.DataTypes;
 using RobotokModel.Model.Extensions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using RobotokModel.Persistence.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace RobotokModel.Persistence.DataAccesses
 {

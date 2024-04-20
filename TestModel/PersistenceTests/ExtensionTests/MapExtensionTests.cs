@@ -1,12 +1,6 @@
-﻿using RobotokModel.Model;
-using RobotokModel.Model.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RobotokModel.Model.Extensions;
 
-namespace TestModel.ModelTests.ExtensionTests
+namespace TestModel.PersistenceTests.ExtensionTests
 {
     [TestClass]
     public class MapExtensionTests
@@ -18,9 +12,9 @@ namespace TestModel.ModelTests.ExtensionTests
         [TestInitialize]
         public void Initialize()
         {
-            _small = new int[3,2];
-            _medium = new bool[15,27];
-            _large = new int[200,700];
+            _small = new int[3, 2];
+            _medium = new bool[15, 27];
+            _large = new int[200, 700];
         }
 
         [TestMethod]
@@ -51,7 +45,7 @@ namespace TestModel.ModelTests.ExtensionTests
             int count = 0;
 
             for (int y = 0; y < _small.GetHeight(); y++)
-            for (int x =  0; x < _small.GetWidth(); x++)
+                for (int x = 0; x < _small.GetWidth(); x++)
                 {
                     Assert.AreEqual((x, y), count.ToXY(_small));
                     count++;

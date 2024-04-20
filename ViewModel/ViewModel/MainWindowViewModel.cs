@@ -1,16 +1,7 @@
-﻿using Microsoft.VisualBasic;
-using Microsoft.Win32;
+﻿using Persistence.DataTypes;
 using Robotok.MVVM;
-using RobotokModel.Model;
 using RobotokModel.Model.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Robotok.ViewModel
 {
@@ -206,7 +197,6 @@ namespace Robotok.ViewModel
         private void Model_RobotsChanged()
         {
             RobotsChanged?.Invoke(Robots, new EventArgs());
-            Debug.WriteLine("333333333333");
         }
 
         /// <summary>

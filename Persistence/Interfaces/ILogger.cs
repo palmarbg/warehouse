@@ -1,9 +1,4 @@
-﻿using RobotokModel.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Persistence.DataTypes;
 
 namespace RobotokModel.Persistence.Interfaces
 {
