@@ -20,44 +20,44 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="View\UserControls\Icons\back.png" />
-    <None Remove="View\UserControls\Icons\end.png" />
-    <None Remove="View\UserControls\Icons\menu.png" />
-    <None Remove="View\UserControls\Icons\next.png" />
-    <None Remove="View\UserControls\Icons\pause.png" />
-    <None Remove="View\UserControls\Icons\play-button.png" />
-    <None Remove="View\UserControls\Icons\play.png" />
-    <None Remove="View\UserControls\Icons\setting.png" />
-    <None Remove="View\UserControls\Icons\start.png" />
-    <None Remove="View\UserControls\Icons\stop.png" />
+    <None Remove="UserControls\Icons\back.png" />
+    <None Remove="UserControls\Icons\end.png" />
+    <None Remove="UserControls\Icons\menu.png" />
+    <None Remove="UserControls\Icons\next.png" />
+    <None Remove="UserControls\Icons\pause.png" />
+    <None Remove="UserControls\Icons\play-button.png" />
+    <None Remove="UserControls\Icons\play.png" />
+    <None Remove="UserControls\Icons\setting.png" />
+    <None Remove="UserControls\Icons\start.png" />
+    <None Remove="UserControls\Icons\stop.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="View\UserControls\Icons\back.png">
+    <Content Include="UserControls\Icons\back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\end.png">
+    <Content Include="UserControls\Icons\end.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\menu.png">
+    <Content Include="UserControls\Icons\menu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\next.png">
+    <Content Include="UserControls\Icons\next.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\pause.png">
+    <Content Include="UserControls\Icons\pause.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\play.png">
+    <Content Include="UserControls\Icons\play.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\setting.png">
+    <Content Include="UserControls\Icons\setting.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\start.png">
+    <Content Include="UserControls\Icons\start.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\UserControls\Icons\stop.png">
+    <Content Include="UserControls\Icons\stop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

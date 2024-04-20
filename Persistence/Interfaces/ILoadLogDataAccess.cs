@@ -1,6 +1,6 @@
 ﻿using Persistence.DataTypes;
 
-namespace RobotokModel.Persistence.Interfaces
+namespace Persistence.Interfaces
 {
     public interface ILoadLogDataAccess : IDataAccess
     {

@@ -1,12 +1,11 @@
 ﻿using Microsoft.Win32;
-using Robotok.View;
-using Robotok.ViewModel;
-using RobotokModel.Model;
-using RobotokModel.Model.Interfaces;
+using ViewModel.ViewModel;
+using RobotokModel;
+using RobotokModel.Interfaces;
 using System.ComponentModel;
 using System.Windows;
 
-namespace Robotok
+namespace View
 {
     /// <summary>
     /// Interaction logic for App.xaml

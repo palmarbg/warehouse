@@ -1,4 +1,4 @@
-﻿using RobotokModel.Model.Extensions;
+﻿using Persistence.Extensions;
 
 namespace TestModel.PersistenceTests.ExtensionTests
 {

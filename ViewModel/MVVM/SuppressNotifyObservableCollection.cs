@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace Robotok.MVVM
+namespace ViewModel.MVVM
 {
     public class SuppressNotifyObservableCollection<T> : ObservableCollection<T>
     {

@@ -1,8 +1,8 @@
 ﻿using Persistence.DataTypes;
-using RobotokModel.Model.Extensions;
-using RobotokModel.Persistence.Interfaces;
+using Persistence.Extensions;
+using Persistence.Interfaces;
 
-namespace RobotokModel.Persistence.DataAccesses
+namespace Persistence.DataAccesses
 {
     public class DemoDataAccess : IDataAccess
     {

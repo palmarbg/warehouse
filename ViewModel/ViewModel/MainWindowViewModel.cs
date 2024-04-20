@@ -1,9 +1,9 @@
 ﻿using Persistence.DataTypes;
-using Robotok.MVVM;
-using RobotokModel.Model.Interfaces;
+using ViewModel.MVVM;
+using RobotokModel.Interfaces;
 using System.Diagnostics;
 
-namespace Robotok.ViewModel
+namespace ViewModel.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {

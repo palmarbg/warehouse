@@ -1,6 +1,6 @@
 ﻿using Persistence.DataTypes;
 
-namespace RobotokModel.Persistence.Interfaces
+namespace Persistence.Interfaces
 {
     //TODO: TASK LOGGING IS AMBIGOUS: [TASKID, FROM<-???, TO]
 

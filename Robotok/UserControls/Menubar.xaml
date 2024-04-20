@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="View.UserControls.Menubar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.UserControls"
+             mc:Ignorable="d" d:DesignWidth="1200" Height="55">
+    <UserControl.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Fájl">
+                <MenuItem Header="Szimuláció betöltése..."
+                          x:Name="_loadSimulationMenuItem"/>
+                <MenuItem Header="Szimuláció mentése..."
+                          x:Name="_saveSimulationMenuItem"/>
+            </MenuItem>
+            <MenuItem Header="Szimuláció" IsEnabled="False">
+                <MenuItem Header="" />
+            </MenuItem>
+            <MenuItem Header="Nézet" IsEnabled="False">
+                <MenuItem Header="" />
+            </MenuItem>
+            <MenuItem Header="Beállítások" IsEnabled="False">
+                <MenuItem Header="" />
+            </MenuItem>
+        </Menu>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <local:MenuIcon LabelText="Start"
+                            IconSrc="Icons/play.png"
+                            x:Name="_playButton"
+                            Width="85"
+                            />
+            <local:MenuIcon IconSrc="Icons/start.png"
+                            x:Name="_startButton"/>
+            <local:MenuIcon IconSrc="Icons/back.png" IsEnabled="False"
+                            x:Name="_backButton"/>
+            <local:MenuIcon IconSrc="Icons/stop.png"
+                            x:Name="_stopButton"/>
+            <local:MenuIcon IconSrc="Icons/next.png" IsEnabled="False"
+                            x:Name="_nextButton"/>
+            <local:MenuIcon IconSrc="Icons/end.png" IsEnabled="False"
+                            x:Name="_endButton"/>
+            <local:MenuIcon IconSrc="Icons/setting.png" IsEnabled="False"
+                            x:Name="_settingButton"/>
+        </StackPanel>
+       
+        
+
+    </Grid>
+</UserControl>

@@ -1,6 +1,6 @@
 ﻿using Persistence.DataTypes;
 
-namespace RobotokModel.Model.Extensions
+namespace Persistence.Extensions
 {
     public static class PositionExtensions
     {

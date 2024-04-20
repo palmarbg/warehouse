@@ -7,72 +7,72 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="View\Grid\MapBlock.xaml.cs">
+    <Compile Update="Grid\MapBlock.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\MapGoal.xaml.cs">
+    <Compile Update="Grid\MapGoal.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\MapGrid.xaml.cs">
+    <Compile Update="Grid\MapGrid.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\MapGridContainer.xaml.cs">
+    <Compile Update="Grid\MapGridContainer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\HorizontalNumberStrip.xaml.cs">
+    <Compile Update="Grid\HorizontalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\MapRobot.xaml.cs">
+    <Compile Update="Grid\MapRobot.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\VerticalNumberStrip.xaml.cs">
+    <Compile Update="Grid\VerticalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Grid\ZoomSlider.xaml.cs">
+    <Compile Update="Grid\ZoomSlider.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\MainWindow.xaml.cs">
+    <Compile Update="MainWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\UserControls\Menubar.xaml.cs">
+    <Compile Update="UserControls\Menubar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\UserControls\MenuIcon.xaml.cs">
+    <Compile Update="UserControls\MenuIcon.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\Grid\MapBlock.xaml">
+    <Page Update="Grid\MapBlock.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\MapGoal.xaml">
+    <Page Update="Grid\MapGoal.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\MapGrid.xaml">
+    <Page Update="Grid\MapGrid.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\MapGridContainer.xaml">
+    <Page Update="Grid\MapGridContainer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\HorizontalNumberStrip.xaml">
+    <Page Update="Grid\HorizontalNumberStrip.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\MapRobot.xaml">
+    <Page Update="Grid\MapRobot.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\VerticalNumberStrip.xaml">
+    <Page Update="Grid\VerticalNumberStrip.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\Grid\ZoomSlider.xaml">
+    <Page Update="Grid\ZoomSlider.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\MainWindow.xaml">
+    <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\UserControls\Menubar.xaml">
+    <Page Update="UserControls\Menubar.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="View\UserControls\MenuIcon.xaml">
+    <Page Update="UserControls\MenuIcon.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

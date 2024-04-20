@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace Robotok.MVVM
+namespace ViewModel.MVVM
 {
     /// <summary>
     /// Általános parancs típusa.

@@ -1,10 +1,10 @@
 ﻿using Persistence.DataTypes;
-using RobotokModel.Model.Extensions;
-using RobotokModel.Persistence.Interfaces;
+using Persistence.Extensions;
+using Persistence.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace RobotokModel.Persistence.DataAccesses
+namespace Persistence.DataAccesses
 {
     public class SaveLogDataAccess : ISaveLogDataAccess
     {

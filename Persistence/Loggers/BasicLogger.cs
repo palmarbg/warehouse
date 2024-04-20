@@ -1,8 +1,8 @@
 ﻿using Persistence.DataTypes;
-using RobotokModel.Persistence.DataAccesses;
-using RobotokModel.Persistence.Interfaces;
+using Persistence.DataAccesses;
+using Persistence.Interfaces;
 
-namespace RobotokModel.Persistence.Loggers
+namespace Persistence.Loggers
 {
     public class BasicLogger : ILogger
     {

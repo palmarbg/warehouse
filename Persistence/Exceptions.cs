@@ -1,4 +1,4 @@
-﻿namespace RobotokModel.Persistence
+﻿namespace Persistence
 {
     public class JSonError : Exception
     {

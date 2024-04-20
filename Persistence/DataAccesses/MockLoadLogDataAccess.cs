@@ -1,7 +1,7 @@
 ﻿using Persistence.DataTypes;
-using RobotokModel.Persistence.Interfaces;
+using Persistence.Interfaces;
 
-namespace RobotokModel.Persistence.DataAccesses
+namespace Persistence.DataAccesses
 {
     public class MockLoadLogDataAccess : ILoadLogDataAccess
     {

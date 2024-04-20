@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Robotok.MVVM
+namespace ViewModel.MVVM
 {
     /// <summary>
     /// Nézetmodell ősosztály típusa.
