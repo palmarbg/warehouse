@@ -4,11 +4,24 @@ stages:
   - build
   - test
 
+build_persistence:
+  stage: build
+  script:
+    - cd Persistence
+    - dotnet build Persistence.csproj
+
 build_model:
   stage: build
   script:
-    - cd RobotokModel
+    - cd Model
+    - dotnet build Model.csproj
+
+build_viewmodel:
+  stage: build
+  script:
+    - cd ViewModel
     - dotnet build RobotokModel.csproj
+
 
 build_view:
   stage: build
@@ -16,11 +29,13 @@ build_view:
   image: mcr.microsoft.com/dotnet/sdk:8.0-windowsservercore-ltsc2019
   script:
     - dotnet build Robotok.sln
+  only:
+    - develop
 
 test_model:
   stage: test
   script:
-    - dotnet test TestModel
+    - dotnet test Test
 
 
 
