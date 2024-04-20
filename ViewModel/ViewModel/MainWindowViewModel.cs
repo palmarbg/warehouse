@@ -1,6 +1,6 @@
 ﻿using Persistence.DataTypes;
 using ViewModel.MVVM;
-using RobotokModel.Interfaces;
+using Model.Interfaces;
 using System.Diagnostics;
 
 namespace ViewModel.ViewModel
