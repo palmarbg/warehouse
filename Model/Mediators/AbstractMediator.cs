@@ -35,13 +35,15 @@ namespace Model.Mediators
 
         public SimulationData SimulationData => simulationData;
         public SimulationState SimulationState => simulationState;
-        public int Interval => interval;
+        public virtual int Interval => interval;
+
+        public string MapFileName {  get; protected set; }
 
         #endregion
 
         #region Constructor
 
-        public AbstractMediator(ISimulation simulation, IServiceLocator serviceLocator)
+        public AbstractMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName)
         {
             _serviceLocator = serviceLocator;
 
@@ -60,6 +62,7 @@ namespace Model.Mediators
                 new EventHandler<SimulationState>(
                     (_, _) => simulation.OnSimulationStateChanged(simulationState)
                 );
+            MapFileName = mapFileName;
         }
 
         #endregion
@@ -119,12 +122,6 @@ namespace Model.Mediators
 
             simulation.OnSimulationLoaded();
 
-        }
-
-        public void LoadSimulation(string filePath)
-        {
-            dataAccess = dataAccess.NewInstance(filePath);
-            SetInitialState();
         }
 
         #endregion

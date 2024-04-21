@@ -90,7 +90,8 @@ namespace Persistence.DataAccesses
                 {
                     str += robotPath.ToChar() + ",";
                 }
-                str = str.Remove(str.Length - 1);
+                if(str.Length > 0)
+                    str = str.Remove(str.Length - 1);
                 externalLog.ActualPaths.Add(str);
             }
 
@@ -102,7 +103,8 @@ namespace Persistence.DataAccesses
                 {
                     str += robotPath.ToChar() + ",";
                 }
-                str = str.Remove(str.Length - 1);
+                if(str.Length > 0)
+                    str = str.Remove(str.Length - 1);
                 externalLog.PlannerPaths.Add(str);
             }
 

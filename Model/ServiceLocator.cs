@@ -16,14 +16,14 @@ namespace Model
     {
         #region Mediators
 
-        public ISimulationMediator GetSimulationMediator(Simulation simulation)
+        public ISimulationMediator GetSimulationMediator(Simulation simulation, string mapFileName)
         {
-            return new SimulationMediator(simulation, this);
+            return new SimulationMediator(simulation, this, mapFileName);
         }
 
-        public IReplayMediator GetReplayMediator(Simulation simulation)
+        public IReplayMediator GetReplayMediator(Simulation simulation, string mapFileName, string logFileName)
         {
-            return new ReplayMediator(simulation, this);
+            return new ReplayMediator(simulation, this, mapFileName, logFileName);
         }
 
         #endregion

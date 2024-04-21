@@ -11,9 +11,9 @@ namespace Model.Interfaces
         ILoadLogDataAccess GetLoadLogDataAccess(string path, IDataAccess dataAccess);
         IController GetReplayController(ILoadLogDataAccess loadLogDataAccess);
         IExecutor GetReplayExecutor(SimulationData simulationData);
-        IReplayMediator GetReplayMediator(Simulation simulation);
+        IReplayMediator GetReplayMediator(Simulation simulation, string mapFileName, string logFileName);
         ITaskDistributor GetReplayTaskDistributor(SimulationData simulationData);
-        ISimulationMediator GetSimulationMediator(Simulation simulation);
+        ISimulationMediator GetSimulationMediator(Simulation simulation, string mapFileName);
         ITaskDistributor GetTaskDistributor(SimulationData simulationData);
     }
 }

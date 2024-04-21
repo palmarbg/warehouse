@@ -12,18 +12,23 @@ namespace Model.Mediators
         private int? _savedInterval = null;
 
         #endregion
+
+        #region Public Fields
+
+        public override int Interval => _savedInterval ?? interval;
+
+        #endregion
+
         #region Constructor
 
-        public ReplayMediator(ISimulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
+        public ReplayMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName, string logFileName) : base(simulation, serviceLocator, mapFileName)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
 
-            string path = Directory.GetCurrentDirectory();
-            path = path.Substring(0, path.LastIndexOf("View"));
-
-            var mapDataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\random_20_config.json");//random_20_config
-            dataAccess = _serviceLocator.GetLoadLogDataAccess(path + "sample_files\\random_20_log.json", mapDataAccess);//random_20_log
+            var mapDataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
+            
+            dataAccess = _serviceLocator.GetLoadLogDataAccess(logFileName, mapDataAccess);
 
             simulationData = dataAccess.GetInitialSimulationData();
 
@@ -31,6 +36,12 @@ namespace Model.Mediators
 
             executor = _serviceLocator.GetReplayExecutor(simulationData);
 
+        }
+
+        public void LoadLog(string fileName)
+        {
+            dataAccess = dataAccess.NewInstance(fileName);
+            SetInitialState();
         }
 
         public void StepForward()

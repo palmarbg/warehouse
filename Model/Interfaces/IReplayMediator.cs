@@ -19,5 +19,8 @@
         public void JumpToStep(int step);
         public void JumpToEnd();
 
+
+        void LoadLog(string fileName);
+
     }
 }

@@ -8,15 +8,12 @@ namespace Model.Mediators
     {
         #region Constructor
 
-        public SimulationMediator(ISimulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
+        public SimulationMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName) : base(simulation, serviceLocator, mapFileName)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
 
-            string path = Directory.GetCurrentDirectory();
-            path = path.Substring(0, path.LastIndexOf("View"));
-
-            dataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\more_goals.json");
+            dataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
 
             simulationData = dataAccess.GetInitialSimulationData();
 
@@ -29,6 +26,13 @@ namespace Model.Mediators
         #endregion
 
         #region Public methods
+
+        public void LoadConfig(string fileName)
+        {
+            MapFileName = fileName;
+            dataAccess = dataAccess.NewInstance(fileName);
+            SetInitialState();
+        }
 
         public void SaveSimulation(string filepath)
         {

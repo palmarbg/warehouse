@@ -53,6 +53,7 @@ namespace View
             // create viewModel
             _viewModel = new MainWindowViewModel(_simulation);
             _viewModel.LoadSimulation += new EventHandler((_, _) => ViewModel_LoadSimulation());
+            _viewModel.LoadReplay += new EventHandler((_, _) => ViewModel_LoadReplay());
             _viewModel.SaveSimulation += new EventHandler((_, _) => ViewModel_SaveSimulation());
             _viewModel.OpenReplaySettings += new EventHandler((_, _) => ViewModel_OpenReplaySettings());
 
@@ -80,21 +81,30 @@ namespace View
             openFileDialog.Filter = "Config file|*.json";
             if (openFileDialog.ShowDialog() == true)
             {
-                _simulation.Mediator.LoadSimulation(openFileDialog.FileName);
+                _simulation.LoadConfig(openFileDialog.FileName);
+            }
+        }
+
+        private void ViewModel_LoadReplay()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Naplófájl betöltése";
+            openFileDialog.Filter = "Log file|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _simulation.LoadLog(openFileDialog.FileName);
+                //_simulation.(openFileDialog.FileName);
             }
         }
 
         private void ViewModel_SaveSimulation()
         {
-            if (_simulation.Mediator is not ISimulationMediator)
-                return;
-            ISimulationMediator simulationMediator = (ISimulationMediator)_simulation.Mediator;
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Naplófájl mentése";
             saveFileDialog.Filter = "Log file|*.json";
             if (saveFileDialog.ShowDialog() == true)
             {
-                simulationMediator.SaveSimulation(saveFileDialog.FileName);
+                _simulation.SaveLog(saveFileDialog.FileName);
             }
         }
 

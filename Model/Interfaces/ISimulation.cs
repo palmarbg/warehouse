@@ -45,7 +45,7 @@ namespace Model.Interfaces
         public event EventHandler? SimulationLoaded;
 
 
-        public event EventHandler<SimulationState>? SimulationStateChanged;
+        public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
         #endregion
 
@@ -58,6 +58,13 @@ namespace Model.Interfaces
         void OnRobotsMoved(TimeSpan timeSpan);
 
         void OnSimulationFinished();
+        void LoadConfig(string fileName);
+
+        void LoadLog(string fileName);
+
+        void StartNewSimulation();
+
+        void SaveLog(string fileName);
 
         #endregion
 

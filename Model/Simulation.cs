@@ -1,11 +1,18 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
 using Persistence.DataTypes;
+using System.Diagnostics;
 
 namespace Model
 {
     public class Simulation : ISimulation
     {
+        #region Private Fields
+
+        private IServiceLocator _serviceLocator;
+
+        #endregion
+
         #region Properties
         public SimulationData SimulationData => Mediator.SimulationData;
         public SimulationState State => Mediator.SimulationState;
@@ -38,7 +45,7 @@ namespace Model
         // <summary>
         /// Fire with <see cref="OnSimulationStateChanged"/>
         /// </summary>
-        public event EventHandler<SimulationState>? SimulationStateChanged;
+        public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
 
         #endregion
@@ -47,11 +54,62 @@ namespace Model
 
         public Simulation(IServiceLocator serviceLocator)
         {
+            _serviceLocator = serviceLocator;
 
             Robot.TaskAssigned += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
             Robot.TaskFinished += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
 
-            Mediator = serviceLocator.GetReplayMediator(this);
+            string path = Directory.GetCurrentDirectory();
+            path = path.Substring(0, path.LastIndexOf("View"));
+
+            Mediator = serviceLocator.GetReplayMediator(
+                this,
+                path + "sample_files\\random_20_config.json",
+                path + "sample_files\\random_20_log.json"
+                );
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void LoadConfig(string fileName)
+        {
+            if(Mediator is ISimulationMediator simulationMediator)
+            {
+                simulationMediator.LoadConfig(fileName);
+                return;
+            }
+            Mediator = _serviceLocator.GetSimulationMediator(this, fileName);
+            OnSimulationLoaded();
+        }
+
+        public void LoadLog(string fileName)
+        {
+            if (Mediator is not IReplayMediator)
+                return;
+            var mediator = Mediator as IReplayMediator;
+            mediator?.LoadLog(fileName);
+        }
+
+        public void StartNewSimulation()
+        {
+            if(Mediator is ISimulationMediator)
+            {
+                Mediator.SetInitialState();
+                return;
+            }
+            var mediator = Mediator as IReplayMediator;
+            Mediator = _serviceLocator.GetSimulationMediator(this, Mediator.MapFileName);
+
+        }
+
+        public void SaveLog(string fileName)
+        {
+            if (Mediator is not ISimulationMediator)
+                return;
+            var mediator = Mediator as ISimulationMediator;
+            mediator?.SaveSimulation(fileName);
         }
 
         #endregion
@@ -84,7 +142,14 @@ namespace Model
         /// </summary>
         public void OnSimulationStateChanged(SimulationState simulationState)
         {
-            SimulationStateChanged?.Invoke(null, simulationState);
+            SimulationStateChanged?.Invoke(
+                null,
+                new SimulationStateEventArgs
+                {
+                    SimulationState = simulationState,
+                    IsReplayMode = Mediator is IReplayMediator
+                }
+                );
         }
 
         #endregion

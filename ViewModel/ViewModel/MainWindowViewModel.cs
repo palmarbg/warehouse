@@ -114,10 +114,11 @@ namespace ViewModel.ViewModel
         /// <summary>
         /// Fire with <see cref="Model_SimulationStateChanged"/>
         /// </summary>
-        public event EventHandler<SimulationState>? SimulationStateChanged;
+        public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
         public event EventHandler? OpenReplaySettings;
         public event EventHandler? LoadSimulation;
+        public event EventHandler? LoadReplay;
         public event EventHandler? SaveSimulation;
 
         #endregion
@@ -152,11 +153,17 @@ namespace ViewModel.ViewModel
         /// <summary> Display the map after the simulation is over </summary>
         public DelegateCommand FinalPositionCommand { get; set; }
 
-        /// <summary> Load a config file </summary>
+        /// <summary> Open window for setting simulation speed and position </summary>
         public DelegateCommand OpenReplaySettingsCommand { get; set; }
 
         /// <summary> Load a config file </summary>
         public DelegateCommand LoadSimulationCommand { get; set; }
+        
+        /// <summary> Load a log file </summary>
+        public DelegateCommand LoadReplayCommand { get; set; }
+
+        /// <summary> Init new simulation </summary>
+        public DelegateCommand StartNewSimulationCommand { get; set; }
 
         /// <summary> Save a log file </summary>
         public DelegateCommand SaveSimulationCommand { get; set; }
@@ -179,7 +186,7 @@ namespace ViewModel.ViewModel
             simulation.RobotsMoved += new EventHandler<TimeSpan>((_, t) => Model_RobotsMoved(t));
             simulation.GoalChanged += new EventHandler<Goal?>((r, goal) => Model_GoalChanged((Robot)r!, goal));
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
-            simulation.SimulationStateChanged += new EventHandler<SimulationState>((_, simulationState) => Model_SimulationStateChanged(simulationState));
+            simulation.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_, arg) => Model_SimulationStateChanged(arg));
 
             ToggleSimulationCommand = new DelegateCommand(param => OnToggleSimulation());
             StopSimulationCommand = new DelegateCommand(param => OnSimulationStop());
@@ -191,6 +198,8 @@ namespace ViewModel.ViewModel
 
             OpenReplaySettingsCommand = new DelegateCommand(param => OnOpenReplaySettings());
             LoadSimulationCommand = new(param => OnLoadSimulation());
+            LoadReplayCommand = new(param => OnLoadReplay());
+            StartNewSimulationCommand = new DelegateCommand(param => OnStartNewSimulation());
             SaveSimulationCommand = new DelegateCommand(param => OnSaveSimulation());
 
             Model_SimulationLoaded();
@@ -234,9 +243,9 @@ namespace ViewModel.ViewModel
             MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
         }
 
-        private void Model_SimulationStateChanged(SimulationState simulationState)
+        private void Model_SimulationStateChanged(SimulationStateEventArgs arg)
         {
-            SimulationStateChanged?.Invoke(null, simulationState);
+            SimulationStateChanged?.Invoke(null, arg);
         }
 
         /// <summary>
@@ -265,7 +274,7 @@ namespace ViewModel.ViewModel
         {
             Model_RobotsChanged();
             Model_MapLoaded();
-            Model_SimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.State);
         }
 
         private void OnToggleSimulation()
@@ -330,9 +339,19 @@ namespace ViewModel.ViewModel
 
         }
 
+        private void OnStartNewSimulation()
+        {
+            _simulation.StartNewSimulation();
+        }
+
         private void OnLoadSimulation()
         {
             LoadSimulation?.Invoke(null, new());
+        }
+
+        private void OnLoadReplay()
+        {
+            LoadReplay?.Invoke(null, new());
         }
 
         private void OnSaveSimulation()

@@ -19,7 +19,7 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="Fájl">
-                <MenuItem Header="Szimuláció betöltése..."
+                <MenuItem Header="Konfiguráció betöltése..."
                           x:Name="_loadSimulationMenuItem"/>
                 <MenuItem Header="Visszajátszás betöltése..."
                           x:Name="_loadReplayMenuItem"/>
