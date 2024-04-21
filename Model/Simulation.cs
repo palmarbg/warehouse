@@ -86,8 +86,10 @@ namespace Model
 
         public void LoadLog(string fileName)
         {
-            if (Mediator is not IReplayMediator)
+            if (Mediator is not IReplayMediator){
+                Mediator = _serviceLocator.GetReplayMediator(this, Mediator.MapFileName, fileName);
                 return;
+            }
             var mediator = Mediator as IReplayMediator;
             mediator?.LoadLog(fileName);
         }
