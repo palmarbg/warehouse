@@ -1,4 +1,5 @@
 ﻿using Model.Controllers;
+using Model.DataTypes;
 using Model.Executors;
 using Model.Interfaces;
 using Persistence.DataTypes;
@@ -77,21 +78,10 @@ namespace Model.Mediators
                 return;
             }
 
-            SetInitialState();
+            InitSimulation();
 
             simulationState.IsSimulationRunning = true;
             simulationState.IsSimulationEnded = false;
-
-            controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
-            {
-                if (controller != sender)
-                    return;
-                OnTaskFinished(e);
-            });
-
-            var taskDistributor = _serviceLocator.GetTaskDistributor(simulationData);
-
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
 
             Timer.Start();
         }
@@ -151,11 +141,30 @@ namespace Model.Mediators
             simulationState.IsExecutingMoves = false;
 
             simulationData.Step++;
-
-            simulation.OnRobotsMoved();
+            Debug.WriteLine(interval);
+            simulation.OnRobotsMoved(TimeSpan.FromMilliseconds(interval));
         }
 
         #endregion
 
+        #region Protected methods
+
+        protected void InitSimulation()
+        {
+            SetInitialState();
+
+            controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            {
+                if (controller != sender)
+                    return;
+                OnTaskFinished(e);
+            });
+
+            var taskDistributor = _serviceLocator.GetTaskDistributor(simulationData);
+
+            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+        }
+
+        #endregion
     }
 }

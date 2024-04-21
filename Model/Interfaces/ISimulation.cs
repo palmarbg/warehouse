@@ -1,4 +1,5 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
+using Persistence.DataTypes;
 
 namespace Model.Interfaces
 {
@@ -17,7 +18,6 @@ namespace Model.Interfaces
         /// </summary>
         public IMediator Mediator { get; }
 
-        public int Interval { get; }
         public SimulationState State { get; }
 
         #endregion
@@ -27,12 +27,12 @@ namespace Model.Interfaces
         /// <summary>
         /// When robots moved
         /// </summary>
-        public event EventHandler? RobotsMoved;
+        public event EventHandler<TimeSpan>? RobotsMoved;
 
         /// <summary>
         /// When goals have been added or completed
         /// </summary>
-        public event EventHandler? GoalsChanged;
+        public event EventHandler<Goal>? GoalChanged;
 
         /// <summary>
         /// When simulation stops

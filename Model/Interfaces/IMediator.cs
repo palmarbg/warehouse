@@ -1,4 +1,5 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
+using Persistence.DataTypes;
 
 namespace Model.Interfaces
 {

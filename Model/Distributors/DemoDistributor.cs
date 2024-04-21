@@ -23,7 +23,6 @@ namespace Model.Distributors
         /// <param name="robot"></param>
         public void AssignNewTask(Robot robot)
         {
-            Debug.WriteLine(AllTasksAssigned);
             while (iterator < simulationData.Goals.Count)
             {
                 Goal goal = simulationData.Goals[iterator];

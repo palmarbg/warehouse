@@ -22,7 +22,7 @@ namespace Model.Mediators
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("View"));
 
-            dataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\astar1test.json");
+            dataAccess = serviceLocator.GetConfigDataAccess(path + "sample_files\\more_goals.json");
 
             simulationData = dataAccess.GetInitialSimulationData();
 

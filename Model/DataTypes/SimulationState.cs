@@ -1,4 +1,4 @@
-﻿namespace Model
+﻿namespace Model.DataTypes
 {
 
     public class SimulationState
@@ -8,15 +8,7 @@
         public bool IsLastTaskFinished { get; set; } = true;
         public bool IsExecutingMoves { get; set; } = false;
         public bool IsSimulationPaused => !IsSimulationRunning && !IsSimulationEnded;
+        public bool IsSimulationStarted => IsSimulationRunning || !IsSimulationEnded;
     }
-
-    //public class SimulationEvents
-    //{
-    //    public event EventHandler? ControllerTimeout;
-    //    public event EventHandler? ControllerTaskFinished;
-    //    public event EventHandler? ExecutorFinished;
-    //    public event EventHandler? TaskFinished;
-    //    //public event EventHandler? TaskAssigned;
-    //}
 
 }

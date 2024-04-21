@@ -45,12 +45,10 @@ namespace Persistence.DataAccesses
 
         public RobotOperation[] GetRobotOperations(int step)
         {
-            List<RobotOperation> operations = new List<RobotOperation>();
-            foreach (List<RobotOperation> robotPath in log.ActualPaths)
-            {
-                operations.Add(robotPath[step]);
-            }
-            return operations.ToArray();
+            RobotOperation[] robotOperations = new RobotOperation[log.ActualPaths.Count];
+            for(int i = 0; i < robotOperations.Length; i++)
+                robotOperations[i] = log.ActualPaths[i][step];
+            return robotOperations;
         }
 
         public List<TaskEvent[]> GetTaskEvents()

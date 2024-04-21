@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Model.Mediators;
 using Persistence.DataTypes;
 using System.Diagnostics;
@@ -8,7 +9,6 @@ namespace Model
     public class Simulation : ISimulation
     {
         #region Properties
-        public int Interval => Mediator.Interval;
         public SimulationData SimulationData => Mediator.SimulationData;
         public SimulationState State => Mediator.SimulationState;
         public IMediator Mediator { get; private set; } = null!;
@@ -20,12 +20,12 @@ namespace Model
         /// <summary>
         /// Fire with <see cref="OnRobotsMoved"/>
         /// </summary>
-        public event EventHandler? RobotsMoved;
+        public event EventHandler<TimeSpan>? RobotsMoved;
 
         /// <summary>
-        /// Fire with <see cref="OnGoalsChanged"/>
+        /// Fire with <see cref="OnGoalChanged"/>
         /// </summary>
-        public event EventHandler? GoalsChanged;
+        public event EventHandler<Goal> GoalChanged;
 
         /// <summary>
         /// Fire with <see cref="OnSimulationFinished"/>
@@ -45,10 +45,10 @@ namespace Model
         public Simulation(IServiceLocator serviceLocator)
         {
 
-            Robot.TaskAssigned += new EventHandler<Goal>((_, _) => OnGoalsChanged());
-            Robot.TaskFinished += new EventHandler<Goal>((_, _) => OnGoalsChanged());
+            Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
+            Robot.TaskFinished += new EventHandler<Goal>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
 
-            Mediator = serviceLocator.GetSimulationMediator(this);
+            Mediator = serviceLocator.GetReplayMediator(this);
         }
 
         #endregion
@@ -58,18 +58,12 @@ namespace Model
         /// <summary>
         /// Call it when robots moved
         /// </summary>
-        public void OnRobotsMoved()
+        public void OnRobotsMoved(TimeSpan timeSpan)
         {
-            RobotsMoved?.Invoke(SimulationData.Robots, new EventArgs());
+            RobotsMoved?.Invoke(SimulationData.Robots, timeSpan);
         }
 
-        /// <summary>
-        /// Call it when tasks are completed or created
-        /// </summary>
-        public void OnGoalsChanged()
-        {
-            GoalsChanged?.Invoke(SimulationData.Goals, new EventArgs());
-        }
+        
 
         /// <summary>
         /// Call it when simulation ended
@@ -85,6 +79,15 @@ namespace Model
         public void OnSimulationLoaded()
         {
             SimulationLoaded?.Invoke(null, new EventArgs());
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void OnGoalChanged(Robot robot, Goal goal)
+        {
+            GoalChanged?.Invoke(robot, goal);
         }
 
         #endregion

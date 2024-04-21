@@ -4,6 +4,7 @@ using Model.Interfaces;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using View.Windows;
 using ViewModel.ViewModel;
 
 namespace View
@@ -32,6 +33,7 @@ namespace View
             } catch
             {
                 Debug.WriteLine("Ezen a ponton lezárhatod a géped és elgondolkodhatsz az életeden mit csinálsz");
+                throw new Exception();
             }
         }
 
@@ -51,6 +53,7 @@ namespace View
             _viewModel = new MainWindowViewModel(_simulation);
             _viewModel.LoadSimulation += new EventHandler((_, _) => ViewModel_LoadSimulation());
             _viewModel.SaveSimulation += new EventHandler((_, _) => ViewModel_SaveSimulation());
+            _viewModel.OpenReplaySettings += new EventHandler((_, _) => ViewModel_OpenReplaySettings());
 
             // create view
             _view = new MainWindow();
@@ -92,6 +95,35 @@ namespace View
             {
                 simulationMediator.SaveSimulation(saveFileDialog.FileName);
             }
+        }
+
+        private void ViewModel_OpenReplaySettings()
+        {
+            if (_simulation.Mediator is not IReplayMediator)
+                return;
+
+            var window = new ReplayControlSettingsWindow()
+            {
+                Step = _simulation.Mediator.SimulationData.Step,
+                StepSpeed = 1000/_simulation.Mediator.Interval
+            };
+
+            window.Cancel += new EventHandler((_,_) =>
+            {
+                window.Close();
+            });
+
+            window.Save += new EventHandler((_, _) =>
+            {
+                var mediator = _simulation.Mediator as IReplayMediator;
+                if (mediator == null)
+                    throw new Exception();
+                mediator.JumpToStep(window.Step);
+                mediator.SetSpeed(window.StepSpeed);
+                window.Close();
+            });
+
+            window.ShowDialog();
         }
 
         #endregion

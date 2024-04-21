@@ -43,15 +43,15 @@
                             />
             <local:MenuIcon IconSrc="Icons/start.png"
                             x:Name="_startButton"/>
-            <local:MenuIcon IconSrc="Icons/back.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/back.png"
                             x:Name="_backButton"/>
             <local:MenuIcon IconSrc="Icons/stop.png"
                             x:Name="_stopButton"/>
-            <local:MenuIcon IconSrc="Icons/next.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/next.png"
                             x:Name="_nextButton"/>
-            <local:MenuIcon IconSrc="Icons/end.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/end.png"
                             x:Name="_endButton"/>
-            <local:MenuIcon IconSrc="Icons/setting.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/setting.png"
                             x:Name="_settingButton"/>
         </StackPanel>
        

@@ -43,17 +43,29 @@
             get => _goal;
             set
             {
+                if (value == null && _goal == null)
+                    return;
                 if(value == null && _goal != null)
                 {
                     _goal.IsAssigned = false;
                     OnTaskFinished(this, _goal);
-                }
-                if (value != null)
+                    _goal = value;
+                } else
+                if (value != null && _goal == null)
                 {
                     value.IsAssigned = true;
-                    OnTaskAssigned(this, value);
+                    _goal = value;
+                    OnTaskAssigned(this, _goal);
+                } else
+                if(value != null && _goal != null)
+                {
+                    _goal.IsAssigned = false;
+                    OnTaskFinished(this, _goal);
+
+                    value.IsAssigned = true;
+                    _goal = value;
+                    OnTaskAssigned(this, _goal);
                 }
-                _goal = value;
             }
         }
 

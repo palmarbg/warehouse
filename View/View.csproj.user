@@ -40,6 +40,9 @@
     <Compile Update="UserControls\MenuIcon.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\ReplayControlSettingsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Grid\MapBlock.xaml">
@@ -73,6 +76,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControls\MenuIcon.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\ReplayControlSettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

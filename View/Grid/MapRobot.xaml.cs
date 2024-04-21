@@ -25,8 +25,8 @@ namespace View.Grid
             viewModel.RobotsChanged += new EventHandler(
                 (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); })
                 );
-            viewModel.RobotsMoved += new EventHandler(
-                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, e); })
+            viewModel.RobotsMoved += new EventHandler<TimeSpan>(
+                (s, t) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, t); })
                 );
         }
 
@@ -94,11 +94,14 @@ namespace View.Grid
             }
         }
 
-        private void RefreshRobots(object? sender, EventArgs e)
+        private void RefreshRobots(object? sender, TimeSpan timeSpan)
         {
             if (sender == null)
                 return;
             List<Robot> robots = (List<Robot>)sender;
+
+            if(timeSpan > TimeSpan.FromMilliseconds(500))
+                timeSpan = TimeSpan.FromMilliseconds(500);
 
             for (int i = 0; i < MapCanvas.Children.Count; i++)
             {
@@ -112,7 +115,7 @@ namespace View.Grid
 
                     ThicknessAnimation marginAnimation = new(
                         new Thickness(GridConverterFunctions.unit * x, GridConverterFunctions.unit * y, 0, 0),
-                        new Duration(TimeSpan.FromMilliseconds(_viewModel.Interval)))
+                        new Duration(timeSpan))
                     {
                         From = grid.Margin
                     };

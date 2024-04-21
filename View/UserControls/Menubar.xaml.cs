@@ -25,6 +25,7 @@ namespace View.UserControls
             SetCommandBinding(_backButton, nameof(viewModel.PreviousStepCommand), viewModel);
             SetCommandBinding(_nextButton, nameof(viewModel.NextStepCommand), viewModel);
             SetCommandBinding(_endButton, nameof(viewModel.FinalPositionCommand), viewModel);
+            SetCommandBinding(_settingButton, nameof(viewModel.OpenReplaySettingsCommand), viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, nameof(viewModel.LoadSimulationCommand), viewModel);
             SetCommandBinding(_saveSimulationMenuItem, nameof(viewModel.SaveSimulationCommand), viewModel);
