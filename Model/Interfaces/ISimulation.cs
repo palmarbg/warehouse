@@ -32,7 +32,7 @@ namespace Model.Interfaces
         /// <summary>
         /// When goals have been added or completed
         /// </summary>
-        public event EventHandler<Goal>? GoalChanged;
+        public event EventHandler<Goal?>? GoalChanged;
 
         /// <summary>
         /// When simulation stops

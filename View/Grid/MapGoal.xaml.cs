@@ -1,4 +1,5 @@
 ﻿using Persistence.DataTypes;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,7 @@ namespace View.Grid
             viewModel.MapLoaded += new EventHandler(
                 (s, _) => App.Current?.Dispatcher.Invoke((Action)delegate { ClearGoals(s); })
                 );
-            viewModel.GoalChanged += new EventHandler<Goal>(
+            viewModel.GoalChanged += new EventHandler<Goal?>(
                 (r, g) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshGoal((Robot)r!, g); })
                 );
         }
@@ -39,20 +40,25 @@ namespace View.Grid
                 return;
 
             MapCanvas.Children.Clear();
+
             _robotIdToCanvasIndex.Clear();
         }
-        private void RefreshGoal(Robot robot, Goal goal)
+        private void RefreshGoal(Robot robot, Goal? goal)
         {
-            if (_robotIdToCanvasIndex.ContainsKey(robot.Id))
+            if(_robotIdToCanvasIndex.ContainsKey(robot.Id))
             {
+                System.Windows.Controls.Grid mock = new()
+                {
+                    Width = 0,
+                    Height = 0,
+                    
+                };
                 MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
-                _robotIdToCanvasIndex.Remove(robot.Id);
-            }
+                MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], mock);
+            }            
 
-            Debug.WriteLine("eeere");
-
-            if (!goal.IsAssigned)
-                return;          
+            if (goal == null || robot.CurrentGoal == null)
+                return;
 
             System.Windows.Controls.Grid grid = new()
             {
@@ -86,8 +92,15 @@ namespace View.Grid
             grid.Children.Add(rectangle);
             grid.Children.Add(textBlock);
 
-            _robotIdToCanvasIndex[robot.Id] = MapCanvas.Children.Count;
-            MapCanvas.Children.Add(grid);
+            if (_robotIdToCanvasIndex.ContainsKey(robot.Id))
+            {
+                MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
+                MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], grid);
+            } else
+            {
+                _robotIdToCanvasIndex[robot.Id] = MapCanvas.Children.Count;
+                MapCanvas.Children.Add(grid);
+            }
 
         }
         #endregion

@@ -13,15 +13,15 @@
         /// <summary>
         /// Fired when a robots goal is changed
         /// </summary>
-        public static event EventHandler<Goal>? TaskAssigned;
-        public static event EventHandler<Goal>? TaskFinished;
+        public static event EventHandler<Goal?>? TaskAssigned;
+        public static event EventHandler<Goal?>? TaskFinished;
 
-        private static void OnTaskAssigned(Robot robot, Goal goal)
+        private static void OnTaskAssigned(Robot robot, Goal? goal)
         {
             TaskAssigned?.Invoke(robot, goal);
         }
 
-        private static void OnTaskFinished(Robot robot, Goal goal)
+        private static void OnTaskFinished(Robot robot, Goal? goal)
         {
             TaskFinished?.Invoke(robot, goal);
         }
@@ -48,8 +48,9 @@
                 if(value == null && _goal != null)
                 {
                     _goal.IsAssigned = false;
-                    OnTaskFinished(this, _goal);
-                    _goal = value;
+                    OnTaskFinished(this, null);
+                    _goal = null;
+
                 } else
                 if (value != null && _goal == null)
                 {
@@ -60,8 +61,6 @@
                 if(value != null && _goal != null)
                 {
                     _goal.IsAssigned = false;
-                    OnTaskFinished(this, _goal);
-
                     value.IsAssigned = true;
                     _goal = value;
                     OnTaskAssigned(this, _goal);

@@ -103,7 +103,7 @@ namespace ViewModel.ViewModel
         /// <summary>
         /// Fire with <see cref="Model_GoalChanged"/>
         /// </summary>
-        public event EventHandler<Goal>? GoalChanged;
+        public event EventHandler<Goal?>? GoalChanged;
 
         /// <summary>
         /// Fire with <see cref="Model_MapLoaded"/>
@@ -171,7 +171,7 @@ namespace ViewModel.ViewModel
             Goals = [];
 
             simulation.RobotsMoved += new EventHandler<TimeSpan>((_, t) => Model_RobotsMoved(t));
-            simulation.GoalChanged += new EventHandler<Goal>((r, goal) => Model_GoalChanged((Robot)r!, goal));
+            simulation.GoalChanged += new EventHandler<Goal?>((r, goal) => Model_GoalChanged((Robot)r!, goal));
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
 
             ToggleSimulationCommand = new DelegateCommand(param => OnToggleSimulation());
@@ -214,7 +214,7 @@ namespace ViewModel.ViewModel
         /// <summary>
         /// Call when new goals have been assigned or finished
         /// </summary>
-        private void Model_GoalChanged(Robot robot, Goal goal)
+        private void Model_GoalChanged(Robot robot, Goal? goal)
         {
             GoalChanged?.Invoke(robot, goal);
         }

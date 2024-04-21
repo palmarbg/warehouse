@@ -40,18 +40,26 @@ namespace Model.Mediators.ReplayMediatorUtils
                 var robot = simulationData.Robots[i];
                 taskEventIterator[i] = (int)Math.Max(taskEventIterator[i], 0);
                 var iter = taskEventIterator[i];
-                while (iter < taskEvents[i].Length && taskEvents[i][iter].step == simulationData.Step)
+
+                var currentGoal = robot.CurrentGoal;
+                while (iter < taskEvents[i].Length && taskEvents[i][iter].step <= simulationData.Step)
                 {
                     TaskEvent taskEvent = taskEvents[i][iter];
+
                     Goal goal = simulationData.Goals[taskEvent.taskId];
-                    if(taskEvent.eventType == TaskEventType.assigned)
-                        robot.CurrentGoal = goal;
+                    if (goal.Id != taskEvent.taskId)
+                        throw new Exception();
+
+                    if (taskEvent.eventType == TaskEventType.assigned)
+                        currentGoal = goal;
                     else
-                        robot.CurrentGoal = null;
-                    
+                        currentGoal = null;
+
                     //Goal.OnGoalsChanged();
                     iter = ++taskEventIterator[i];
                 }
+                if(currentGoal != robot.CurrentGoal)
+                    robot.CurrentGoal = currentGoal;
             }
 
             OnTaskFinished(robotOperations);

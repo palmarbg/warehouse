@@ -25,7 +25,7 @@ namespace Model
         /// <summary>
         /// Fire with <see cref="OnGoalChanged"/>
         /// </summary>
-        public event EventHandler<Goal> GoalChanged;
+        public event EventHandler<Goal?>? GoalChanged;
 
         /// <summary>
         /// Fire with <see cref="OnSimulationFinished"/>
@@ -45,8 +45,8 @@ namespace Model
         public Simulation(IServiceLocator serviceLocator)
         {
 
-            Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
-            Robot.TaskFinished += new EventHandler<Goal>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
+            Robot.TaskAssigned += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
+            Robot.TaskFinished += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
 
             Mediator = serviceLocator.GetReplayMediator(this);
         }
@@ -85,7 +85,7 @@ namespace Model
 
         #region Private methods
 
-        private void OnGoalChanged(Robot robot, Goal goal)
+        private void OnGoalChanged(Robot robot, Goal? goal)
         {
             GoalChanged?.Invoke(robot, goal);
         }
