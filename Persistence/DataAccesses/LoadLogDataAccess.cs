@@ -46,7 +46,7 @@ namespace Persistence.DataAccesses
         public RobotOperation[] GetRobotOperations(int step)
         {
             RobotOperation[] robotOperations = new RobotOperation[log.ActualPaths.Count];
-            for(int i = 0; i < robotOperations.Length; i++)
+            for (int i = 0; i < robotOperations.Length; i++)
                 robotOperations[i] = log.ActualPaths[i][step];
             return robotOperations;
         }

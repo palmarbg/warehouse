@@ -44,77 +44,20 @@ namespace Model.Interfaces
         /// </summary>
         public event EventHandler? SimulationLoaded;
 
+
+        public event EventHandler<SimulationState>? SimulationStateChanged;
+
         #endregion
 
         #region Methods
-        /*
-        /// <summary>
-        /// Sets the controller used by the simulation
-        /// </summary>
-        /// <param name="name">Name of the controller</param>
-        public void SetController(string name);
 
-        /// <summary>
-        /// Sets the task distributor used by the simulation
-        /// </summary>
-        /// <param name="name">Name of the task distributor</param>
-        public void SetTaskDistributor(string name);
+        void OnSimulationStateChanged(SimulationState simulationState);
 
+        void OnSimulationLoaded();
 
-        /// <summary>
-        /// Start simulation
-        /// </summary>
-        public void StartSimulation();
+        void OnRobotsMoved(TimeSpan timeSpan);
 
-        /// <summary>
-        /// Stop simulation
-        /// </summary>
-        public void StopSimulation();
-
-        /// <summary>
-        /// Sets the state of the simulation to the initial position loaded from config files
-        /// </summary>
-        public void SetInitialPosition();
-
-        /// <summary>
-        /// Start new simulation from config file
-        /// </summary>
-        /// <param name="filePath">Absolute path for config file</param>
-        public void LoadSimulation(string filePath);
-        */
-        /*
-        /// <summary>
-        /// Pause simulation
-        /// </summary>
-        public void PauseSimulation();
-
-        /// <summary>
-        /// ???
-        /// </summary>
-        public void StepForward();
-
-        /// <summary>
-        /// ???
-        /// </summary>
-        public void StepBackward();
-
-        /// <summary>
-        /// When replaying set the replay speed relative to <c>1 move/sec</c>
-        /// </summary>
-        public void SetSimulationSpeed(double speed);
-
-        /// <summary>
-        /// When replaying set the position to the n-th step
-        /// </summary>
-        /// <param name="step"></param>
-        public void JumpToStep(int step);
-
-        /// <summary>
-        /// ???
-        /// </summary>
-        public Log GetLog();
-
-        */
+        void OnSimulationFinished();
 
         #endregion
 

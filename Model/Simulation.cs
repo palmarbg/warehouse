@@ -1,8 +1,6 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
-using Model.Mediators;
 using Persistence.DataTypes;
-using System.Diagnostics;
 
 namespace Model
 {
@@ -37,6 +35,11 @@ namespace Model
         /// </summary>
         public event EventHandler? SimulationLoaded;
 
+        // <summary>
+        /// Fire with <see cref="OnSimulationStateChanged"/>
+        /// </summary>
+        public event EventHandler<SimulationState>? SimulationStateChanged;
+
 
         #endregion
 
@@ -63,7 +66,10 @@ namespace Model
             RobotsMoved?.Invoke(SimulationData.Robots, timeSpan);
         }
 
-        
+        public void OnSimulationLoaded()
+        {
+            SimulationLoaded?.Invoke(null, new EventArgs());
+        }
 
         /// <summary>
         /// Call it when simulation ended
@@ -76,9 +82,9 @@ namespace Model
         /// <summary>
         /// Call it when new simulation data have been loaded
         /// </summary>
-        public void OnSimulationLoaded()
+        public void OnSimulationStateChanged(SimulationState simulationState)
         {
-            SimulationLoaded?.Invoke(null, new EventArgs());
+            SimulationStateChanged?.Invoke(null, simulationState);
         }
 
         #endregion

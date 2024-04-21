@@ -2,12 +2,12 @@
 using Model.Distributors;
 using Model.Executors;
 using Model.Interfaces;
-using Persistence.Interfaces;
-using Persistence.DataAccesses;
-using Persistence.DataTypes;
-using Persistence.Loggers;
 using Model.Mediators;
 using Model.Mediators.ReplayMediatorUtils;
+using Persistence.DataAccesses;
+using Persistence.DataTypes;
+using Persistence.Interfaces;
+using Persistence.Loggers;
 
 namespace Model
 {

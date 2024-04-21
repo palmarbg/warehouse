@@ -1,6 +1,5 @@
 ﻿using Model.Interfaces;
 using Persistence.DataTypes;
-using System.Diagnostics;
 
 namespace Model.Controllers
 {
@@ -35,7 +34,7 @@ namespace Model.Controllers
                         return robot.NextOperation;
                     }
                     _taskDistributor.AssignNewTask(robot);
-                    
+
                     //Goal.OnGoalsChanged();
                     if (robot.CurrentGoal is null)
                     {
@@ -45,7 +44,7 @@ namespace Model.Controllers
                 }
                 var robotPosition = robot.Position;
                 var goalPosition = robot.CurrentGoal.Position;
-                
+
                 if (robotPosition.X == goalPosition.X)
                 {
                     int distance = robot.Position.Y - robot.CurrentGoal.Position.Y;

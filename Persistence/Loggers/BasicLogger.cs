@@ -1,5 +1,4 @@
-﻿using Persistence.DataAccesses;
-using Persistence.DataTypes;
+﻿using Persistence.DataTypes;
 using Persistence.Interfaces;
 
 namespace Persistence.Loggers

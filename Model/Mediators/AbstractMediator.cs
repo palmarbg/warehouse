@@ -1,10 +1,7 @@
-﻿using Model.Controllers;
-using Model.DataTypes;
-using Model.Executors;
+﻿using Model.DataTypes;
 using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Interfaces;
-using Persistence.Loggers;
 using System.Diagnostics;
 
 namespace Model.Mediators
@@ -26,7 +23,7 @@ namespace Model.Mediators
         protected SimulationState simulationState;
         protected SimulationData simulationData = null!;
 
-        protected readonly Simulation simulation;
+        protected readonly ISimulation simulation;
 
         protected DateTime time;
 
@@ -44,7 +41,7 @@ namespace Model.Mediators
 
         #region Constructor
 
-        public AbstractMediator(Simulation simulation, IServiceLocator serviceLocator)
+        public AbstractMediator(ISimulation simulation, IServiceLocator serviceLocator)
         {
             _serviceLocator = serviceLocator;
 
@@ -59,7 +56,10 @@ namespace Model.Mediators
             Timer.Stop();
 
             simulationState = new SimulationState();
-
+            simulationState.SimulationStateChanged +=
+                new EventHandler<SimulationState>(
+                    (_, _) => simulation.OnSimulationStateChanged(simulationState)
+                );
         }
 
         #endregion
@@ -109,7 +109,7 @@ namespace Model.Mediators
         {
             Timer.Stop();
 
-            simulationState = new SimulationState();
+            simulationState.Reset();
 
             simulationData = dataAccess.GetInitialSimulationData();
             simulationData.ControllerName = controller.Name;

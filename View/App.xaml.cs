@@ -30,7 +30,8 @@ namespace View
             try
             {
                 Startup += new StartupEventHandler(App_Startup);
-            } catch
+            }
+            catch
             {
                 Debug.WriteLine("Ezen a ponton lezárhatod a géped és elgondolkodhatsz az életeden mit csinálsz");
                 throw new Exception();
@@ -105,10 +106,10 @@ namespace View
             var window = new ReplayControlSettingsWindow()
             {
                 Step = _simulation.Mediator.SimulationData.Step,
-                StepSpeed = 1000/_simulation.Mediator.Interval
+                StepSpeed = 1000 / _simulation.Mediator.Interval
             };
 
-            window.Cancel += new EventHandler((_,_) =>
+            window.Cancel += new EventHandler((_, _) =>
             {
                 window.Close();
             });

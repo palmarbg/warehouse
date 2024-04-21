@@ -2,7 +2,6 @@
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
-using System.Diagnostics;
 
 namespace Model.Mediators.ReplayMediatorUtils
 {
@@ -58,7 +57,7 @@ namespace Model.Mediators.ReplayMediatorUtils
                     //Goal.OnGoalsChanged();
                     iter = ++taskEventIterator[i];
                 }
-                if(currentGoal != robot.CurrentGoal)
+                if (currentGoal != robot.CurrentGoal)
                     robot.CurrentGoal = currentGoal;
             }
 
@@ -111,13 +110,14 @@ namespace Model.Mediators.ReplayMediatorUtils
 
         public void SetPosition(int step)
         {
-            while(simulationData.Step < step)
+            while (simulationData.Step < step)
             {
                 RobotOperation[] robotOperations;
                 try
                 {
                     robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
-                } catch (ArgumentOutOfRangeException)
+                }
+                catch (ArgumentOutOfRangeException)
                 {
                     //simulation ended
                     break;

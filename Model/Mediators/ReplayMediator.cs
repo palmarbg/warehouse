@@ -1,9 +1,7 @@
 ﻿using Model.Interfaces;
 using Model.Mediators.ReplayMediatorUtils;
-using Persistence.DataAccesses;
 using Persistence.Interfaces;
 using System.Diagnostics;
-using System.Numerics;
 
 namespace Model.Mediators
 {
@@ -16,7 +14,7 @@ namespace Model.Mediators
         #endregion
         #region Constructor
 
-        public ReplayMediator(Simulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
+        public ReplayMediator(ISimulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
@@ -49,7 +47,7 @@ namespace Model.Mediators
                 simulationState.IsSimulationEnded = false;
             }
 
-            if(_savedInterval == null)
+            if (_savedInterval == null)
                 _savedInterval = interval;
             interval = 100;
 
@@ -68,7 +66,7 @@ namespace Model.Mediators
 
             simulationState.IsLastTaskFinished = false;
 
-            if(_savedInterval == null)
+            if (_savedInterval == null)
                 _savedInterval = interval;
             interval = 100;
 
@@ -89,10 +87,10 @@ namespace Model.Mediators
             if (step == simulationData.Step)
                 return;
 
-            if(step < SimulationData.Step || !SimulationState.IsSimulationStarted)
+            if (step < SimulationData.Step || !SimulationState.IsSimulationStarted)
                 InitSimulation();
 
-            if(step == 0)
+            if (step == 0)
                 return;
 
             simulationState.IsSimulationEnded = false;
@@ -136,7 +134,7 @@ namespace Model.Mediators
                 _savedInterval = calculatedInterval;
             else
                 interval = calculatedInterval;
-            
+
             Timer.Interval = calculatedInterval;
         }
 

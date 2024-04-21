@@ -100,7 +100,7 @@ namespace View.Grid
                 return;
             List<Robot> robots = (List<Robot>)sender;
 
-            if(timeSpan > TimeSpan.FromMilliseconds(500))
+            if (timeSpan > TimeSpan.FromMilliseconds(500))
                 timeSpan = TimeSpan.FromMilliseconds(500);
 
             for (int i = 0; i < MapCanvas.Children.Count; i++)

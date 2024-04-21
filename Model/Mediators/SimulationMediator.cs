@@ -1,10 +1,4 @@
-﻿using Model.Controllers;
-using Model.Distributors;
-using Model.Executors;
-using Model.Interfaces;
-using Persistence.DataAccesses;
-using Persistence.Interfaces;
-using Persistence.Loggers;
+﻿using Model.Interfaces;
 using System.Diagnostics;
 using System.Timers;
 
@@ -14,7 +8,7 @@ namespace Model.Mediators
     {
         #region Constructor
 
-        public SimulationMediator(Simulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
+        public SimulationMediator(ISimulation simulation, IServiceLocator serviceLocator) : base(simulation, serviceLocator)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();

@@ -2,7 +2,6 @@ using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
-using System.Diagnostics;
 
 namespace Model.Executors
 {
@@ -195,7 +194,7 @@ namespace Model.Executors
             OnTimeout();
         }
 
-        
+
 
         public void SaveSimulation(string filepath)
         {

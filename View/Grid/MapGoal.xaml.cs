@@ -1,6 +1,4 @@
 ﻿using Persistence.DataTypes;
-using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -45,17 +43,17 @@ namespace View.Grid
         }
         private void RefreshGoal(Robot robot, Goal? goal)
         {
-            if(_robotIdToCanvasIndex.ContainsKey(robot.Id))
+            if (_robotIdToCanvasIndex.ContainsKey(robot.Id))
             {
                 System.Windows.Controls.Grid mock = new()
                 {
                     Width = 0,
                     Height = 0,
-                    
+
                 };
                 MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
                 MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], mock);
-            }            
+            }
 
             if (goal == null || robot.CurrentGoal == null)
                 return;
@@ -96,7 +94,8 @@ namespace View.Grid
             {
                 MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
                 MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], grid);
-            } else
+            }
+            else
             {
                 _robotIdToCanvasIndex[robot.Id] = MapCanvas.Children.Count;
                 MapCanvas.Children.Add(grid);

@@ -21,17 +21,14 @@
             <MenuItem Header="Fájl">
                 <MenuItem Header="Szimuláció betöltése..."
                           x:Name="_loadSimulationMenuItem"/>
+                <MenuItem Header="Visszajátszás betöltése..."
+                          x:Name="_loadReplayMenuItem"/>
+            </MenuItem>
+            <MenuItem Header="Szimuláció">
+                <MenuItem Header="Új szimuláció indítása"
+                    x:Name="_startNewSimulationMenuItem"/>
                 <MenuItem Header="Szimuláció mentése..."
-                          x:Name="_saveSimulationMenuItem"/>
-            </MenuItem>
-            <MenuItem Header="Szimuláció" IsEnabled="False">
-                <MenuItem Header="" />
-            </MenuItem>
-            <MenuItem Header="Nézet" IsEnabled="False">
-                <MenuItem Header="" />
-            </MenuItem>
-            <MenuItem Header="Beállítások" IsEnabled="False">
-                <MenuItem Header="" />
+                    x:Name="_saveSimulationMenuItem"/>
             </MenuItem>
         </Menu>
 
