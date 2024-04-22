@@ -45,7 +45,21 @@ namespace TestModel.PersistenceTests.ExtensionTests
                 newPosition24.PositionInDirection(Direction.Left)
                 );
         }
-
+        [TestMethod]
+        public void DirectionInPositionTests()
+        {
+            Assert.AreEqual(
+                Direction.Down,
+                newPosition14.DirectionInPosition(newPosition15)
+                );
+            Assert.AreEqual(
+                Direction.Up,
+                newPosition15.DirectionInPosition(newPosition14)
+                );
+            Assert.IsNull(
+                newPosition14.DirectionInPosition(newPosition14)
+                );
+        }
 
 
 
