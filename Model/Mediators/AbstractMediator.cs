@@ -99,6 +99,7 @@ namespace Model.Mediators
 
             Timer.Stop();
             simulation.OnSimulationFinished();
+            this.SetInitialState();
         }
 
         public void PauseSimulation()

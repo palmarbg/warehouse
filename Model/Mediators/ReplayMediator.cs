@@ -72,8 +72,11 @@ namespace Model.Mediators
                 !simulationState.IsSimulationStarted)
                 return;
 
-            if (simulationData.Step < 1)
+            if (simulationData.Step < 2)
+            {
+                this.SetInitialState();
                 return;
+            }
 
             simulationState.IsLastTaskFinished = false;
 
