@@ -75,7 +75,8 @@ namespace Model
 
         public void LoadConfig(string fileName)
         {
-            if(Mediator is ISimulationMediator simulationMediator)
+            Mediator.SetInitialState();
+            if (Mediator is ISimulationMediator simulationMediator)
             {
                 simulationMediator.LoadConfig(fileName);
                 return;
@@ -86,6 +87,7 @@ namespace Model
 
         public void LoadLog(string fileName)
         {
+            Mediator.SetInitialState();
             if (Mediator is not IReplayMediator){
                 Mediator = _serviceLocator.GetReplayMediator(this, Mediator.MapFileName, fileName);
                 return;
