@@ -28,7 +28,6 @@
     <Folder Include="MockClasses\Mediators\" />
     <Folder Include="MockClasses\Simulations\" />
     <Folder Include="ModelTests\ControllerTests\" />
-    <Folder Include="ModelTests\DistributorTests\" />
     <Folder Include="ModelTests\ExecutorTests\" />
     <Folder Include="ModelTests\MediatorTests\" />
     <Folder Include="ModelTests\SimulationTests\" />
