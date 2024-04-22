@@ -1,7 +1,9 @@
-﻿using ViewModel.ViewModel;
+﻿using Model.DataTypes;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using ViewModel.ViewModel;
 
 namespace View.UserControls
 {
@@ -19,38 +21,26 @@ namespace View.UserControls
         {
             this.DataContext = viewModel;
 
-            SetCommandBinding(_playButton,  nameof(viewModel.ToggleSimulationCommand),  viewModel);
-            SetCommandBinding(_stopButton,  nameof(viewModel.StopSimulationCommand),    viewModel);
-            SetCommandBinding(_startButton, nameof(viewModel.InitialPositionCommand),   viewModel);
-            SetCommandBinding(_backButton,  nameof(viewModel.PreviousStepCommand),      viewModel);
-            SetCommandBinding(_nextButton,  nameof(viewModel.NextStepCommand),          viewModel);
-            SetCommandBinding(_endButton,   nameof(viewModel.FinalPositionCommand),     viewModel);
+            viewModel.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_,arg) => OnSimulationStateChanged(arg));
+
+            SetCommandBinding(_playButton, nameof(viewModel.ToggleSimulationCommand), viewModel);
+            SetCommandBinding(_stopButton, nameof(viewModel.StopSimulationCommand), viewModel);
+            SetCommandBinding(_startButton, nameof(viewModel.InitialPositionCommand), viewModel);
+            SetCommandBinding(_backButton, nameof(viewModel.PreviousStepCommand), viewModel);
+            SetCommandBinding(_nextButton, nameof(viewModel.NextStepCommand), viewModel);
+            SetCommandBinding(_endButton, nameof(viewModel.FinalPositionCommand), viewModel);
+            SetCommandBinding(_settingButton, nameof(viewModel.OpenReplaySettingsCommand), viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, nameof(viewModel.LoadSimulationCommand), viewModel);
+            SetCommandBinding(_loadReplayMenuItem, nameof(viewModel.LoadReplayCommand), viewModel);
+
+
+            SetCommandBinding(_startNewSimulationMenuItem, nameof(viewModel.StartNewSimulationCommand), viewModel);
             SetCommandBinding(_saveSimulationMenuItem, nameof(viewModel.SaveSimulationCommand), viewModel);
 
-            _playButton.Click += new RoutedEventHandler((_,_) => {
-                _playButton.IconSrc = _playButton.IconSrc == "Icons/pause.png" ? "Icons/play.png" : "Icons/pause.png";
-                _playButton.LabelText = _playButton.IconSrc == "Icons/pause.png" ? "Pause" : "Start";
-            });
-
-            _stopButton.Click += new RoutedEventHandler((_, _) => {
-                _playButton.IconSrc = "Icons/play.png";
-                _playButton.LabelText = "Start";
-            });
-
-            _startButton.Click += new RoutedEventHandler((_, _) => {
-                _playButton.IconSrc = "Icons/play.png";
-                _playButton.LabelText = "Start";
-            });
-
-            _loadSimulationMenuItem.Click += new RoutedEventHandler((_, _) => {
-                _playButton.IconSrc = "Icons/play.png";
-                _playButton.LabelText = "Start";
-            });
         }
 
-        public void SetCommandBinding(Button btn, string path, MainWindowViewModel viewModel)
+        private void SetCommandBinding(Button btn, string path, MainWindowViewModel viewModel)
         {
             Binding binding = new()
             {
@@ -61,7 +51,7 @@ namespace View.UserControls
             BindingOperations.SetBinding(btn, Button.CommandProperty, binding);
         }
 
-        public void SetCommandBinding(MenuItem btn, string path, MainWindowViewModel viewModel)
+        private void SetCommandBinding(MenuItem btn, string path, MainWindowViewModel viewModel)
         {
             Binding binding = new()
             {
@@ -70,6 +60,35 @@ namespace View.UserControls
                 Mode = BindingMode.TwoWay
             };
             BindingOperations.SetBinding(btn, MenuItem.CommandProperty, binding);
+        }
+
+        private void OnSimulationStateChanged(SimulationStateEventArgs arg)
+        {
+            var simulationState = arg.SimulationState;
+
+            _playButton.IconSrc = !simulationState.IsSimulationRunning ? "Icons/play.png" : "Icons/pause.png";
+            _playButton.LabelText = !simulationState.IsSimulationRunning ? "Start" : "Pause";
+
+
+            if(!arg.IsReplayMode)
+            {
+                _playButton.IsEnabled = true;
+                _stopButton.IsEnabled = simulationState.IsSimulationRunning;
+                _startButton.IsEnabled = simulationState.IsSimulationStarted;
+                _backButton.IsEnabled = false;
+                _nextButton.IsEnabled = false;
+                _endButton.IsEnabled = false;
+                _settingButton.IsEnabled = false;
+                return;
+            }
+
+            _playButton.IsEnabled = true;
+            _stopButton.IsEnabled = simulationState.IsSimulationStarted;
+            _startButton.IsEnabled = simulationState.IsSimulationStarted;
+            _backButton.IsEnabled = simulationState.IsSimulationStarted && !simulationState.IsSimulationRunning;
+            _nextButton.IsEnabled = !simulationState.IsSimulationRunning;
+            _endButton.IsEnabled = !simulationState.IsSimulationRunning;
+            _settingButton.IsEnabled = !simulationState.IsSimulationRunning;
         }
     }
 }

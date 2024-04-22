@@ -1,7 +1,7 @@
-﻿using ViewModel.ViewModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {

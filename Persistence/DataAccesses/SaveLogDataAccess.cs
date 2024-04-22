@@ -8,6 +8,10 @@ namespace Persistence.DataAccesses
 {
     public class SaveLogDataAccess : ISaveLogDataAccess
     {
+        public ISaveLogDataAccess NewInstance()
+        {
+            return new SaveLogDataAccess();
+        }
         public void SaveLogData(string path, Log log)
         {
             /*
@@ -41,9 +45,9 @@ namespace Persistence.DataAccesses
             foreach (var error in log.Errors)
             {
                 externalLog.Errors.Add(new([
-                    error.robotId1, 
-                    error.robotId2, 
-                    error.round, 
+                    error.robotId1,
+                    error.robotId2,
+                    error.round,
                     error.errorType.ToString()
                     ]));
             }
@@ -59,7 +63,7 @@ namespace Persistence.DataAccesses
             }
 
             externalLog.Events = new();
-            for(int i = 0; i < log.Events.Count; i++)
+            for (int i = 0; i < log.Events.Count; i++)
             {
                 externalLog.Events.Add(new());
                 foreach (var evnt in log.Events[i])
@@ -83,14 +87,15 @@ namespace Persistence.DataAccesses
             }
 
             externalLog.ActualPaths = new();
-            foreach(var robotPathList in log.ActualPaths)
+            foreach (var robotPathList in log.ActualPaths)
             {
                 string str = "";
                 foreach (var robotPath in robotPathList)
                 {
                     str += robotPath.ToChar() + ",";
                 }
-                str = str.Remove(str.Length - 1);
+                if(str.Length > 0)
+                    str = str.Remove(str.Length - 1);
                 externalLog.ActualPaths.Add(str);
             }
 
@@ -102,7 +107,8 @@ namespace Persistence.DataAccesses
                 {
                     str += robotPath.ToChar() + ",";
                 }
-                str = str.Remove(str.Length - 1);
+                if(str.Length > 0)
+                    str = str.Remove(str.Length - 1);
                 externalLog.PlannerPaths.Add(str);
             }
 

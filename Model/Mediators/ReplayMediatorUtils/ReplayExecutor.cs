@@ -1,5 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Extensions;
 
 namespace Model.Mediators.ReplayMediatorUtils
@@ -32,11 +32,6 @@ namespace Model.Mediators.ReplayMediatorUtils
         public void SaveSimulation(string filepath)
         {
             throw new NotImplementedException();
-        }
-
-        public void TaskAssigned(int taskId, int robotId)
-        {
-
         }
 
         public void Timeout()

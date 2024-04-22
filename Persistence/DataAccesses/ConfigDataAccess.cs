@@ -50,7 +50,7 @@ namespace Persistence.DataAccesses
             ITile[,] map = new ITile[width, height];
             for (int y = 0; y < height; y++)
             {
-                string row = mapData[y+4];
+                string row = mapData[y + 4];
                 for (int x = 0; x < width; x++)
                 {
                     if (row[x] == '.')
@@ -74,7 +74,7 @@ namespace Persistence.DataAccesses
             for (int i = 1; i <= robotCount; i++)
             {
                 int intPos = int.Parse(robotData[i]);
-                
+
 
                 int x = intPos % simulationData.Map.GetLength(0);
                 int y = intPos / simulationData.Map.GetLength(0);
@@ -112,30 +112,23 @@ namespace Persistence.DataAccesses
 
         private void Load()
         {
-            try
+            baseUri = new(path);
+            string jsonString = File.ReadAllText(path);
+            var options = new JsonSerializerOptions();
+            options.PropertyNameCaseInsensitive = true;
+            options.Converters.Add(new JsonStringEnumConverter());
+            Config? config = JsonSerializer.Deserialize<Config>(jsonString, options) ?? throw new JSonError("Serialization of config file was unsuccesful!");
+            simulationData = new SimulationData
             {
-                baseUri = new(path);
-                string jsonString = File.ReadAllText(path);
-                var options = new JsonSerializerOptions();
-                options.PropertyNameCaseInsensitive = true;
-                options.Converters.Add(new JsonStringEnumConverter());
-                Config? config = JsonSerializer.Deserialize<Config>(jsonString, options) ?? throw new JSonError("Serialization of config file was unsuccesful!");
-                simulationData = new SimulationData
-                {
-                    DistributorName = config.TaskAssignmentStrategy,
-                    RevealedTaskCount = config.NumTasksReveal,
-                    Map = null!,
-                    Goals =[],
-                    Robots = []
-                };
-                SetMap(config.MapFile);
-                SetRobots(config.AgentFile);
-                SetGoals(config.TaskFile);
-            }
-            catch (Exception) 
-            {
-                throw new JSonError();
-            }
+                DistributorName = config.TaskAssignmentStrategy,
+                RevealedTaskCount = config.NumTasksReveal,
+                Map = null!,
+                Goals = [],
+                Robots = []
+            };
+            SetMap(config.MapFile);
+            SetRobots(config.AgentFile);
+            SetGoals(config.TaskFile);
         }
         #endregion
 

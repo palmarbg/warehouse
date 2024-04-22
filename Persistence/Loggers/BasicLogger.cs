@@ -1,16 +1,26 @@
 ﻿using Persistence.DataTypes;
-using Persistence.DataAccesses;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Persistence.Loggers
 {
     public class BasicLogger : ILogger
     {
-        private SaveLogDataAccess dataAccess = new SaveLogDataAccess();
+        private bool flag = false;
+        private ISaveLogDataAccess _saveLogDataAccess;
         private Log log = new Log();
         private SimulationData simulationData;
-        public BasicLogger(SimulationData simulationData)
+        public BasicLogger(SimulationData simulationData, ISaveLogDataAccess saveLogDataAccess)
         {
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+
+
+            _saveLogDataAccess = saveLogDataAccess;
+
             string actionModel = simulationData.ControllerName ?? string.Empty;
             int teamSize = simulationData.Robots.Count;
 
@@ -32,7 +42,7 @@ namespace Persistence.Loggers
                 });
             }
 
-            
+
 
 
             // LogEvent()
@@ -53,11 +63,11 @@ namespace Persistence.Loggers
         public void SaveLog(string path)
         {
             log.Tasks = simulationData.Goals;
-            log.AllValid = !log.Errors.All(e=>e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
+            log.AllValid = !log.Errors.All(e => e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
-            foreach(List<TaskEvent> events in log.Events)
+            foreach (List<TaskEvent> events in log.Events)
             {
-                foreach(TaskEvent v in events)
+                foreach (TaskEvent v in events)
                 {
                     if (v.eventType == TaskEventType.assigned)
                         log.NumTaskFinished += 1;
@@ -65,7 +75,7 @@ namespace Persistence.Loggers
             }
             log.MakeSpan = log.ActualPaths[0].Count;
             log.SumOfCost = log.ActualPaths.Count * log.ActualPaths[0].Count;
-            dataAccess.SaveLogData(path, log);
+            _saveLogDataAccess.SaveLogData(path, log);
         }
         public void LogTimeout()
         {
@@ -88,6 +98,8 @@ namespace Persistence.Loggers
         }
         public void LogEvent(TaskEvent taskEvent, int robotId)
         {
+            if (flag)
+                return;
             log.Events[robotId].Add(taskEvent);
         }
 
@@ -113,7 +125,8 @@ namespace Persistence.Loggers
 
         public ILogger NewInstance(SimulationData simulationData)
         {
-            return new BasicLogger(simulationData);
+            flag = true;
+            return new BasicLogger(simulationData, _saveLogDataAccess.NewInstance());
         }
     }
 }

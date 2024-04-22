@@ -1,5 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 
 namespace Model.Controllers
 {
@@ -34,7 +34,8 @@ namespace Model.Controllers
                         return robot.NextOperation;
                     }
                     _taskDistributor.AssignNewTask(robot);
-                    Goal.OnGoalsChanged();
+
+                    //Goal.OnGoalsChanged();
                     if (robot.CurrentGoal is null)
                     {
                         robot.NextOperation = RobotOperation.Wait;
@@ -43,6 +44,7 @@ namespace Model.Controllers
                 }
                 var robotPosition = robot.Position;
                 var goalPosition = robot.CurrentGoal.Position;
+
                 if (robotPosition.X == goalPosition.X)
                 {
                     int distance = robot.Position.Y - robot.CurrentGoal.Position.Y;

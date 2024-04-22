@@ -1,8 +1,8 @@
 ﻿using Persistence.DataTypes;
-using ViewModel.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ViewModel.ViewModel;
 using Block = Persistence.DataTypes.Block;
 
 

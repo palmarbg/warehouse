@@ -19,19 +19,16 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="Fájl">
-                <MenuItem Header="Szimuláció betöltése..."
+                <MenuItem Header="Konfiguráció betöltése..."
                           x:Name="_loadSimulationMenuItem"/>
+                <MenuItem Header="Visszajátszás betöltése..."
+                          x:Name="_loadReplayMenuItem"/>
+            </MenuItem>
+            <MenuItem Header="Szimuláció">
+                <MenuItem Header="Új szimuláció indítása"
+                    x:Name="_startNewSimulationMenuItem"/>
                 <MenuItem Header="Szimuláció mentése..."
-                          x:Name="_saveSimulationMenuItem"/>
-            </MenuItem>
-            <MenuItem Header="Szimuláció" IsEnabled="False">
-                <MenuItem Header="" />
-            </MenuItem>
-            <MenuItem Header="Nézet" IsEnabled="False">
-                <MenuItem Header="" />
-            </MenuItem>
-            <MenuItem Header="Beállítások" IsEnabled="False">
-                <MenuItem Header="" />
+                    x:Name="_saveSimulationMenuItem"/>
             </MenuItem>
         </Menu>
 
@@ -43,15 +40,15 @@
                             />
             <local:MenuIcon IconSrc="Icons/start.png"
                             x:Name="_startButton"/>
-            <local:MenuIcon IconSrc="Icons/back.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/back.png"
                             x:Name="_backButton"/>
             <local:MenuIcon IconSrc="Icons/stop.png"
                             x:Name="_stopButton"/>
-            <local:MenuIcon IconSrc="Icons/next.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/next.png"
                             x:Name="_nextButton"/>
-            <local:MenuIcon IconSrc="Icons/end.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/end.png"
                             x:Name="_endButton"/>
-            <local:MenuIcon IconSrc="Icons/setting.png" IsEnabled="False"
+            <local:MenuIcon IconSrc="Icons/setting.png"
                             x:Name="_settingButton"/>
         </StackPanel>
        

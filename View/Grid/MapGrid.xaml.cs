@@ -1,7 +1,7 @@
 ﻿using Persistence.DataTypes;
-using ViewModel.ViewModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {
@@ -17,7 +17,7 @@ namespace View.Grid
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if(DataContext is MainWindowViewModel model)
+            if (DataContext is MainWindowViewModel model)
             {
                 model.XOffset = (int)e.HorizontalOffset;
                 model.YOffset = (int)e.VerticalOffset;

@@ -17,7 +17,7 @@ namespace View.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            
+
             return ((BitmapImage)value).UriSource.ToString();
 
         }

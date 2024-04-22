@@ -1,10 +1,4 @@
-﻿using Model.Controllers;
-using Model.Distributors;
-using Model.Executors;
-using Model.Interfaces;
-using Persistence.DataAccesses;
-using Persistence.Interfaces;
-using Persistence.Loggers;
+﻿using Model.Interfaces;
 using System.Diagnostics;
 using System.Timers;
 
@@ -14,30 +8,31 @@ namespace Model.Mediators
     {
         #region Constructor
 
-        public SimulationMediator(Simulation simulation) : base(simulation)
+        public SimulationMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName) : base(simulation, serviceLocator, mapFileName)
         {
 
             Timer.Elapsed += (_, _) => StepSimulation();
 
-            string path = Directory.GetCurrentDirectory();
-            path = path.Substring(0, path.LastIndexOf("View"));
-            dataAccess = new ConfigDataAccess(path + "sample_files\\astar1test.json");
+            dataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
 
             simulationData = dataAccess.GetInitialSimulationData();
 
-            controller = new AStarController();
-            taskDistributor = new DemoDistributor(simulationData);
+            controller = serviceLocator.GetController();
 
-            ILogger logger = new BasicLogger(simulationData);
-            executor = new DefaultExecutor(simulationData, logger);
-
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+            executor = _serviceLocator.GetExecutor(simulationData);
 
         }
 
         #endregion
 
         #region Public methods
+
+        public void LoadConfig(string fileName)
+        {
+            MapFileName = fileName;
+            dataAccess = dataAccess.NewInstance(fileName);
+            SetInitialState();
+        }
 
         public void SaveSimulation(string filepath)
         {
@@ -72,15 +67,6 @@ namespace Model.Mediators
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             executor.Timeout();
             simulationData.Step++;
-        }
-
-        #endregion
-
-        #region Protected methods
-
-        protected override void OnTaskAssigned(int robotId, int taskId)
-        {
-            executor.TaskAssigned(taskId, robotId);
         }
 
         #endregion

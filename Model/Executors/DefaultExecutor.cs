@@ -1,5 +1,5 @@
-using Persistence.DataTypes;
 using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
 
@@ -15,6 +15,8 @@ namespace Model.Executors
         {
             this.simulationData = simulationData;
             this.logger = logger;
+
+            Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnTaskAssigned(goal.Id, ((Robot)robot!).Id));
         }
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
+
             errors = new List<OperationError>();
             // Reset MovedThisTurn
             for (int i = 0; i < simulationData.Robots.Count; i++)
@@ -51,7 +54,6 @@ namespace Model.Executors
             }
 
             OnStepFinished(robotOperations, executedOperations, errors.ToArray(), timeSpan);
-
             return robotOperations;
         }
 
@@ -129,10 +131,6 @@ namespace Model.Executors
                         robot.CurrentGoal.IsAssigned = false;
                         OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                         robot.CurrentGoal = null;
-                        Goal.OnGoalsChanged();
-                        //TODO: Robotnak új goal-t kell adni
-                        //robot.CurrentGoal = null;
-                        //Distributor.AssignNewTask(robot);
                         robot.MovedThisTurn = true;
                         return true;
 
@@ -196,10 +194,7 @@ namespace Model.Executors
             OnTimeout();
         }
 
-        public void TaskAssigned(int taskId, int robotId)
-        {
-            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
-        }
+
 
         public void SaveSimulation(string filepath)
         {
@@ -242,6 +237,11 @@ namespace Model.Executors
                 errors,
                 timeElapsed
             );
+        }
+
+        private void OnTaskAssigned(int taskId, int robotId)
+        {
+            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
         }
 
         #endregion

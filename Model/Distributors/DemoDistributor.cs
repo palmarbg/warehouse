@@ -1,6 +1,5 @@
-﻿using Persistence.DataTypes;
-using Model.Interfaces;
-using System.Diagnostics;
+﻿using Model.Interfaces;
+using Persistence.DataTypes;
 
 namespace Model.Distributors
 {
@@ -8,7 +7,7 @@ namespace Model.Distributors
     {
         private SimulationData simulationData;
         private int iterator = 0;
-        public event EventHandler<(Robot, Goal)>? TaskAssigned;
+
         public DemoDistributor(SimulationData simulationData)
         {
             this.simulationData = simulationData;
@@ -23,7 +22,6 @@ namespace Model.Distributors
         /// <param name="robot"></param>
         public void AssignNewTask(Robot robot)
         {
-            Debug.WriteLine(simulationData.Goals.Count);
             while (iterator < simulationData.Goals.Count)
             {
                 Goal goal = simulationData.Goals[iterator];
@@ -32,9 +30,8 @@ namespace Model.Distributors
                 if (goal.IsAssigned)
                     continue;
 
-                robot.CurrentGoal = goal;
                 goal.IsAssigned = true;
-                OnTaskAssigned(robot);
+                robot.CurrentGoal = goal;
 
                 return;
             }
@@ -44,11 +41,6 @@ namespace Model.Distributors
         public ITaskDistributor NewInstance(SimulationData simulationData)
         {
             return new DemoDistributor(simulationData);
-        }
-
-        private void OnTaskAssigned(Robot robot)
-        {
-            TaskAssigned?.Invoke(null, (robot, robot.CurrentGoal!));
         }
     }
 }

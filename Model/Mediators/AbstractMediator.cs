@@ -1,5 +1,6 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
 using Model.Interfaces;
+using Persistence.DataTypes;
 using Persistence.Interfaces;
 using System.Diagnostics;
 
@@ -7,12 +8,12 @@ namespace Model.Mediators
 {
     public abstract class AbstractMediator : IMediator
     {
+
         #region Protected Fields
 
         protected readonly System.Timers.Timer Timer;
 
         protected IDataAccess dataAccess = null!;
-        protected ITaskDistributor taskDistributor = null!;
         protected IController controller = null!;
         protected IExecutor executor = null!;
 
@@ -22,9 +23,11 @@ namespace Model.Mediators
         protected SimulationState simulationState;
         protected SimulationData simulationData = null!;
 
-        protected readonly Simulation simulation;
+        protected readonly ISimulation simulation;
 
         protected DateTime time;
+
+        protected readonly IServiceLocator _serviceLocator;
 
         #endregion
 
@@ -32,14 +35,18 @@ namespace Model.Mediators
 
         public SimulationData SimulationData => simulationData;
         public SimulationState SimulationState => simulationState;
-        public int Interval => interval;
+        public virtual int Interval => interval;
+
+        public string MapFileName {  get; protected set; }
 
         #endregion
 
         #region Constructor
 
-        public AbstractMediator(Simulation simulation)
+        public AbstractMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName)
         {
+            _serviceLocator = serviceLocator;
+
             this.simulation = simulation;
 
             interval = 500;
@@ -51,6 +58,11 @@ namespace Model.Mediators
             Timer.Stop();
 
             simulationState = new SimulationState();
+            simulationState.SimulationStateChanged +=
+                new EventHandler<SimulationState>(
+                    (_, _) => simulation.OnSimulationStateChanged(simulationState)
+                );
+            MapFileName = mapFileName;
         }
 
         #endregion
@@ -69,21 +81,10 @@ namespace Model.Mediators
                 return;
             }
 
-            SetInitialState();
+            InitSimulation();
 
             simulationState.IsSimulationRunning = true;
             simulationState.IsSimulationEnded = false;
-
-            taskDistributor.TaskAssigned += new EventHandler<(Robot, Goal)>((_, robotAndGoal) => OnTaskAssigned(robotAndGoal.Item1.Id, robotAndGoal.Item2.Id));
-
-            controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
-            {
-                if (controller != sender)
-                    return;
-                OnTaskFinished(e);
-            });
-
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
 
             Timer.Start();
         }
@@ -111,22 +112,16 @@ namespace Model.Mediators
         {
             Timer.Stop();
 
-            simulationState = new SimulationState();
+            simulationState.Reset();
 
             simulationData = dataAccess.GetInitialSimulationData();
             simulationData.ControllerName = controller.Name;
-            taskDistributor = taskDistributor.NewInstance(simulationData);
+
             controller = controller.NewInstance();
             executor = executor.NewInstance(simulationData);
 
             simulation.OnSimulationLoaded();
 
-        }
-
-        public void LoadSimulation(string filePath)
-        {
-            dataAccess = dataAccess.NewInstance(filePath);
-            SetInitialState();
         }
 
         #endregion
@@ -143,17 +138,28 @@ namespace Model.Mediators
             simulationState.IsExecutingMoves = false;
 
             simulationData.Step++;
-
-            simulation.OnRobotsMoved();
+            Debug.WriteLine(interval);
+            simulation.OnRobotsMoved(TimeSpan.FromMilliseconds(interval));
         }
 
         #endregion
 
         #region Protected methods
 
-        protected virtual void OnTaskAssigned(int robotId, int taskId)
+        protected void InitSimulation()
         {
+            SetInitialState();
 
+            controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            {
+                if (controller != sender)
+                    return;
+                OnTaskFinished(e);
+            });
+
+            var taskDistributor = _serviceLocator.GetTaskDistributor(simulationData);
+
+            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
         }
 
         #endregion

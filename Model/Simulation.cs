@@ -1,13 +1,19 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
 using Model.Interfaces;
-using Model.Mediators;
+using Persistence.DataTypes;
+using System.Diagnostics;
 
 namespace Model
 {
     public class Simulation : ISimulation
     {
+        #region Private Fields
+
+        private IServiceLocator _serviceLocator;
+
+        #endregion
+
         #region Properties
-        public int Interval => Mediator.Interval;
         public SimulationData SimulationData => Mediator.SimulationData;
         public SimulationState State => Mediator.SimulationState;
         public IMediator Mediator { get; private set; } = null!;
@@ -19,12 +25,12 @@ namespace Model
         /// <summary>
         /// Fire with <see cref="OnRobotsMoved"/>
         /// </summary>
-        public event EventHandler? RobotsMoved;
+        public event EventHandler<TimeSpan>? RobotsMoved;
 
         /// <summary>
-        /// Fire with <see cref="OnGoalsChanged"/>
+        /// Fire with <see cref="OnGoalChanged"/>
         /// </summary>
-        public event EventHandler? GoalsChanged;
+        public event EventHandler<Goal?>? GoalChanged;
 
         /// <summary>
         /// Fire with <see cref="OnSimulationFinished"/>
@@ -36,17 +42,76 @@ namespace Model
         /// </summary>
         public event EventHandler? SimulationLoaded;
 
+        // <summary>
+        /// Fire with <see cref="OnSimulationStateChanged"/>
+        /// </summary>
+        public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
+
 
         #endregion
 
         #region Constructor
 
-        public Simulation()
+        public Simulation(IServiceLocator serviceLocator)
         {
+            _serviceLocator = serviceLocator;
 
-            Goal.GoalsChanged += new EventHandler((_, _) => OnGoalsChanged());
+            Robot.TaskAssigned += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
+            Robot.TaskFinished += new EventHandler<Goal?>((robot, goal) => OnGoalChanged((Robot)robot!, goal));
 
-            Mediator = new SimulationMediator(this);
+            string path = Directory.GetCurrentDirectory();
+            path = path.Substring(0, path.LastIndexOf("View"));
+
+            Mediator = serviceLocator.GetSimulationMediator(
+                this,
+                path + "sample_files\\random_20_config.json"//warehouse_100_config
+                //, path + "sample_files\\random_20_log.json"//warehouse_100_log
+                );
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void LoadConfig(string fileName)
+        {
+            if(Mediator is ISimulationMediator simulationMediator)
+            {
+                simulationMediator.LoadConfig(fileName);
+                return;
+            }
+            Mediator = _serviceLocator.GetSimulationMediator(this, fileName);
+            OnSimulationLoaded();
+        }
+
+        public void LoadLog(string fileName)
+        {
+            if (Mediator is not IReplayMediator){
+                Mediator = _serviceLocator.GetReplayMediator(this, Mediator.MapFileName, fileName);
+                return;
+            }
+            var mediator = Mediator as IReplayMediator;
+            mediator?.LoadLog(fileName);
+        }
+
+        public void StartNewSimulation()
+        {
+            if(Mediator is ISimulationMediator)
+            {
+                Mediator.SetInitialState();
+                return;
+            }
+            var mediator = Mediator as IReplayMediator;
+            Mediator = _serviceLocator.GetSimulationMediator(this, Mediator.MapFileName);
+
+        }
+
+        public void SaveLog(string fileName)
+        {
+            if (Mediator is not ISimulationMediator)
+                return;
+            var mediator = Mediator as ISimulationMediator;
+            mediator?.SaveSimulation(fileName);
         }
 
         #endregion
@@ -56,17 +121,14 @@ namespace Model
         /// <summary>
         /// Call it when robots moved
         /// </summary>
-        public void OnRobotsMoved()
+        public void OnRobotsMoved(TimeSpan timeSpan)
         {
-            RobotsMoved?.Invoke(SimulationData.Robots, new EventArgs());
+            RobotsMoved?.Invoke(SimulationData.Robots, timeSpan);
         }
 
-        /// <summary>
-        /// Call it when tasks are completed or created
-        /// </summary>
-        public void OnGoalsChanged()
+        public void OnSimulationLoaded()
         {
-            GoalsChanged?.Invoke(SimulationData.Goals, new EventArgs());
+            SimulationLoaded?.Invoke(null, new EventArgs());
         }
 
         /// <summary>
@@ -80,9 +142,25 @@ namespace Model
         /// <summary>
         /// Call it when new simulation data have been loaded
         /// </summary>
-        public void OnSimulationLoaded()
+        public void OnSimulationStateChanged(SimulationState simulationState)
         {
-            SimulationLoaded?.Invoke(null, new EventArgs());
+            SimulationStateChanged?.Invoke(
+                null,
+                new SimulationStateEventArgs
+                {
+                    SimulationState = simulationState,
+                    IsReplayMode = Mediator is IReplayMediator
+                }
+                );
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void OnGoalChanged(Robot robot, Goal? goal)
+        {
+            GoalChanged?.Invoke(robot, goal);
         }
 
         #endregion

@@ -67,7 +67,7 @@ namespace View.UserControls
         {
             if (value == null || value == DependencyProperty.UnsetValue)
                 return 1.0;
-            if((bool)value)
+            if ((bool)value)
                 return 1.0;
             return 0.7;
         }

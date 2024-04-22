@@ -1,9 +1,9 @@
 ﻿using Persistence.DataTypes;
-using ViewModel.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {
@@ -23,10 +23,10 @@ namespace View.Grid
             _viewModel = viewModel;
             this.DataContext = viewModel;
             viewModel.RobotsChanged += new EventHandler(
-                (s,e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s,e); })
+                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); })
                 );
-            viewModel.RobotsMoved += new EventHandler(
-                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, e); })
+            viewModel.RobotsMoved += new EventHandler<TimeSpan>(
+                (s, t) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, t); })
                 );
         }
 
@@ -94,13 +94,16 @@ namespace View.Grid
             }
         }
 
-        private void RefreshRobots(object? sender, EventArgs e)
+        private void RefreshRobots(object? sender, TimeSpan timeSpan)
         {
             if (sender == null)
                 return;
             List<Robot> robots = (List<Robot>)sender;
 
-            for(int i=0; i< MapCanvas.Children.Count;i++)
+            if (timeSpan > TimeSpan.FromMilliseconds(500))
+                timeSpan = TimeSpan.FromMilliseconds(500);
+
+            for (int i = 0; i < MapCanvas.Children.Count; i++)
             {
                 var element = MapCanvas.Children[i];
                 if (element is System.Windows.Controls.Grid grid)
@@ -112,7 +115,7 @@ namespace View.Grid
 
                     ThicknessAnimation marginAnimation = new(
                         new Thickness(GridConverterFunctions.unit * x, GridConverterFunctions.unit * y, 0, 0),
-                        new Duration(TimeSpan.FromMilliseconds(_viewModel.Interval)))
+                        new Duration(timeSpan))
                     {
                         From = grid.Margin
                     };

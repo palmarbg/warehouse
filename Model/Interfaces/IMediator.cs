@@ -1,4 +1,5 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
+using Persistence.DataTypes;
 
 namespace Model.Interfaces
 {
@@ -10,8 +11,9 @@ namespace Model.Interfaces
         public SimulationState SimulationState { get; }
         public int Interval { get; }
 
-        #endregion
+        public string MapFileName { get; }
 
+        #endregion
 
         #region Methods
 
@@ -19,12 +21,6 @@ namespace Model.Interfaces
         void StopSimulation();
         void PauseSimulation();
         void SetInitialState();
-
-        /// <summary>
-        /// Start new simulation from file
-        /// </summary>
-        /// <param name="filePath">Absolute path for file</param>
-        void LoadSimulation(string filePath);
 
         #endregion
     }

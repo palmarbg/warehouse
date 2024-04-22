@@ -1,8 +1,8 @@
-﻿using ViewModel.ViewModel;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using ViewModel.ViewModel;
 
 namespace View.Grid
 {
