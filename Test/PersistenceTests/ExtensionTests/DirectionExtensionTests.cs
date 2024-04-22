@@ -78,6 +78,29 @@ namespace TestModel.PersistenceTests.ExtensionTests
                 );
         }
 
+        [TestMethod]
+        public void OppositeTest()
+        {
+            Assert.AreEqual(
+                Direction.Down,
+                Direction.Up.Opposite()
+                );
+
+            Assert.AreEqual(
+                Direction.Up,
+                Direction.Down.Opposite()
+                );
+
+            Assert.AreEqual(
+                Direction.Left,
+                Direction.Right.Opposite()
+                );
+
+            Assert.AreEqual(
+                Direction.Right,
+                Direction.Left.Opposite()
+                );
+        }
 
     }
 }
