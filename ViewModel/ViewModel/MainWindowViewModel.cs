@@ -347,6 +347,7 @@ namespace ViewModel.ViewModel
         private void OnLoadSimulation()
         {
             LoadSimulation?.Invoke(null, new());
+            _simulation.OnSimulationStateChanged(_simulation.State);
         }
 
         private void OnLoadReplay()
