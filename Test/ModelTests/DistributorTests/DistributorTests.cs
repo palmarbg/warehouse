@@ -15,10 +15,6 @@ namespace Test.ModelTests.DistributorTests
         private SimulationData _simulationData = null!;
         private DemoDistributor distributor = null!;
         private Mock<ConfigDataAccess> _mock = null!;
-        DistributorTests()
-        {
-
-        }
         [TestMethod]
         public void TestMoq()
         {
