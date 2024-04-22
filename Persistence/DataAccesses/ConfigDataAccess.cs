@@ -13,14 +13,16 @@ namespace Persistence.DataAccesses
         private Uri baseUri;
         private string path;
         private SimulationData simulationData = null!;
+        private IDirectoryDataAccess _directoryDataAccess;
 
         #endregion
 
         #region Constructor
-        public ConfigDataAccess(string path)
+        public ConfigDataAccess(string path, IDirectoryDataAccess directoryDataAccess)
         {
             this.path = path;
             baseUri = new(path);
+            _directoryDataAccess = directoryDataAccess;
         }
 
         #endregion
@@ -33,7 +35,7 @@ namespace Persistence.DataAccesses
         }
         public IDataAccess NewInstance(string filePath)
         {
-            return new ConfigDataAccess(filePath);
+            return new ConfigDataAccess(filePath, _directoryDataAccess);
         }
 
         #endregion
@@ -43,7 +45,7 @@ namespace Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] mapData = File.ReadAllText(filePath).Split('\n');
+            string[] mapData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
             // map[0]: type octile nem tudjuk mit jelent, nem használjuk
             int height = int.Parse(mapData[1].Split(' ')[1]);
             int width = int.Parse(mapData[2].Split(' ')[1]);
@@ -69,7 +71,7 @@ namespace Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] robotData = File.ReadAllText(filePath).Split('\n');
+            string[] robotData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
             int robotCount = int.Parse(robotData[0]);
             for (int i = 1; i <= robotCount; i++)
             {
@@ -93,7 +95,7 @@ namespace Persistence.DataAccesses
         {
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
-            string[] goalData = File.ReadAllText(filePath).Split('\n');
+            string[] goalData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
             int goalCount = int.Parse(goalData[0]);
             for (int i = 1; i <= goalCount; i++)
             {
@@ -113,7 +115,7 @@ namespace Persistence.DataAccesses
         private void Load()
         {
             baseUri = new(path);
-            string jsonString = File.ReadAllText(path);
+            string jsonString = _directoryDataAccess.LoadFromFile(path);
             var options = new JsonSerializerOptions();
             options.PropertyNameCaseInsensitive = true;
             options.Converters.Add(new JsonStringEnumConverter());

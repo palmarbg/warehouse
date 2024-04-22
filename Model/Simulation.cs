@@ -81,6 +81,7 @@ namespace Model
                 simulationMediator.LoadConfig(fileName);
                 return;
             }
+
             Mediator = _serviceLocator.GetSimulationMediator(this, fileName);
             OnSimulationLoaded();
         }
