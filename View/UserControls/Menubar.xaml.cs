@@ -72,6 +72,9 @@ namespace View.UserControls
 
             if(!arg.IsReplayMode)
             {
+                _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+                _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+
                 _playButton.IsEnabled = true;
                 _stopButton.IsEnabled = simulationState.IsSimulationRunning;
                 _startButton.IsEnabled = simulationState.IsSimulationStarted;
@@ -81,6 +84,8 @@ namespace View.UserControls
                 _settingButton.IsEnabled = false;
                 return;
             }
+            _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+            _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
 
             _playButton.IsEnabled = true;
             _stopButton.IsEnabled = simulationState.IsSimulationStarted;
