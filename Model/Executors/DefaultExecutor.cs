@@ -106,6 +106,7 @@ namespace Model.Executors
                             {
                                 robot.BlockedThisTurn = true;
                                 robot.MovedThisTurn = true;
+                                OnRobotCrash(robot.Id, blockingRobot.Id);
                                 return false;
                             }
                             else
@@ -164,7 +165,6 @@ namespace Model.Executors
                 case RobotOperation.Wait:
                     // TODO: Prototype 2 : Logging
                     robot.MovedThisTurn = true;
-
                     return false;
                     break;
             }

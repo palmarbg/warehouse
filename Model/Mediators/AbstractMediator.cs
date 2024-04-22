@@ -49,7 +49,7 @@ namespace Model.Mediators
 
             this.simulation = simulation;
 
-            interval = 500;
+            interval = 100;
             Timer = new System.Timers.Timer
             {
                 Interval = interval,
