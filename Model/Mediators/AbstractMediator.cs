@@ -114,7 +114,7 @@ namespace Model.Mediators
             Timer.Stop();
 
             simulationState.Reset();
-
+            
             simulationData = dataAccess.GetInitialSimulationData();
             simulationData.ControllerName = controller.Name;
 

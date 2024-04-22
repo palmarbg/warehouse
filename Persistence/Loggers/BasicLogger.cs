@@ -100,7 +100,16 @@ namespace Persistence.Loggers
         {
             if (flag)
                 return;
+            try
+            {
             log.Events[robotId].Add(taskEvent);
+
+            }
+            catch (Exception)
+            {
+
+                
+            }
         }
 
         public void LogStep(
