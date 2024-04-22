@@ -32,7 +32,7 @@ namespace Model
 
         public IDataAccess GetConfigDataAccess(string path)
         {
-            return new ConfigDataAccess(path);
+            return new ConfigDataAccess(path, GetDirectoryDataAccess());
         }
 
         public ILoadLogDataAccess GetLoadLogDataAccess(string path, IDataAccess dataAccess)
@@ -90,6 +90,11 @@ namespace Model
         private ISaveLogDataAccess GetSaveLogDataAccess()
         {
             return new SaveLogDataAccess();
+        }
+
+        private IDirectoryDataAccess GetDirectoryDataAccess()
+        {
+            return new DirectoryDataAccess();
         }
 
         #endregion
