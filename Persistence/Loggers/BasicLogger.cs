@@ -1,15 +1,24 @@
 ﻿using Persistence.DataTypes;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Persistence.Loggers
 {
     public class BasicLogger : ILogger
     {
+        private bool flag = false;
         private ISaveLogDataAccess _saveLogDataAccess;
         private Log log = new Log();
         private SimulationData simulationData;
         public BasicLogger(SimulationData simulationData, ISaveLogDataAccess saveLogDataAccess)
         {
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+            Debug.WriteLine(simulationData.Robots.Count);
+
+
             _saveLogDataAccess = saveLogDataAccess;
 
             string actionModel = simulationData.ControllerName ?? string.Empty;
@@ -89,6 +98,8 @@ namespace Persistence.Loggers
         }
         public void LogEvent(TaskEvent taskEvent, int robotId)
         {
+            if (flag)
+                return;
             log.Events[robotId].Add(taskEvent);
         }
 
@@ -114,7 +125,8 @@ namespace Persistence.Loggers
 
         public ILogger NewInstance(SimulationData simulationData)
         {
-            return new BasicLogger(simulationData, _saveLogDataAccess);
+            flag = true;
+            return new BasicLogger(simulationData, _saveLogDataAccess.NewInstance());
         }
     }
 }

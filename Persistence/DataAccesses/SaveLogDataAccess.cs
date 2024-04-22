@@ -8,6 +8,10 @@ namespace Persistence.DataAccesses
 {
     public class SaveLogDataAccess : ISaveLogDataAccess
     {
+        public ISaveLogDataAccess NewInstance()
+        {
+            return new SaveLogDataAccess();
+        }
         public void SaveLogData(string path, Log log)
         {
             /*

@@ -10,5 +10,7 @@ namespace Persistence.Interfaces
         /// <param name="path">absolute path for saving</param>
         /// <param name="log">content to save</param>
         void SaveLogData(string path, Log log);
+
+        ISaveLogDataAccess NewInstance();
     }
 }

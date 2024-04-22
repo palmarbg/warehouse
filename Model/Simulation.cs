@@ -62,10 +62,10 @@ namespace Model
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("View"));
 
-            Mediator = serviceLocator.GetReplayMediator(
+            Mediator = serviceLocator.GetSimulationMediator(
                 this,
-                path + "sample_files\\random_20_config.json",
-                path + "sample_files\\random_20_log.json"
+                path + "sample_files\\random_20_config.json"//warehouse_100_config
+                //, path + "sample_files\\random_20_log.json"//warehouse_100_log
                 );
         }
 
