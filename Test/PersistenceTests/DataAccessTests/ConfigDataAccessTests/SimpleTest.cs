@@ -1,4 +1,4 @@
-﻿using Persistence.DataAccesses;
+using Persistence.DataAccesses;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using System;
@@ -77,7 +77,7 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
             Assert.AreEqual(0, data.Robots.Count);
             Assert.AreEqual(0, data.Goals.Count);
 
-            Assert.IsTrue(data.Map[1, 0] is Block);
+            Assert.IsTrue(data.Map[0, 1] is Block);
             Assert.IsTrue(data.Map[0, 0] is not Block);
         }
     }
