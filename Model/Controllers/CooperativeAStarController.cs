@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Model.Controllers
 {
     //WORK IN PROGRESS
-    public class CooperativeAStarController
+    public class CooperativeAStarController : IController
     {
         public string Name => "CoopAStarController";
         private SimulationData? SimulationData = null!;
@@ -23,7 +23,10 @@ namespace Model.Controllers
         private int[] blockedCount = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
 
-        private Dictionary<Position, SortedList<int, Robot?>>? Reservations = null!;
+        // Delete from reservers to delete all reservation of Robot
+        private List<Reserver?>? reservers = null!;
+        private Dictionary<Position, SortedList<int, Reserver>>? Reservations = null!;
+        private int CurrentTurn = 0;
 
         #region Public Methods
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
@@ -33,7 +36,19 @@ namespace Model.Controllers
             robotsFinished = new bool[simulationData.Robots.Count];
             previousOperations = new RobotOperation[simulationData.Robots.Count];
             blockedCount = new int[simulationData.Robots.Count];
-            Reservations = new Dictionary<Position, SortedList<int, Robot?>>();
+
+            CurrentTurn = 0;
+            reservers = new List<Reserver?>();
+            Reservations = new Dictionary<Position, SortedList<int, Reserver>>();
+
+
+            for (int i = 0; i < simulationData.Map.GetLength(0); i++)
+            {
+                for (int j = 0; j < simulationData.Map.GetLength(1); j++)
+                {
+                    Reservations.Add(new Position() { X = i, Y = j }, []);
+                }
+            }
 
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
@@ -53,7 +68,7 @@ namespace Model.Controllers
         }
         public IController NewInstance()
         {
-            return new AStarController();
+            return new CooperativeAStarController();
         }
 
         public void CalculateOperations(TimeSpan timeSpan)
@@ -145,6 +160,7 @@ namespace Model.Controllers
                     }
                 }
             }
+            CurrentTurn++;
             OnTaskFinished([.. result]);
         }
 
@@ -161,7 +177,7 @@ namespace Model.Controllers
             start.Direction = robot.Rotation;
             var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
-
+            start.Turn = CurrentTurn;
 
             gScore[start] = 0;
             fScore[start] = Heuristic(start, goal);
@@ -199,6 +215,7 @@ namespace Model.Controllers
                     if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
                     {
                         neighbor.parent = current;
+                        neighbor.Turn = current.Turn + rotationCost;
                         gScore[neighbor] = tentativeGScore;
                         neighbor.Direction = directionOnNewNode;
                         fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
@@ -230,21 +247,32 @@ namespace Model.Controllers
             return NodePathToRobotOperationList(path);
         }
 
+        /// <summary>
+        /// Converts Node List to RobotOperation List. Reserves Positions for the robot
+        /// </summary>
+        /// <param name="path"> List of Nodes in the path</param>
+        /// <returns> List of Operations needed to complete path</returns>
+        /// <exception cref="Exception"></exception>
         private Queue<RobotOperation> NodePathToRobotOperationList(List<Node> path)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             Queue<RobotOperation> Operations = new Queue<RobotOperation>();
-            var robot = SimulationData.Map.GetAtPosition(path[0].Position);
+            var startTile = SimulationData.Map.GetAtPosition(path[0].Position);
             Direction currentDirection;
-            if (robot is not Robot)
+            if (startTile is not Robot)
             {
                 throw new Exception("Path does not start at a robot");
             }
-            else
+            var robot = (startTile as Robot)!;
+            currentDirection = (robot).Rotation;
+            var reserver = reservers!.Find(r1 => r1 is not null && r1.Robot.Id == robot.Id);
+            if (reserver is null)
             {
-                currentDirection = ((Robot)robot).Rotation;
+                reserver = new Reserver(robot);
+                reservers.Add(reserver);
             }
 
+            int turn = CurrentTurn;
             for (int i = 1; i < path.Count; i++)
             {
                 var startPos = path[i - 1].Position;
@@ -256,6 +284,8 @@ namespace Model.Controllers
                 }
                 else
                 {
+                    Reserve(startPos, turn, reserver);
+                    turn++;
                     var ops = currentDirection.RotateTo((Direction)dir);
                     for (int j = 0; j < ops.Count; j++)
                     {
@@ -272,11 +302,31 @@ namespace Model.Controllers
                                 break;
                         }
                         Operations.Enqueue(ops[j]);
+                        Reserve(startPos, turn, reserver);
+                        turn++;
                     }
                     Operations.Enqueue(RobotOperation.Forward);
+                    if (i == path.Count - 1)
+                    {
+                        Reserve(endPos, turn, reserver);
+                        turn++;
+                    }
                 }
             }
             return Operations;
+        }
+
+        private void Reserve(Position position, int turn, Reserver reserver)
+        {
+            if (Reservations is null)
+            {
+                throw new Exception("Controller not initialized");
+            }
+            if (!Reservations.ContainsKey(position))
+            {
+                Reservations.Add(position, []);
+            }
+            Reservations[position].Add(turn, reserver);
         }
         private List<Node> GetNeighbors(Node node, bool robotBlock)
         {
@@ -327,5 +377,17 @@ namespace Model.Controllers
             FinishedTask?.Invoke(this, new(result));
         }
         #endregion
+
+    }
+    public class Reserver
+    {
+        public Robot Robot;
+        public int Offset;
+        public Reserver(Robot robot)
+        {
+            Robot = robot;
+            Offset = 0;
+        }
+
     }
 }
