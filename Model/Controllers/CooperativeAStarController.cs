@@ -2,12 +2,18 @@
 using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Model.Controllers
 {
-    public class AStarController : IController
+    //WORK IN PROGRESS
+    public class CooperativeAStarController
     {
-        public string Name => "AStarController";
+        public string Name => "CoopAStarController";
         private SimulationData? SimulationData = null!;
         private ITaskDistributor _taskDistributor = null!;
         private List<Queue<RobotOperation>> _plannedOperations = new List<Queue<RobotOperation>>();
@@ -17,6 +23,8 @@ namespace Model.Controllers
         private int[] blockedCount = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
 
+        private Dictionary<Position, SortedList<int, Robot?>>? Reservations = null!;
+
         #region Public Methods
         public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
         {
@@ -25,6 +33,7 @@ namespace Model.Controllers
             robotsFinished = new bool[simulationData.Robots.Count];
             previousOperations = new RobotOperation[simulationData.Robots.Count];
             blockedCount = new int[simulationData.Robots.Count];
+            Reservations = new Dictionary<Position, SortedList<int, Robot?>>();
 
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
@@ -84,7 +93,6 @@ namespace Model.Controllers
                                 previousOperations[i] = nextOp;
                                 result.Add(nextOp);
                             }
-
                         }
                     }
                     //Van task de nincs út
@@ -127,8 +135,6 @@ namespace Model.Controllers
                             robot.NextOperation = nextOp;
                             result.Add(nextOp);
                         }
-
-
                     }
                     else
                     {
@@ -155,6 +161,7 @@ namespace Model.Controllers
             start.Direction = robot.Rotation;
             var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
+
 
             gScore[start] = 0;
             fScore[start] = Heuristic(start, goal);
@@ -320,6 +327,5 @@ namespace Model.Controllers
             FinishedTask?.Invoke(this, new(result));
         }
         #endregion
-
     }
 }
