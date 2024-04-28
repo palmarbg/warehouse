@@ -14,6 +14,7 @@ namespace Model.DataTypes
         public Node? parent;
         public Direction? Direction { get; set; } = null;
         public int Turn = 0;
+        public int AllowedRotations = 0;
         public Node(Position pos)
         {
             Position = pos;
@@ -22,6 +23,7 @@ namespace Model.DataTypes
         {
             return Position.Equals(other.Position);
         }
+
         public override bool Equals(object? obj)
         {
             if (obj is Node node)
@@ -44,6 +46,11 @@ namespace Model.DataTypes
         public override string ToString()
         {
             return Position.ToString();
+        }
+
+        public static Node NewWaitNode()
+        {
+            return new Node(new Position() { X = -1, Y = -1 });
         }
     }
 }

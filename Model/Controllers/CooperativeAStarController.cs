@@ -4,6 +4,7 @@ using Persistence.DataTypes;
 using Persistence.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,14 +43,6 @@ namespace Model.Controllers
             Reservations = new Dictionary<Position, SortedList<int, Reserver>>();
 
 
-            for (int i = 0; i < simulationData.Map.GetLength(0); i++)
-            {
-                for (int j = 0; j < simulationData.Map.GetLength(1); j++)
-                {
-                    Reservations.Add(new Position() { X = i, Y = j }, []);
-                }
-            }
-
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
@@ -60,7 +53,8 @@ namespace Model.Controllers
             simulationData.Robots.ForEach(robot =>
             {
                 if (robot.CurrentGoal is null) _taskDistributor.AssignNewTask(robot);
-
+                var reserver = new Reserver(robot);
+                reservers.Add(reserver);
             });
 
             //Goal.OnGoalsChanged();
@@ -71,8 +65,12 @@ namespace Model.Controllers
             return new CooperativeAStarController();
         }
 
+        //TODO: Deadlock : refactor
         public void CalculateOperations(TimeSpan timeSpan)
         {
+            if (CurrentTurn == 500)
+            {
+            }
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             var result = new List<RobotOperation>();
             for (int i = 0; i < _plannedOperations.Count; i++)
@@ -113,7 +111,7 @@ namespace Model.Controllers
                     //Van task de nincs út
                     else
                     {
-                        _plannedOperations[i] = FindPath(robot, true);
+                        _plannedOperations[i] = FindPath(robot, false);
                         if (_plannedOperations[i].Count == 0)
                         {
                             robot.NextOperation = RobotOperation.Wait;
@@ -160,6 +158,23 @@ namespace Model.Controllers
                     }
                 }
             }
+            //var res = new Dictionary<Position, SortedList<int, Reserver>>();
+            //foreach (var item in Reservations!)
+            //{
+            //    var pos = item.Key;
+
+            //    res.Add(pos, []);
+            //    foreach (var ress in item.Value)
+            //    {
+            //        if (ress.Key >= CurrentTurn)
+            //        {
+            //            res[pos].Add(ress.Key, ress.Value);
+            //        }
+
+            //    }
+            //    if (res[pos].Count == 0) res.Remove(pos);
+            //}
+            //Reservations = res;
             CurrentTurn++;
             OnTaskFinished([.. result]);
         }
@@ -168,7 +183,8 @@ namespace Model.Controllers
         #region Private Methods
         private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
         {
-            if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal"); }
+            if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal!"); }
+            if (Reservations is null) { throw new Exception("Initialize the controller before using it!"); }
             HashSet<Node> openSet = new HashSet<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
             Dictionary<Node, int> gScore = new Dictionary<Node, int>();
@@ -178,7 +194,7 @@ namespace Model.Controllers
             var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
             start.Turn = CurrentTurn;
-
+            start.AllowedRotations = AllowedRotationsOnPosition(start.Position, start.Turn);
             gScore[start] = 0;
             fScore[start] = Heuristic(start, goal);
 
@@ -212,10 +228,14 @@ namespace Model.Controllers
                     int rotationCost = ((Direction)current.Direction).RotateTo((Direction)current.Position.DirectionInPosition(neighbor.Position)!).Count;
 
                     int tentativeGScore = gScore[current] + 1 + rotationCost;
-                    if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
+
+                    int freeTurns = AllowedRotationsOnPosition(neighbor.Position, current.Turn + 1 + rotationCost);
+
+                    if ((!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor]) && freeTurns >= 0 && current.AllowedRotations >= rotationCost)
                     {
                         neighbor.parent = current;
-                        neighbor.Turn = current.Turn + rotationCost;
+                        neighbor.AllowedRotations = freeTurns;
+                        neighbor.Turn = current.Turn + rotationCost + 1;
                         gScore[neighbor] = tentativeGScore;
                         neighbor.Direction = directionOnNewNode;
                         fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
@@ -230,6 +250,55 @@ namespace Model.Controllers
             return new Queue<RobotOperation>(); // No path found
         }
 
+        private int AllowedRotationsOnPosition(Position pos, int turn)
+        {
+            int r = 4;
+            if (Reservations!.ContainsKey(pos))
+            {
+                if (Reservations[pos].ContainsKey(turn) && Reservations[pos][turn] is not null)
+                {
+                    r = -1;
+                }
+                else if (Reservations[pos].ContainsKey(turn + 1) && Reservations[pos][turn + 1] is not null)
+                {
+                    r = 0;
+
+                }
+                else if (Reservations[pos].ContainsKey(turn + 2) && Reservations[pos][turn + 2] is not null)
+                {
+                    r = 1;
+
+                }
+                else if (Reservations[pos].ContainsKey(turn + 3) && Reservations[pos][turn + 3] is not null)
+                {
+                    r = 2;
+                }
+            }
+            return r;
+        }
+        private List<Node> GetNeighbors(Node node, bool robotBlock)
+        {
+            List<Node> neighbors = new List<Node>();
+
+            for (int xOffset = -1; xOffset <= 1; xOffset++)
+            {
+                for (int yOffset = -1; yOffset <= 1; yOffset++)
+                {
+                    if (xOffset != 0 && yOffset != 0 || xOffset == 0 && yOffset == 0)
+                        continue;
+
+                    int checkX = node.Position.X + xOffset;
+                    int checkY = node.Position.Y + yOffset;
+
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot)))
+                    {
+                        neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
+                    }
+                }
+            }
+
+            return neighbors;
+        }
         private Queue<RobotOperation> RetracePath(Node startNode, Node endNode)
         {
             List<Node> path = new List<Node>();
@@ -259,20 +328,28 @@ namespace Model.Controllers
             Queue<RobotOperation> Operations = new Queue<RobotOperation>();
             var startTile = SimulationData.Map.GetAtPosition(path[0].Position);
             Direction currentDirection;
+
             if (startTile is not Robot)
             {
                 throw new Exception("Path does not start at a robot");
             }
+
             var robot = (startTile as Robot)!;
             currentDirection = (robot).Rotation;
+
             var reserver = reservers!.Find(r1 => r1 is not null && r1.Robot.Id == robot.Id);
+            //reserver = null;
             if (reserver is null)
             {
                 reserver = new Reserver(robot);
                 reservers.Add(reserver);
             }
-
+            reserver.Offset = 0;
             int turn = CurrentTurn;
+            if (robot.Id == 18)
+            {
+
+            }
             for (int i = 1; i < path.Count; i++)
             {
                 var startPos = path[i - 1].Position;
@@ -284,8 +361,6 @@ namespace Model.Controllers
                 }
                 else
                 {
-                    Reserve(startPos, turn, reserver);
-                    turn++;
                     var ops = currentDirection.RotateTo((Direction)dir);
                     for (int j = 0; j < ops.Count; j++)
                     {
@@ -302,15 +377,15 @@ namespace Model.Controllers
                                 break;
                         }
                         Operations.Enqueue(ops[j]);
-                        Reserve(startPos, turn, reserver);
                         turn++;
+                        Reserve(startPos, turn, reserver);
                     }
                     Operations.Enqueue(RobotOperation.Forward);
-                    if (i == path.Count - 1)
-                    {
-                        Reserve(endPos, turn, reserver);
-                        turn++;
-                    }
+                    //if (i == path.Count - 1)
+                    //{
+                    turn++;
+                    Reserve(endPos, turn, reserver);
+                    //}
                 }
             }
             return Operations;
@@ -320,7 +395,7 @@ namespace Model.Controllers
         {
             if (Reservations is null)
             {
-                throw new Exception("Controller not initialized");
+                Reservations = new Dictionary<Position, SortedList<int, Reserver>>();
             }
             if (!Reservations.ContainsKey(position))
             {
@@ -328,29 +403,7 @@ namespace Model.Controllers
             }
             Reservations[position].Add(turn, reserver);
         }
-        private List<Node> GetNeighbors(Node node, bool robotBlock)
-        {
-            List<Node> neighbors = new List<Node>();
 
-            for (int xOffset = -1; xOffset <= 1; xOffset++)
-            {
-                for (int yOffset = -1; yOffset <= 1; yOffset++)
-                {
-                    if (xOffset != 0 && yOffset != 0 || xOffset == 0 && yOffset == 0)
-                        continue;
-
-                    int checkX = node.Position.X + xOffset;
-                    int checkY = node.Position.Y + yOffset;
-
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot)))
-                    {
-                        neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
-                    }
-                }
-            }
-
-            return neighbors;
-        }
 
         private int Heuristic(Node a, Node b)
         {
@@ -387,6 +440,10 @@ namespace Model.Controllers
         {
             Robot = robot;
             Offset = 0;
+        }
+        public override string ToString()
+        {
+            return this.Robot.Id.ToString();
         }
 
     }
