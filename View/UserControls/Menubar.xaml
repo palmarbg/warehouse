@@ -18,13 +18,13 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
-            <MenuItem Header="Fájl">
+            <MenuItem Header="Fájl" x:Name="_fileMenuItem">
                 <MenuItem Header="Konfiguráció betöltése..."
                           x:Name="_loadSimulationMenuItem"/>
                 <MenuItem Header="Visszajátszás betöltése..."
                           x:Name="_loadReplayMenuItem"/>
             </MenuItem>
-            <MenuItem Header="Szimuláció">
+            <MenuItem Header="Szimuláció" x:Name="_simulationMenuItem">
                 <MenuItem Header="Új szimuláció indítása"
                     x:Name="_startNewSimulationMenuItem"/>
                 <MenuItem Header="Szimuláció mentése..."
