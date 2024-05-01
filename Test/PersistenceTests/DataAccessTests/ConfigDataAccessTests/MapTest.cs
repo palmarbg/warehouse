@@ -12,7 +12,7 @@ using Test.MockClasses.DataAccesses;
 namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
 {
     [TestClass]
-    public class SimpleTest
+    public class MapTest
     {
         private MockDirectoryLoadDataAccess _dirAccess = null!;
         private ConfigDataAccess _configDataAccess = null!;
@@ -30,13 +30,13 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
                     "width 10\n" +
                     "map\n" +
                     "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
+                    "@@........\n" +
+                    "..@.......\n" +
+                    "..@.......\n" +
+                    "..@@@.....\n" +
+                    ".....u....\n" +
+                    "......t...\n" +
+                    "..b.......\n" +
                     "..........\n"
                 },
                 {
@@ -66,16 +66,20 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
             _configDataAccess = new("X:/config.json", _dirAccess);
         }
         [TestMethod]
-        public void SimpleTests()
+        public void MapTests()
         {
             SimulationData data = _configDataAccess.GetInitialSimulationData();
             Assert.IsNotNull(data);
             Assert.AreEqual(data.Map.GetLength(0), 10);
             Assert.AreEqual(data.Map.GetLength(1), 9);
-            Assert.AreEqual(data.Robots.Count, 0);
-            Assert.AreEqual(data.DistributorName, "roundrobin");
-            Assert.AreEqual(data.RevealedTaskCount, 1);
-            Assert.AreEqual(data.Goals.Count, 0);
+            Assert.IsTrue(data.Map[5, 5] is Block);
+            Assert.IsTrue(data.Map[6, 6] is Block);
+            Assert.IsTrue(data.Map[0, 1] is Block);
+            Assert.IsTrue(data.Map[2, 8] is not Block);
+            Assert.IsTrue(data.Map[0, 0] is not Block);
+            Assert.IsTrue(data.Map[3, 8] is not Block);
+            Assert.IsTrue(data.Map[3, 7] is not Block);
+            Assert.IsTrue(data.Map[9, 8] is not Block);
         }
     }
 }

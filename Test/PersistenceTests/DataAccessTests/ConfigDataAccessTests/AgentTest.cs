@@ -12,7 +12,7 @@ using Test.MockClasses.DataAccesses;
 namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
 {
     [TestClass]
-    public class SimpleTest
+    public class AgentTest
     {
         private MockDirectoryLoadDataAccess _dirAccess = null!;
         private ConfigDataAccess _configDataAccess = null!;
@@ -30,19 +30,27 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
                     "width 10\n" +
                     "map\n" +
                     "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
-                    "..........\n" +
+                    "@@........\n" +
+                    "..@.......\n" +
+                    "..@.......\n" +
+                    "..@@@.....\n" +
+                    ".....u....\n" +
+                    "......t...\n" +
+                    "..b.......\n" +
                     "..........\n"
                 },
                 {
                     "X:/agents.agents",
 
-                    "0"
+                    """
+                    5
+                    0
+                    89
+                    4
+                    13
+                    41
+                    86
+                    """
                 },
                 {
                     "X:/tasks.tasks",
@@ -65,17 +73,23 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
             _dirAccess = new MockDirectoryLoadDataAccess(mockDirectory);
             _configDataAccess = new("X:/config.json", _dirAccess);
         }
-        [TestMethod]
-        public void SimpleTests()
+        public void SetRobotsTests()
         {
             SimulationData data = _configDataAccess.GetInitialSimulationData();
+
             Assert.IsNotNull(data);
-            Assert.AreEqual(data.Map.GetLength(0), 10);
-            Assert.AreEqual(data.Map.GetLength(1), 9);
-            Assert.AreEqual(data.Robots.Count, 0);
-            Assert.AreEqual(data.DistributorName, "roundrobin");
-            Assert.AreEqual(data.RevealedTaskCount, 1);
-            Assert.AreEqual(data.Goals.Count, 0);
+            Assert.AreEqual(data.Robots.Count, 5);
+
+            Assert.IsTrue(data.Map[0, 0] is Robot);
+            Assert.IsTrue(data.Map[10, 9] is Robot);
+            Assert.IsTrue(data.Map[3, 0] is Robot);
+            Assert.IsTrue(data.Map[3, 1] is Robot);
+            Assert.IsTrue(data.Map[1, 4] is Robot);
+
+            Assert.IsTrue(data.Map[6, 8] is not Robot);
+            Assert.IsTrue(data.Map[0, 3] is not Robot);
+            Assert.IsTrue(data.Map[1, 3] is not Robot);
+            Assert.IsTrue(data.Map[4, 1] is not Robot);
         }
     }
 }
