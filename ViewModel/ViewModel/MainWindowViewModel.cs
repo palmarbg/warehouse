@@ -268,75 +268,63 @@ namespace ViewModel.ViewModel
         #region ViewModel Event methods
 
         /// <summary>
-        /// View calls when datacontext have been set
+        /// View calls it when datacontext have been set
         /// </summary>
         public void OnSetDataContext()
         {
             Model_RobotsChanged();
             Model_MapLoaded();
-            _simulation.OnSimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
         }
 
         private void OnToggleSimulation()
         {
-            Debug.WriteLine("simulation start");
-            if (_simulation.State.IsSimulationRunning)
-                _simulation.Mediator.PauseSimulation();
+            Debug.WriteLine($"simulation start, state({_simulation.SimulationState.State})");
+            if (_simulation.SimulationState.IsSimulationRunning)
+                _simulation.PauseSimulation();
             else
-                _simulation.Mediator.StartSimulation();
+                _simulation.StartSimulation();
         }
 
         private void OnSimulationStop()
         {
             Debug.WriteLine("simulation stop");
-            _simulation.Mediator.StopSimulation();
+            _simulation.StopSimulation();
         }
 
         private void OnSimulationPause()
         {
             Debug.WriteLine("simulation pause");
+            _simulation.PauseSimulation();
         }
         private void OnInitialPosition()
         {
             Debug.WriteLine("first step");
-            _simulation.Mediator.SetInitialState();
+            _simulation.SetInitialPosition();
         }
 
         private void OnPreviousStep()
         {
             Debug.WriteLine("prev step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.StepBackward();
-            }
+            _simulation.StepBackward();
         }
 
         private void OnNextStep()
         {
             Debug.WriteLine("next step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.StepForward();
-            }
+            _simulation.StepForward();
         }
 
         private void OnFinalPosition()
         {
             Debug.WriteLine("last step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.JumpToEnd();
-            }
+            _simulation.JumpToEnd();
         }
 
         private void OnOpenReplaySettings()
         {
             Debug.WriteLine("replay control settings");
-            if (_simulation.Mediator is IReplayMediator mediator && !_simulation.State.IsSimulationRunning)
-            {
-                OpenReplaySettings?.Invoke(null, new());
-            }
-
+            OpenReplaySettings?.Invoke(null, new());
         }
 
         private void OnStartNewSimulation()
@@ -347,13 +335,13 @@ namespace ViewModel.ViewModel
         private void OnLoadSimulation()
         {
             LoadSimulation?.Invoke(null, new());
-            _simulation.OnSimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
         }
 
         private void OnLoadReplay()
         {
             LoadReplay?.Invoke(null, new());
-            _simulation.OnSimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
         }
 
         private void OnSaveSimulation()

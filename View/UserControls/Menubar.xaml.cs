@@ -21,7 +21,10 @@ namespace View.UserControls
         {
             this.DataContext = viewModel;
 
-            viewModel.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_,arg) => OnSimulationStateChanged(arg));
+            viewModel.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_,arg) =>
+                this.Dispatcher.Invoke(() =>
+                    OnSimulationStateChanged(arg)
+                ));
 
             SetCommandBinding(_playButton, nameof(viewModel.ToggleSimulationCommand), viewModel);
             SetCommandBinding(_stopButton, nameof(viewModel.StopSimulationCommand), viewModel);
@@ -65,9 +68,10 @@ namespace View.UserControls
         private void OnSimulationStateChanged(SimulationStateEventArgs arg)
         {
             var simulationState = arg.SimulationState;
+            Debug.WriteLine($"The simstate is {simulationState.State}");
 
-            _playButton.IconSrc = !simulationState.IsSimulationRunning ? "Icons/play.png" : "Icons/pause.png";
-            _playButton.LabelText = !simulationState.IsSimulationRunning ? "Start" : "Pause";
+            _playButton.IconSrc     = simulationState.IsSimulationRunning ? "Icons/pause.png" : "Icons/play.png" ;
+            _playButton.LabelText   = simulationState.IsSimulationRunning ? "Pause" : "Start";
 
 
             if(!arg.IsReplayMode)
@@ -76,8 +80,8 @@ namespace View.UserControls
                 _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
 
                 _playButton.IsEnabled = true;
-                _stopButton.IsEnabled = simulationState.IsSimulationRunning;
-                _startButton.IsEnabled = simulationState.IsSimulationStarted;
+                _stopButton.IsEnabled = true;
+                _startButton.IsEnabled = !simulationState.IsSimulationRunning;
                 _backButton.IsEnabled = false;
                 _nextButton.IsEnabled = false;
                 _endButton.IsEnabled = false;
@@ -88,9 +92,9 @@ namespace View.UserControls
             _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
 
             _playButton.IsEnabled = true;
-            _stopButton.IsEnabled = simulationState.IsSimulationStarted;
-            _startButton.IsEnabled = simulationState.IsSimulationStarted;
-            _backButton.IsEnabled = simulationState.IsSimulationStarted && !simulationState.IsSimulationRunning;
+            _stopButton.IsEnabled = true;
+            _startButton.IsEnabled = true;
+            _backButton.IsEnabled = !simulationState.IsSimulationRunning;
             _nextButton.IsEnabled = !simulationState.IsSimulationRunning;
             _endButton.IsEnabled = !simulationState.IsSimulationRunning;
             _settingButton.IsEnabled = !simulationState.IsSimulationRunning;

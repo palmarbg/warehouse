@@ -28,7 +28,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             {
                 robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (Exception e)
             {
                 //simulation ended
                 return;
