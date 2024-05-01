@@ -23,10 +23,7 @@ namespace Persistence.Loggers
 
             string actionModel = simulationData.ControllerName ?? string.Empty;
             int teamSize = simulationData.Robots.Count;
-
             this.simulationData = simulationData;
-
-            // Konstruktorból inicializálva
             log.ActionModel = actionModel;
             log.TeamSize = teamSize;
 

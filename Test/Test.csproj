@@ -31,6 +31,7 @@
     <Folder Include="ModelTests\ExecutorTests\" />
     <Folder Include="ModelTests\MediatorTests\" />
     <Folder Include="ModelTests\SimulationTests\" />
+    <Folder Include="PersistenceTests\DataAccessTests\LogDataAccessTests\" />
   </ItemGroup>
 
   <ItemGroup>

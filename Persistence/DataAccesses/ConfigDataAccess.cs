@@ -131,7 +131,6 @@ namespace Persistence.DataAccesses
                 simulationData.Goals.Add(g);
             }
         }
-
         private void Load()
         {
             baseUri = new(path);
