@@ -47,8 +47,7 @@ namespace Persistence.DataAccesses
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
             string[] mapData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
-            try
-            {
+
                 int height = int.Parse(mapData[1].Split(' ')[1]);
                 int width = int.Parse(mapData[2].Split(' ')[1]);
                 if (width <= 0 || height <= 0)
@@ -57,27 +56,24 @@ namespace Persistence.DataAccesses
                         throw new InvalidMapDetailsException("Height or width is less than 1");
                     }
                 ITile[,] map = new ITile[width, height];
-                for (int y = 0; y < height; y++)
+            for (int y = 0; y < height; y++)
+            {
+                string row = mapData[y + 4];
+                for (int x = 0; x < width; x++)
                 {
-                    string row = mapData[y + 4];
-                    for (int x = 0; x < width; x++)
+                    if (row[x] == '.')
                     {
-                        if (row[x] == '.')
-                        {
-                            map[x, y] = EmptyTile.Instance;
-                        }
-                        else
-                        {
-                            map[x, y] = Block.Instance;
-                        }
+                        map[x, y] = EmptyTile.Instance;
+                    }
+                    else
+                    {
+                        map[x, y] = Block.Instance;
                     }
                 }
+            }
                 simulationData.Map = map;
-            }
-            catch
-            {
-                throw new InvalidMapDetailsException("Parse error in loading map");
-            }
+            
+
 
         }
         private void SetRobots(string path)

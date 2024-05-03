@@ -58,8 +58,6 @@ namespace Persistence.DataAccesses
             }
             return e;
         }
-
-
         private static List<List<object>> GetStart(Log log)
         {
             List<List<object>> s = new();
@@ -105,10 +103,8 @@ namespace Persistence.DataAccesses
             }
             return paths;
         }
-
-        public void SaveLogData(string path, Log log)
+        public ExternalLog GetExternalLog(Log log)
         {
-
             ExternalLog externalLog = new ExternalLog
             {
                 ActionModel = log.ActionModel,
@@ -125,6 +121,11 @@ namespace Persistence.DataAccesses
                 Errors = GetErrors(log),
                 Start = GetStart(log)
             };
+            return externalLog;
+        }
+        public void SaveLogData(string path, Log log)
+        {
+            ExternalLog externalLog = GetExternalLog(log);
 
             var options = new JsonSerializerOptions();
             options.PropertyNameCaseInsensitive = true;
