@@ -31,6 +31,23 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
 
             Assert.IsNotNull(data);
             Assert.AreEqual(data.Robots.Count, 20);
+
+            Assert.IsTrue(data.Map[0, 0] is Robot);
+            Assert.IsTrue(data.Map[9, 9] is Robot);
+            Assert.IsTrue(data.Map[4, 8] is Robot);
+            Assert.IsTrue(data.Map[5, 1] is Robot);
+            Assert.IsTrue(data.Map[0, 1] is Robot);
+            Assert.IsTrue(data.Map[4, 6] is Robot);
+            Assert.IsTrue(data.Map[4, 7] is Robot);
+            Assert.IsTrue(data.Map[9, 5] is Robot);
+            Assert.IsTrue(data.Map[0, 4] is Robot);
+            Assert.IsTrue(data.Map[5, 0] is Robot);
+
+            Assert.IsTrue(data.Map[7, 4] is not Robot);
+            Assert.IsTrue(data.Map[0, 5] is not Robot);
+            Assert.IsTrue(data.Map[3, 1] is not Robot);
+            Assert.IsTrue(data.Map[9, 8] is not Robot);
+            Assert.IsTrue(data.Map[5, 9] is not Robot);
         }
     }
 }
