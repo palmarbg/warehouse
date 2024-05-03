@@ -7,79 +7,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Test.MockClasses.DataAccesses;
 
 namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
 {
     [TestClass]
     public class MapTest
     {
-        private MockDirectoryLoadDataAccess _dirAccess = null!;
+        private DirectoryDataAccess _dirAccess = null!;
         private ConfigDataAccess _configDataAccess = null!;
+        private string _files = null!;
+        SimulationData data = null!;
 
         [TestInitialize]
         public void Initialize()
         {
-            Dictionary<string, string> mockDirectory = new()
-            {
-                {
-                    "X:/map.map",
-
-                    "type octile\n" +
-                    "height 9\n" +
-                    "width 10\n" +
-                    "map\n" +
-                    "..........\n" +
-                    "@@........\n" +
-                    "..@.......\n" +
-                    "..@.......\n" +
-                    "..@@@.....\n" +
-                    ".....u....\n" +
-                    "......t...\n" +
-                    "..b.......\n" +
-                    "..........\n"
-                },
-                {
-                    "X:/agents.agents",
-
-                    "0"
-                },
-                {
-                    "X:/tasks.tasks",
-
-                    "0"
-                },
-                {
-                    "X:/config.json",
-
-                    "{\n    " +
-                    "\"mapFile\": \"map.map\",\n    " +
-                    "\"agentFile\": \"agents.agents\",\n    " +
-                    "\"teamSize\": 0,\n    " +
-                    "\"taskFile\": \"tasks.tasks\",\n    " +
-                    "\"numTasksReveal\": 1,\n    " +
-                    "\"taskAssignmentStrategy\": \"roundrobin\"\n  " +
-                    "}"
-                }
-            };
-            _dirAccess = new MockDirectoryLoadDataAccess(mockDirectory);
-            _configDataAccess = new("X:/config.json", _dirAccess);
+            _dirAccess = new DirectoryDataAccess();
+            _files = System.IO.Directory.GetCurrentDirectory().Split("\\bin")[0] + "/Files/";
         }
         [TestMethod]
         public void MapTests()
         {
-            SimulationData data = _configDataAccess.GetInitialSimulationData();
+            _configDataAccess = new ConfigDataAccess(_files + "Config2.json", _dirAccess);
+            data = _configDataAccess.GetInitialSimulationData();
             Assert.IsNotNull(data);
-            Assert.AreEqual(data.Map.GetLength(0), 10);
-            Assert.AreEqual(data.Map.GetLength(1), 9);
-            Assert.IsTrue(data.Map[5, 5] is Block);
-            Assert.IsTrue(data.Map[6, 6] is Block);
+            Assert.AreEqual(data.Map.GetLength(0), 5);
+            Assert.AreEqual(data.Map.GetLength(1), 5);
+            /*
+            a.c.e
+            \@&#-
+            ß.$.í
+            ..5..
+            .é.p.
+            */
+            Assert.IsTrue(data.Map[0, 0] is Block);
+            Assert.IsTrue(data.Map[1, 0] is not Block);
+            Assert.IsTrue(data.Map[2, 0] is Block);
+            Assert.IsTrue(data.Map[3, 0] is not Block);
+            Assert.IsTrue(data.Map[4, 0] is Block);
+
             Assert.IsTrue(data.Map[0, 1] is Block);
-            Assert.IsTrue(data.Map[2, 8] is not Block);
-            Assert.IsTrue(data.Map[0, 0] is not Block);
-            Assert.IsTrue(data.Map[3, 8] is not Block);
-            Assert.IsTrue(data.Map[3, 7] is not Block);
-            Assert.IsTrue(data.Map[9, 8] is not Block);
+            Assert.IsTrue(data.Map[1, 1] is Block);
+            Assert.IsTrue(data.Map[2, 1] is Block);
+            Assert.IsTrue(data.Map[3, 1] is Block);
+            Assert.IsTrue(data.Map[4, 1] is Block);
+
+            Assert.IsTrue(data.Map[0, 2] is Block);
+            Assert.IsTrue(data.Map[1, 2] is not Block);
+            Assert.IsTrue(data.Map[2, 2] is Block);
+            Assert.IsTrue(data.Map[3, 2] is not Block);
+            Assert.IsTrue(data.Map[4, 2] is Block);
+
+            Assert.IsTrue(data.Map[0, 3] is not Block);
+            Assert.IsTrue(data.Map[1, 3] is not Block);
+            Assert.IsTrue(data.Map[2, 3] is Block);
+            Assert.IsTrue(data.Map[3, 3] is not Block);
+            Assert.IsTrue(data.Map[4, 3] is not Block);
+
+            Assert.IsTrue(data.Map[0, 4] is not Block);
+            Assert.IsTrue(data.Map[1, 4] is Block);
+            Assert.IsTrue(data.Map[2, 4] is not Block);
+            Assert.IsTrue(data.Map[3, 4] is Block);
+            Assert.IsTrue(data.Map[4, 4] is not Block);
+
         }
     }
 }
