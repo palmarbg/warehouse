@@ -22,7 +22,9 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
         public void Initialize()
         {
             _dirAccess = new DirectoryDataAccess();
-            _files = System.IO.Directory.GetCurrentDirectory().Split("/bin")[0] + "/Files/";
+            string path1 = System.IO.Directory.GetCurrentDirectory().Split("/bin")[0] + "/Files/";
+            string path2 = System.IO.Directory.GetCurrentDirectory().Split("\\bin")[0] + "/Files/";
+            _files = path1.Length < path2.Length ? path1 : path2;
         }
         [TestMethod]
         public void MapTests()
