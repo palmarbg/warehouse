@@ -1,4 +1,5 @@
-﻿namespace Persistence.DataTypes
+﻿
+namespace Persistence.DataTypes
 {
     public enum Direction
     {
@@ -19,7 +20,6 @@
         {
             return $"({X},{Y})";
         }
-
     }
 
     public struct RobotMove

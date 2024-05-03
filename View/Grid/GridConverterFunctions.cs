@@ -11,10 +11,10 @@ namespace View.Grid
 
         /// <param name="zoom"></param>
         /// <returns>
-        /// The number of cells grouped together
+        /// Number of cells grouped together
         /// into one label
         /// </returns>
-        public static double AmountOfNumbersInOneLabel(double zoom)
+        public static double AmountOfNumbersInGroupedLabel(double zoom)
         {
             double fun = Math.Floor((2.4 / zoom)) - 1;
             var groupedAmountInOneBlock = (fun - 1 <= 0.5) ? 1.0 : (fun - 2 <= 0.5) ? 2.0 : (fun - 5 <= 0.5) ? 5.0 : 10.0;
@@ -24,22 +24,34 @@ namespace View.Grid
         /// <param name="count"></param>
         /// <param name="zoom"></param>
         /// <returns>
-        /// The number of grouped labels to cover the whole map
+        /// Number of grouped labels needed to cover the whole map
         /// </returns>
-        public static int NumberOfLabels(int count, double zoom)
+        public static int NumberOfGroupedLabels(int count, double zoom)
         {
-            return System.Convert.ToInt32(Math.Ceiling(count / AmountOfNumbersInOneLabel(zoom)));
+            return System.Convert.ToInt32(Math.Ceiling(count / AmountOfNumbersInGroupedLabel(zoom)));
         }
 
-        public static double LabelLength(double zoom)
+        public static double GroupedLabelLength(double zoom)
         {
-            return unit * zoom * AmountOfNumbersInOneLabel(zoom);
+            return unit * zoom * AmountOfNumbersInGroupedLabel(zoom);
         }
 
-        public static int NumberOfLabelsOnScreen(double zoom)
+        public static int NumberOfLabelsOnScreen_Max(double zoom)
         {
             double size = Math.Max(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
-            return (int)Math.Ceiling(size / LabelLength(zoom));
+            return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
+        }
+
+        public static int NumberOfLabelsOnScreen_Horizontal(double zoom)
+        {
+            double size = SystemParameters.PrimaryScreenWidth;
+            return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
+        }
+
+        public static int NumberOfLabelsOnScreen_Vertical(double zoom)
+        {
+            double size = SystemParameters.PrimaryScreenHeight;
+            return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
         }
 
         public static double MapLength(int count)
@@ -50,7 +62,7 @@ namespace View.Grid
         /// <param name="rowCount"></param>
         /// <param name="columnCount"></param>
         /// <returns>The number of cells displayed as one block</returns>
-        public static int AmountOfCellsInOneBlock(int rowCount, int columnCount)
+        public static int AmountOfCellsInOneTile(int rowCount, int columnCount)
         {
             return Math.Max(rowCount / 500, columnCount / 500);
         }
@@ -60,7 +72,7 @@ namespace View.Grid
         /// <returns>The number of lines in the first dimension</returns>
         public static int NumberOfLines(int count1, int count2)
         {
-            int scale = AmountOfCellsInOneBlock(count1, count2);
+            int scale = AmountOfCellsInOneTile(count1, count2);
             return System.Convert.ToInt32(Math.Ceiling((double)count1 / scale));
         }
 
@@ -70,7 +82,7 @@ namespace View.Grid
         /// <returns>The number of grouped labels not displayed at the start</returns>
         public static int NumberOfLabelsToOmit(int offset, double zoom)
         {
-            return (int)Math.Floor(offset / GridConverterFunctions.LabelLength(zoom));
+            return (int)Math.Floor(offset / GridConverterFunctions.GroupedLabelLength(zoom));
         }
 
         /// <param name="offset"></param>
@@ -78,7 +90,7 @@ namespace View.Grid
         /// <returns>The offset after discarding the first labels</returns>
         public static int OmittedOffset(int offset, double zoom)
         {
-            return offset - (int)Math.Round(GridConverterFunctions.LabelLength(zoom) * GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
+            return offset - (int)Math.Round(GridConverterFunctions.GroupedLabelLength(zoom) * GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
         }
 
 

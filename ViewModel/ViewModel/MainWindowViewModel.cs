@@ -30,6 +30,7 @@ namespace ViewModel.ViewModel
                 if (_zoom != value)
                 {
                     _zoom = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -69,6 +70,7 @@ namespace ViewModel.ViewModel
                 if (_xoffset != value)
                 {
                     _xoffset = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -82,6 +84,7 @@ namespace ViewModel.ViewModel
                 if (_yoffset != value)
                 {
                     _yoffset = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -120,6 +123,8 @@ namespace ViewModel.ViewModel
         public event EventHandler? LoadSimulation;
         public event EventHandler? LoadReplay;
         public event EventHandler? SaveSimulation;
+
+        public event EventHandler<MainWindowViewModel>? WindowChanged;
 
         #endregion
 
@@ -267,16 +272,6 @@ namespace ViewModel.ViewModel
 
         #region ViewModel Event methods
 
-        /// <summary>
-        /// View calls it when datacontext have been set
-        /// </summary>
-        public void OnSetDataContext()
-        {
-            Model_RobotsChanged();
-            Model_MapLoaded();
-            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
-        }
-
         private void OnToggleSimulation()
         {
             Debug.WriteLine($"simulation start, state({_simulation.SimulationState.State})");
@@ -351,6 +346,23 @@ namespace ViewModel.ViewModel
 
         #endregion
 
+        #region View Event methods
 
+        /// <summary>
+        /// View calls it when datacontext have been set
+        /// </summary>
+        public void OnSetDataContext()
+        {
+            Model_RobotsChanged();
+            Model_MapLoaded();
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
+        }
+
+        public void OnWindowChanged()
+        {
+            WindowChanged?.Invoke(this, this);
+        }
+
+        #endregion
     }
 }

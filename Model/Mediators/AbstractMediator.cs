@@ -45,7 +45,7 @@ namespace Model.Mediators
 
             this._simulation = simulation;
 
-            _interval = 200;
+            _interval = 500;
             Timer = new System.Timers.Timer
             {
                 Interval = _interval,
