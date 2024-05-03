@@ -24,6 +24,12 @@ namespace View.Grid
         {
             this.DataContext = viewModel;
         }
+
+        private void _ScrollViewer_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            //just to disable scrolling
+            e.Handled = true;
+        }
     }
 
     #region Converters
