@@ -102,7 +102,7 @@ namespace ViewModel.ViewModel
         /// <summary>
         /// Fire with <see cref="Model_RobotsMoved" />
         /// </summary>
-        public event EventHandler<TimeSpan>? RobotsMoved;
+        public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
         /// Fire with <see cref="Model_GoalChanged"/>
@@ -188,7 +188,7 @@ namespace ViewModel.ViewModel
             Robots = [];
             Goals = [];
 
-            simulation.RobotsMoved += new EventHandler<TimeSpan>((_, t) => Model_RobotsMoved(t));
+            simulation.RobotsMoved += new EventHandler<RobotsMovedEventArgs>((_, t) => Model_RobotsMoved(t));
             simulation.GoalChanged += new EventHandler<Goal?>((r, goal) => Model_GoalChanged((Robot)r!, goal));
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
             simulation.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_, arg) => Model_SimulationStateChanged(arg));
@@ -219,7 +219,7 @@ namespace ViewModel.ViewModel
         /// </summary>
         private void Model_RobotsChanged()
         {
-            RobotsChanged?.Invoke(Robots, new EventArgs());
+            RobotsChanged?.Invoke(Robots, new System.EventArgs());
         }
 
         /// <summary>
@@ -227,9 +227,9 @@ namespace ViewModel.ViewModel
         /// <para />
         /// If the collection changed call <see cref="Model_RobotsChanged"/>
         /// </summary>
-        private void Model_RobotsMoved(TimeSpan timeSpan)
+        private void Model_RobotsMoved(RobotsMovedEventArgs args)
         {
-            RobotsMoved?.Invoke(Robots, timeSpan);
+            RobotsMoved?.Invoke(Robots, args);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace ViewModel.ViewModel
         /// </summary>
         private void Model_MapLoaded()
         {
-            MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
+            MapLoaded?.Invoke(_simulation.SimulationData.Map, new System.EventArgs());
         }
 
         private void Model_SimulationStateChanged(SimulationStateEventArgs arg)
@@ -274,7 +274,6 @@ namespace ViewModel.ViewModel
 
         private void OnToggleSimulation()
         {
-            Debug.WriteLine($"simulation start, state({_simulation.SimulationState.State})");
             if (_simulation.SimulationState.IsSimulationRunning)
                 _simulation.PauseSimulation();
             else
@@ -283,42 +282,35 @@ namespace ViewModel.ViewModel
 
         private void OnSimulationStop()
         {
-            Debug.WriteLine("simulation stop");
             _simulation.StopSimulation();
         }
 
         private void OnSimulationPause()
         {
-            Debug.WriteLine("simulation pause");
             _simulation.PauseSimulation();
         }
         private void OnInitialPosition()
         {
-            Debug.WriteLine("first step");
             _simulation.SetInitialPosition();
         }
 
         private void OnPreviousStep()
         {
-            Debug.WriteLine("prev step");
             _simulation.StepBackward();
         }
 
         private void OnNextStep()
         {
-            Debug.WriteLine("next step");
             _simulation.StepForward();
         }
 
         private void OnFinalPosition()
         {
-            Debug.WriteLine("last step");
             _simulation.JumpToEnd();
         }
 
         private void OnOpenReplaySettings()
         {
-            Debug.WriteLine("replay control settings");
             OpenReplaySettings?.Invoke(null, new());
         }
 

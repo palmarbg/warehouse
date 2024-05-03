@@ -1,4 +1,5 @@
-﻿using Persistence.DataTypes;
+﻿using Model.DataTypes;
+using Persistence.DataTypes;
 using System.Diagnostics;
 using System.Security.Cryptography.Xml;
 using System.Windows;
@@ -14,16 +15,17 @@ namespace View.Grid
     /// </summary>
     public partial class MapRobot : Canvas
     {
+        private static int ROUND_INTERVAL = 50;
+
         private int _roundsToRefreshBuffer = 0;
         private int[] _robotDistanceFromView = null!;
-
-        private static int ROUND_INTERVAL = 50;
 
         private Position _center = new Position { X = 0, Y = 0 };
         private int rx = 0;
         private int ry = 0;
 
         private DateTime? _lastArgDate = null!;
+        private RobotOperation[] _lastArgRobotOperations = null!;
         private List<Robot> _lastArgRobot = null!;
 
         public MapRobot()
@@ -41,8 +43,8 @@ namespace View.Grid
                 (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); })
                 );
 
-            viewModel.RobotsMoved += new EventHandler<TimeSpan>(
-                (s, t) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, t); })
+            viewModel.RobotsMoved += new EventHandler<RobotsMovedEventArgs>(
+                (s, arg) => App.Current?.Dispatcher.Invoke((Action)delegate { RefreshRobots(s, arg); })
                 );
 
             viewModel.WindowChanged += new EventHandler<MainWindowViewModel>((_, vm) => OnWindowChanged(vm));
@@ -109,12 +111,14 @@ namespace View.Grid
             }
         }
 
-        private void RefreshRobots(object? sender, TimeSpan timeSpan)
+        private void RefreshRobots(object? sender, RobotsMovedEventArgs args)
         {
             if (sender == null)
                 return;
 
             List<Robot> robots = (List<Robot>)sender;
+
+            var timeSpan = args.TimeSpan;
 
             _lastArgRobot = robots;
             _lastArgDate = DateTime.Now + timeSpan;
@@ -185,6 +189,10 @@ namespace View.Grid
             }
         }
 
+        #endregion
+
+        #region Event methods
+
         private void OnWindowChanged(MainWindowViewModel vm)
         {
             //Debug.WriteLine("Window is");
@@ -212,9 +220,13 @@ namespace View.Grid
                 return;
 
             TimeSpan timeSpan = (TimeSpan)(_lastArgDate - DateTime.Now);
-            if(_lastArgDate <  DateTime.Now)
+            if (_lastArgDate < DateTime.Now)
                 timeSpan = TimeSpan.Zero;
-            RefreshRobots(_lastArgRobot, timeSpan);
+            RefreshRobots(_lastArgRobot, new RobotsMovedEventArgs()
+            {
+                RobotOperations = _lastArgRobotOperations,
+                TimeSpan = timeSpan
+            });
             //Debug.WriteLine("final is");
             //Debug.WriteLine($"CENTER IS {_center.X} - {_center.Y}");
             //Debug.WriteLine($"TOPLEFT IS {x}:{y}");

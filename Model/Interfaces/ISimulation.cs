@@ -10,7 +10,7 @@ namespace Model.Interfaces
         /// <summary>
         /// When robots moved
         /// </summary>
-        public event EventHandler<TimeSpan>? RobotsMoved;
+        public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
         /// When goals have been added or completed
@@ -38,7 +38,7 @@ namespace Model.Interfaces
 
         void OnSimulationLoaded();
 
-        void OnRobotsMoved(TimeSpan timeSpan);
+        void OnRobotsMoved(RobotsMovedEventArgs args);
 
         void OnSimulationFinished();
 

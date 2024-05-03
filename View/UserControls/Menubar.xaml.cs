@@ -68,7 +68,7 @@ namespace View.UserControls
         private void OnSimulationStateChanged(SimulationStateEventArgs arg)
         {
             var simulationState = arg.SimulationState;
-            Debug.WriteLine($"The simstate is {simulationState.State}");
+            //Debug.WriteLine($"The simstate is {simulationState.State}");
 
             _playButton.IconSrc     = simulationState.IsSimulationRunning ? "Icons/pause.png" : "Icons/play.png" ;
             _playButton.LabelText   = simulationState.IsSimulationRunning ? "Pause" : "Start";

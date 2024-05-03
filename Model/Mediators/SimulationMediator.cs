@@ -59,6 +59,9 @@ namespace Model.Mediators
                 return;
             }
 
+            if (_simulationState.State != SimulationStates.Waiting)
+                return;
+
             _simulationState.State = SimulationStates.ControllerWorking;
             _timeBeforeController = DateTime.Now;
             _controller.CalculateOperations(TimeSpan.FromMilliseconds(_interval));

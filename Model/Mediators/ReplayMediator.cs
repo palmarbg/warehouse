@@ -95,8 +95,12 @@ namespace Model.Mediators
                 return;
             
             //handle in service locator if you get null ref error
-            (_controller as IReplayController)!.SetPosition(step);
-            _simulation.OnRobotsMoved(TimeSpan.Zero);
+            var robotOperations = (_controller as IReplayController)!.SetPosition(step);
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = robotOperations,
+                TimeSpan = TimeSpan.Zero,
+            });
         }
 
         public void JumpToEnd()
@@ -105,8 +109,12 @@ namespace Model.Mediators
                 return;
 
             //handle in service locator if you get null ref error
-            (_controller as IReplayController)!.JumpToEnd();
-            _simulation.OnRobotsMoved(TimeSpan.Zero);
+            var robotOperations = (_controller as IReplayController)!.JumpToEnd();
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = robotOperations,
+                TimeSpan = TimeSpan.Zero,
+            });
         }
 
         public void SetSpeed(float speed)
@@ -138,6 +146,9 @@ namespace Model.Mediators
                 return;
             }
 
+            if (_simulationState.State != SimulationStates.Waiting)
+                return;
+
             _simulationState.State = SimulationStates.ControllerWorking;
 
             if (toRestoreInterval != false)
@@ -149,6 +160,14 @@ namespace Model.Mediators
 
         private void OnTaskTimeout()
         {
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             _executor.Timeout();
         }

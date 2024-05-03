@@ -67,7 +67,6 @@ namespace Model.Mediators
 
         public void StartSimulation()
         {
-            Debug.WriteLine("StartSimulation()");
             if (_simulationState.IsSimulationRunning)
                 return;
 
@@ -129,20 +128,23 @@ namespace Model.Mediators
         private void OnTaskFinished(IControllerEventArgs e)
         {
             Debug.WriteLine("TASK FINISHED");
-            Debug.WriteLine(_interval);
 
             _simulationState.State = SimulationStates.ExecutingMoves;
 
             var elapsedTime = (DateTime.Now - _timeBeforeController).TotalSeconds;
             _executor.ExecuteOperations(e.robotOperations, (float)elapsedTime);
+            _simulationData.Step++;
 
             if (Timer.Enabled)
                 _simulationState.State = SimulationStates.Waiting;
             else
                 _simulationState.State = SimulationStates.SimulationPaused;
 
-            _simulationData.Step++;
-            _simulation.OnRobotsMoved(TimeSpan.FromMilliseconds(_interval));
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = e.robotOperations,
+                TimeSpan = TimeSpan.FromMilliseconds(_interval)
+            });
         }
 
         private void ContinueSimulation()

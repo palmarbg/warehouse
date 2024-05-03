@@ -54,7 +54,7 @@ namespace Model
         /// <summary>
         /// Fire with <see cref="OnRobotsMoved"/>
         /// </summary>
-        public event EventHandler<TimeSpan>? RobotsMoved;
+        public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
         /// Fire with <see cref="OnGoalChanged"/>
@@ -204,14 +204,14 @@ namespace Model
         /// <summary>
         /// Call it when robots moved
         /// </summary>
-        public void OnRobotsMoved(TimeSpan timeSpan)
+        public void OnRobotsMoved(RobotsMovedEventArgs args)
         {
-            RobotsMoved?.Invoke(SimulationData.Robots, timeSpan);
+            RobotsMoved?.Invoke(SimulationData.Robots, args);
         }
 
         public void OnSimulationLoaded()
         {
-            SimulationLoaded?.Invoke(null, new EventArgs());
+            SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Model
         /// </summary>
         public void OnSimulationFinished()
         {
-            SimulationFinished?.Invoke(null, new EventArgs());
+            SimulationFinished?.Invoke(null, new System.EventArgs());
         }
 
         /// <summary>
