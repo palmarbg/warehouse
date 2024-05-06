@@ -40,22 +40,19 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  >
-            <Grid>
-                <Canvas Name="MapCanvas"
-                    Style="{StaticResource BindMe}"
-                    ClipToBounds="True"
-                    >       
-                    <Canvas.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding Zoom}"/>
-                            <ScaleTransform ScaleY="{Binding Zoom}"/>
-                        </TransformGroup>
-                    </Canvas.LayoutTransform>
-                </Canvas>
-
+            <Grid Style="{StaticResource BindMe}">
+                
+                <local:MapLine x:Name="MapCanvas"/>
                 <local:MapBlock x:Name="BlockLayer"/>
                 <local:MapGoal x:Name="GoalLayer"/>
                 <local:MapRobot x:Name="RobotLayer"/>
+
+                <Grid.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding Zoom}"/>
+                        <ScaleTransform ScaleY="{Binding Zoom}"/>
+                    </TransformGroup>
+                </Grid.LayoutTransform>
             </Grid>
         </Viewbox>
         

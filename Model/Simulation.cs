@@ -10,13 +10,42 @@ namespace Model
         #region Private Fields
 
         private IServiceLocator _serviceLocator;
+        private IMediator _mediator;      
 
         #endregion
 
-        #region Properties
-        public SimulationData SimulationData => Mediator.SimulationData;
-        public SimulationState State => Mediator.SimulationState;
-        public IMediator Mediator { get; private set; } = null!;
+        #region Private Fields
+        private IReplayMediator ReplayMediator
+        {
+            get
+            {
+                if (_mediator is not IReplayMediator)
+                    throw new SimulationStateException();
+
+                return (IReplayMediator)_mediator!;
+            }
+        }
+
+        private ISimulationMediator SimulationMediator
+        {
+            get
+            {
+                if (_mediator is not ISimulationMediator)
+                    throw new SimulationStateException();
+
+                return (ISimulationMediator)_mediator!;
+            }
+        }
+
+        #endregion
+
+
+        #region Public Properties
+
+        public SimulationData SimulationData => _mediator.SimulationData;
+        public SimulationState SimulationState => _mediator.SimulationState;
+        public int Interval => _mediator.Interval;
+        public string MapFileName => _mediator.MapFileName;
 
         #endregion
 
@@ -25,7 +54,7 @@ namespace Model
         /// <summary>
         /// Fire with <see cref="OnRobotsMoved"/>
         /// </summary>
-        public event EventHandler<TimeSpan>? RobotsMoved;
+        public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
         /// Fire with <see cref="OnGoalChanged"/>
@@ -47,7 +76,6 @@ namespace Model
         /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
-
         #endregion
 
         #region Constructor
@@ -62,7 +90,7 @@ namespace Model
             string path = Directory.GetCurrentDirectory();
             path = path.Substring(0, path.LastIndexOf("View"));
 
-            Mediator = serviceLocator.GetSimulationMediator(
+            _mediator = serviceLocator.GetSimulationMediator(
                 this,
                 path + "sample_files\\random_20_config.json"//warehouse_100_config
                 //, path + "sample_files\\random_20_log.json"//warehouse_100_log
@@ -71,50 +99,102 @@ namespace Model
 
         #endregion
 
-        #region Public methods
+
+        #region Public StateChange methods
+
+        public void StartNewSimulation()
+        {
+            if (_mediator is ISimulationMediator)
+            {
+                _mediator.SetInitialPosition();
+                return;
+            }
+            _mediator = _serviceLocator.GetSimulationMediator(this, _mediator.MapFileName);
+        }
+
+        public void LoadLog(string fileName)
+        {
+            if (_mediator is not IReplayMediator)
+            {
+                _mediator.SetInitialPosition(); //heggesztés
+                _mediator = _serviceLocator.GetReplayMediator(this, _mediator.MapFileName, fileName);
+                return;
+            }
+            ReplayMediator.LoadLog(fileName);
+        }
 
         public void LoadConfig(string fileName)
         {
-            Mediator.SetInitialState();
-            if (Mediator is ISimulationMediator simulationMediator)
+            if (_mediator is ISimulationMediator simulationMediator)
             {
                 simulationMediator.LoadConfig(fileName);
                 return;
             }
 
-            Mediator = _serviceLocator.GetSimulationMediator(this, fileName);
-            OnSimulationLoaded();
+            _mediator.SetInitialPosition(); // heggesztés
+            _mediator = _serviceLocator.GetSimulationMediator(this, fileName);
         }
 
-        public void LoadLog(string fileName)
+        #endregion
+
+        #region Public Mediator methods
+
+        public void StartSimulation()
         {
-            Mediator.SetInitialState();
-            if (Mediator is not IReplayMediator){
-                Mediator = _serviceLocator.GetReplayMediator(this, Mediator.MapFileName, fileName);
-                return;
-            }
-            var mediator = Mediator as IReplayMediator;
-            mediator?.LoadLog(fileName);
+            _mediator.StartSimulation();
         }
 
-        public void StartNewSimulation()
+        public void StopSimulation()
         {
-            if(Mediator is ISimulationMediator)
-            {
-                Mediator.SetInitialState();
-                return;
-            }
-            var mediator = Mediator as IReplayMediator;
-            Mediator = _serviceLocator.GetSimulationMediator(this, Mediator.MapFileName);
-
+            _mediator.StopSimulation();
         }
 
-        public void SaveLog(string fileName)
+        public void PauseSimulation()
         {
-            if (Mediator is not ISimulationMediator)
-                return;
-            var mediator = Mediator as ISimulationMediator;
-            mediator?.SaveSimulation(fileName);
+            _mediator.PauseSimulation();
+        }
+
+        public void SetInitialPosition()
+        {
+            _mediator.SetInitialPosition();
+        }
+
+        #endregion
+
+        #region Public Replay methods
+
+        public void StepForward()
+        {
+            ReplayMediator.StepForward();
+        }
+
+        public void StepBackward()
+        {
+            ReplayMediator.StepBackward();
+        }
+
+        public void SetSpeed(float speed)
+        {
+            ReplayMediator.SetSpeed(speed);
+        }
+
+        public void JumpToStep(int step)
+        {
+            ReplayMediator.JumpToStep(step);
+        }
+
+        public void JumpToEnd()
+        {
+            ReplayMediator.JumpToEnd();
+        }
+
+        #endregion
+
+        #region Public Simulation methods
+
+        public void SaveSimulation(string filepath)
+        {
+            SimulationMediator.SaveSimulation(filepath);
         }
 
         #endregion
@@ -124,14 +204,14 @@ namespace Model
         /// <summary>
         /// Call it when robots moved
         /// </summary>
-        public void OnRobotsMoved(TimeSpan timeSpan)
+        public void OnRobotsMoved(RobotsMovedEventArgs args)
         {
-            RobotsMoved?.Invoke(SimulationData.Robots, timeSpan);
+            RobotsMoved?.Invoke(SimulationData.Robots, args);
         }
 
         public void OnSimulationLoaded()
         {
-            SimulationLoaded?.Invoke(null, new EventArgs());
+            SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
         /// <summary>
@@ -139,7 +219,7 @@ namespace Model
         /// </summary>
         public void OnSimulationFinished()
         {
-            SimulationFinished?.Invoke(null, new EventArgs());
+            SimulationFinished?.Invoke(null, new System.EventArgs());
         }
 
         /// <summary>
@@ -152,7 +232,7 @@ namespace Model
                 new SimulationStateEventArgs
                 {
                     SimulationState = simulationState,
-                    IsReplayMode = Mediator is IReplayMediator
+                    IsReplayMode = _mediator is IReplayMediator
                 }
                 );
         }

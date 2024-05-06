@@ -11,32 +11,28 @@ namespace Model.Mediators
 
         #region Protected Fields
 
-        protected readonly System.Timers.Timer Timer;
-
-        protected IDataAccess dataAccess = null!;
-        protected IController controller = null!;
-        protected IExecutor executor = null!;
-
-
-        protected int interval;
-
-        protected SimulationState simulationState;
-        protected SimulationData simulationData = null!;
-
-        protected readonly ISimulation simulation;
-
-        protected DateTime time;
-
         protected readonly IServiceLocator _serviceLocator;
+        protected readonly ISimulation _simulation;
+
+        protected SimulationState _simulationState;
+        protected SimulationData _simulationData = null!;
+
+
+        protected readonly System.Timers.Timer Timer;
+        protected int _interval;
+        protected DateTime _timeBeforeController;
+
+        protected IDataAccess _dataAccess = null!;
+        protected IController _controller = null!;
+        protected IExecutor _executor = null!;
 
         #endregion
 
         #region Properties
 
-        public SimulationData SimulationData => simulationData;
-        public SimulationState SimulationState => simulationState;
-        public virtual int Interval => interval;
-
+        public SimulationData SimulationData => _simulationData;
+        public SimulationState SimulationState => _simulationState;
+        public virtual int Interval => _interval;
         public string MapFileName {  get; protected set; }
 
         #endregion
@@ -47,22 +43,22 @@ namespace Model.Mediators
         {
             _serviceLocator = serviceLocator;
 
-            this.simulation = simulation;
+            this._simulation = simulation;
 
-            interval = 100;
+            _interval = 500;
             Timer = new System.Timers.Timer
             {
-                Interval = interval,
-                Enabled = true
+                Interval = _interval,
+                Enabled = false
             };
-            Timer.Stop();
 
-            simulationState = new SimulationState();
-            simulationState.SimulationStateChanged +=
+            _simulationState = new SimulationState();
+            _simulationState.SimulationStateChanged +=
                 new EventHandler<SimulationState>(
-                    (_, _) => simulation.OnSimulationStateChanged(simulationState)
+                    (_, _) => simulation.OnSimulationStateChanged(_simulationState)
                 );
             MapFileName = mapFileName;
+
         }
 
         #endregion
@@ -71,57 +67,53 @@ namespace Model.Mediators
 
         public void StartSimulation()
         {
-            if (simulationState.IsSimulationRunning)
+            if (_simulationState.IsSimulationRunning)
                 return;
 
-            if (simulationState.IsSimulationPaused)
-            {
-                simulationState.IsSimulationRunning = true;
-                Timer.Start();
-                return;
-            }
+            InitSimulationIfNeeded();
 
-            InitSimulation();
-
-            simulationState.IsSimulationRunning = true;
-            simulationState.IsSimulationEnded = false;
-
-            Timer.Start();
+            ContinueSimulation();
         }
 
         public void StopSimulation()
         {
-            if (simulationState.IsSimulationEnded)
-                return;
-
-            simulationState.IsSimulationRunning = false;
-            simulationState.IsSimulationEnded = true;
+            //TODO: which states can be escaped?
 
             Timer.Stop();
-            simulation.OnSimulationFinished();
-            this.SetInitialState();
+            _simulationState.State = SimulationStates.SimulationEnded;
+
+            //TODO: escape running controller/executor
+            _simulation.OnSimulationFinished();
+            //SetInitialState();
         }
 
         public void PauseSimulation()
         {
-            if (!simulationState.IsSimulationRunning) return;
-            simulationState.IsSimulationRunning = false;
             Timer.Stop();
+            if(_simulationState.State == SimulationStates.Waiting)
+                _simulationState.State = SimulationStates.SimulationPaused;
         }
 
-        public void SetInitialState()
+        public void SetInitialPosition()
         {
             Timer.Stop();
 
-            simulationState.Reset();
+            _simulationState.State = SimulationStates.SimulationPaused;
             
-            simulationData = dataAccess.GetInitialSimulationData();
-            simulationData.ControllerName = controller.Name;
+            _simulationData = _dataAccess.GetInitialSimulationData();
+            _simulationData.ControllerName = _controller.Name;
 
-            controller = controller.NewInstance();
-            executor = executor.NewInstance(simulationData);
+            _controller = _controller.NewInstance();
+            _executor = _executor.NewInstance(_simulationData);
 
-            simulation.OnSimulationLoaded();
+            _controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            {
+                if (_controller != sender)
+                    return;
+                OnTaskFinished(e);
+            });
+
+            _simulation.OnSimulationLoaded();
 
         }
 
@@ -129,38 +121,59 @@ namespace Model.Mediators
 
         #region Private methods
 
+        /// <summary>
+        /// Called when the Controller finishes the calculations
+        /// </summary>
+        /// <param name="e">Contains the calculated operations</param>
         private void OnTaskFinished(IControllerEventArgs e)
         {
             Debug.WriteLine("TASK FINISHED");
-            simulationState.IsExecutingMoves = true;
-            simulationState.IsLastTaskFinished = true;
 
-            executor.ExecuteOperations(e.robotOperations, (float)(DateTime.Now - time).TotalSeconds);
-            simulationState.IsExecutingMoves = false;
+            _simulationState.State = SimulationStates.ExecutingMoves;
 
-            simulationData.Step++;
-            Debug.WriteLine(interval);
-            simulation.OnRobotsMoved(TimeSpan.FromMilliseconds(interval));
+            var elapsedTime = (DateTime.Now - _timeBeforeController).TotalSeconds;
+            _executor.ExecuteOperations(e.robotOperations, (float)elapsedTime);
+            _simulationData.Step++;
+
+            if (Timer.Enabled)
+                _simulationState.State = SimulationStates.Waiting;
+            else
+                _simulationState.State = SimulationStates.SimulationPaused;
+
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = e.robotOperations,
+                TimeSpan = TimeSpan.FromMilliseconds(_interval)
+            });
+        }
+
+        private void ContinueSimulation()
+        {
+            _simulationState.State = SimulationStates.Waiting;
+            Timer.Start();
         }
 
         #endregion
 
-        #region Protected methods
+        #region Protectes Methods
 
-        protected void InitSimulation()
+        /// <summary>
+        /// <para>If the simulation have been ended set the initial position.</para>
+        /// <para>Initialises the controller if it's before the first step.</para>
+        /// </summary>
+        protected void InitSimulationIfNeeded()
         {
-            SetInitialState();
-
-            controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            if (_simulationState.State == SimulationStates.SimulationEnded)
             {
-                if (controller != sender)
-                    return;
-                OnTaskFinished(e);
-            });
+                SetInitialPosition();
+            }
 
-            var taskDistributor = _serviceLocator.GetTaskDistributor(simulationData);
+            if (_simulationData.Step == 0)
+            {
+                var taskDistributor = _serviceLocator.GetTaskDistributor(_simulationData);
 
-            controller.InitializeController(simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+                _controller.InitializeController(_simulationData, TimeSpan.FromSeconds(6), taskDistributor);
+            }
         }
 
         #endregion

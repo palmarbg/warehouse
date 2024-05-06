@@ -104,19 +104,16 @@ namespace View
             saveFileDialog.Filter = "Log file|*.json";
             if (saveFileDialog.ShowDialog() == true)
             {
-                _simulation.SaveLog(saveFileDialog.FileName);
+                _simulation.SaveSimulation(saveFileDialog.FileName);
             }
         }
 
         private void ViewModel_OpenReplaySettings()
         {
-            if (_simulation.Mediator is not IReplayMediator)
-                return;
-
             var window = new ReplayControlSettingsWindow()
             {
-                Step = _simulation.Mediator.SimulationData.Step,
-                StepSpeed = 1000 / _simulation.Mediator.Interval
+                Step = _simulation.SimulationData.Step,
+                StepSpeed = 1000 / _simulation.Interval
             };
 
             window.Cancel += new EventHandler((_, _) =>
@@ -126,11 +123,8 @@ namespace View
 
             window.Save += new EventHandler((_, _) =>
             {
-                var mediator = _simulation.Mediator as IReplayMediator;
-                if (mediator == null)
-                    throw new Exception();
-                mediator.JumpToStep(window.Step);
-                mediator.SetSpeed(window.StepSpeed);
+                _simulation.JumpToStep(window.Step);
+                _simulation.SetSpeed(window.StepSpeed);
                 window.Close();
             });
 
