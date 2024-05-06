@@ -107,15 +107,38 @@ namespace Model.Executors
                             // TODO: Check if robot was blocking original robots NewPos
                             if (startingRobot.Id == blockingRobot.Id)
                             {
-                                robot.BlockedThisTurn = true;
-                                robot.MovedThisTurn = true;
-                                OnRobotCrash(robot.Id, blockingRobot.Id);
-                                return false;
+                                //robot.BlockedThisTurn = true;
+                                //robot.MovedThisTurn = true;
+                                //OnRobotCrash(robot.Id, blockingRobot.Id);
+
+                                robot.Position = blockingRobot.Position;
+                                robot.MovedThisTurn= true;
+                                if (robot.CurrentGoal!.Position.EqualsPosition(blockingRobot.Position))
+                                {
+                                    robot.CurrentGoal.IsAssigned = false;
+                                    OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
+                                    robot.CurrentGoal = null;
+                                }
+
+                                return true;
                             }
                             else
                             if (!blockingRobot.InspectedThisTurn && MoveRobot(blockingRobot, startingRobot))
                             {
                                 MoveRobotToNewPosition(robot, newPos, operation);
+
+                                if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                                {
+                                    //MoveRobotToNewPosition(robot, newPos, operation);
+                                    //simulationData.Goals.Remove(robot.CurrentGoal);
+                                    robot.CurrentGoal.IsAssigned = false;
+                                    OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
+                                    robot.CurrentGoal = null;
+                                    robot.MovedThisTurn = true;
+                                    return true;
+
+                                }
+
                                 return true;
                             }
                             else
@@ -168,8 +191,15 @@ namespace Model.Executors
                 case RobotOperation.Wait:
                     // TODO: Prototype 2 : Logging
                     robot.MovedThisTurn = true;
+                    if(robot.CurrentGoal is not null && robot.Position.EqualsPosition(robot.CurrentGoal.Position))
+                    {
+                        robot.CurrentGoal.IsAssigned = false;
+                        OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
+                        robot.CurrentGoal = null;
+                    }
+                    //robot.BlockedThisTurn = true;
                     return false;
-                    break;
+                    //break;
             }
             return false;
         }
@@ -182,8 +212,9 @@ namespace Model.Executors
         private void MoveRobotToNewPosition(Robot robot, Position newPosition, RobotOperation operaition)
         {
             var map = simulationData.Map;
+            var temp = map.GetAtPosition(newPosition);
             map.SetAtPosition(newPosition, robot);
-            map.SetAtPosition(robot.Position, EmptyTile.Instance);
+            map.SetAtPosition(robot.Position, temp);
             robot.Position = newPosition;
         }
 
