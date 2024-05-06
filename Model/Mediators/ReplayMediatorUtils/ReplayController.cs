@@ -28,7 +28,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             {
                 robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (Exception e)
             {
                 //simulation ended
                 return;
@@ -108,14 +108,15 @@ namespace Model.Mediators.ReplayMediatorUtils
             OnTaskFinished(robotOperations);
         }
 
-        public void SetPosition(int step)
+        public RobotOperation[] SetPosition(int step)
         {
+            RobotOperation[] robotOperations = null!;
             while (simulationData.Step < step)
             {
-                RobotOperation[] robotOperations;
                 try
                 {
-                    robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
+                    var temp = loadLogDataAccess.GetRobotOperations(simulationData.Step);
+                    robotOperations = temp;
                 }
                 catch (ArgumentOutOfRangeException)
                 {
@@ -154,11 +155,13 @@ namespace Model.Mediators.ReplayMediatorUtils
                 }
                 robot.CurrentGoal = currentGoal;
             }
+
+            return robotOperations;
         }
 
-        public void JumpToEnd()
+        public RobotOperation[] JumpToEnd()
         {
-            SetPosition(Int32.MaxValue);
+            return SetPosition(Int32.MaxValue);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Model.Mediators.ReplayMediatorUtils;
 using Persistence.Interfaces;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Model.Mediators
 
         #region Public Fields
 
-        public override int Interval => _savedInterval ?? interval;
+        public override int Interval => _savedInterval ?? _interval;
 
         #endregion
 
@@ -24,117 +25,96 @@ namespace Model.Mediators
         public ReplayMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName, string logFileName) : base(simulation, serviceLocator, mapFileName)
         {
 
-            Timer.Elapsed += (_, _) => StepSimulation();
+            Timer.Elapsed += (_, _) => OnTimerInterval();
 
             var mapDataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
             
-            dataAccess = _serviceLocator.GetLoadLogDataAccess(logFileName, mapDataAccess);
+            _dataAccess = _serviceLocator.GetLoadLogDataAccess(logFileName, mapDataAccess);
 
-            simulationData = dataAccess.GetInitialSimulationData();
+            _simulationData = _dataAccess.GetInitialSimulationData();
 
-            controller = serviceLocator.GetReplayController((ILoadLogDataAccess)dataAccess);
+            _controller = serviceLocator.GetReplayController((ILoadLogDataAccess)_dataAccess);
 
-            executor = _serviceLocator.GetReplayExecutor(simulationData);
+            _executor = _serviceLocator.GetReplayExecutor(_simulationData);
 
         }
 
+        #endregion
+
+        #region Public Methods
+
         public void LoadLog(string fileName)
         {
-            dataAccess = dataAccess.NewInstance(fileName);
-            SetInitialState();
+            _dataAccess = _dataAccess.NewInstance(fileName);
+            SetInitialPosition();
         }
 
         public void StepForward()
         {
-            if (
-                simulationState.IsSimulationRunning ||
-                simulationState.IsExecutingMoves
-                )
+            if (_simulationState.IsSimulationRunning)
                 return;
 
-            if (!simulationState.IsSimulationStarted)
-            {
-                InitSimulation();
-                simulationState.IsSimulationEnded = false;
-            }
+            InitSimulationIfNeeded();
 
-            if (_savedInterval == null)
-                _savedInterval = interval;
-            interval = 100;
+            SaveInterval();
+            _interval = 100;
 
-            StepSimulation(false);
+            OnTimerInterval(false);
         }
 
         public void StepBackward()
         {
-            if (simulationState.IsSimulationRunning ||
-                simulationState.IsExecutingMoves ||
-                !simulationState.IsSimulationStarted)
+            if(_simulationState.IsSimulationRunning)
                 return;
 
-            if (simulationData.Step < 2)
-            {
-                this.SetInitialState();
+            if (_simulationData.Step <= 0)
                 return;
-            }
 
-            simulationState.IsLastTaskFinished = false;
+            SimulationState.State = SimulationStates.SimulationPaused;
 
-            if (_savedInterval == null)
-                _savedInterval = interval;
-            interval = 100;
+            SaveInterval();
+            _interval = 100;
 
-            simulationData.Step--;
-            //handle in service locator if null ref error
-            (controller as IReplayController)!.CalculateBackward();
-            simulationData.Step--;
+            _simulationData.Step--;
+            //handle in service locator if you get null ref error
+            (_controller as IReplayController)!.CalculateBackward();
+            _simulationData.Step--;
         }
 
         public void JumpToStep(int step)
         {
-            if (
-                SimulationState.IsSimulationRunning ||
-                SimulationState.IsExecutingMoves
-                )
+            if(_simulationState.IsSimulationRunning)
                 return;
 
-            if (step == simulationData.Step)
+            //we should go backward
+            if (step < SimulationData.Step)
+                SetInitialPosition();
+
+            //we are at the right step
+            if (step == _simulationData.Step)
                 return;
-
-            if (step < SimulationData.Step || !SimulationState.IsSimulationStarted)
-                InitSimulation();
-
-            if (step == 0)
-                return;
-
-            simulationState.IsSimulationEnded = false;
-            SimulationState.IsExecutingMoves = true;
-
-            //handle in service locator if null ref error
-            (controller as IReplayController)!.SetPosition(step);
-            SimulationState.IsExecutingMoves = false;
-            simulation.OnRobotsMoved(TimeSpan.Zero);
+            
+            //handle in service locator if you get null ref error
+            var robotOperations = (_controller as IReplayController)!.SetPosition(step);
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = robotOperations,
+                TimeSpan = TimeSpan.Zero,
+            });
         }
 
         public void JumpToEnd()
         {
-            if (
-                SimulationState.IsSimulationRunning ||
-                SimulationState.IsExecutingMoves
-                )
+            if(_simulationState.IsSimulationRunning)
                 return;
 
-            if (!SimulationState.IsSimulationStarted)
-                InitSimulation();
-
-            simulationState.IsSimulationEnded = false;
-            SimulationState.IsExecutingMoves = true;
-
-            //handle in service locator if null ref error
-            (controller as IReplayController)!.JumpToEnd();
-
-            SimulationState.IsExecutingMoves = false;
-            simulation.OnRobotsMoved(TimeSpan.Zero);
+            //handle in service locator if you get null ref error
+            var robotOperations = (_controller as IReplayController)!.JumpToEnd();
+            _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
+            {
+                RobotOperations = robotOperations,
+                TimeSpan = TimeSpan.Zero,
+            });
         }
 
         public void SetSpeed(float speed)
@@ -147,7 +127,7 @@ namespace Model.Mediators
             if (_savedInterval != null)
                 _savedInterval = calculatedInterval;
             else
-                interval = calculatedInterval;
+                _interval = calculatedInterval;
 
             Timer.Interval = calculatedInterval;
         }
@@ -156,36 +136,54 @@ namespace Model.Mediators
 
         #region Private methods
 
-        private void StepSimulation(bool? toDeleteInterval = null)
+        private void OnTimerInterval(bool? toRestoreInterval = null)
         {
-            Debug.WriteLine(SimulationData.Step);
             Debug.WriteLine("--SIMULATION STEP--");
 
-            if (simulationState.IsExecutingMoves)
-                return;
-
-            if (!simulationState.IsLastTaskFinished)
+            if (_simulationState.State == SimulationStates.ControllerWorking)
             {
                 OnTaskTimeout();
                 return;
             }
 
-            simulationState.IsLastTaskFinished = false;
+            if (_simulationState.State != SimulationStates.Waiting)
+                return;
 
-            if (toDeleteInterval == null && _savedInterval != null)
-            {
-                interval = (int)_savedInterval;
-                _savedInterval = null;
-            }
+            _simulationState.State = SimulationStates.ControllerWorking;
 
-            controller.CalculateOperations(TimeSpan.FromMilliseconds(interval));
+            if (toRestoreInterval != false)
+                RestoreInterval();
+
+            _controller.CalculateOperations(TimeSpan.FromMilliseconds(_interval));
 
         }
 
         private void OnTaskTimeout()
         {
             Debug.WriteLine("XXXX TIMEOUT XXXX");
-            executor.Timeout();
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            Debug.WriteLine("XXXX TIMEOUT XXXX");
+            _executor.Timeout();
+        }
+
+        private void SaveInterval()
+        {
+            if (_savedInterval == null)
+                _savedInterval = _interval;
+        }
+
+        private void RestoreInterval()
+        {
+            if (_savedInterval == null)
+                return;
+            _interval = (int)_savedInterval;
+            _savedInterval = null;
         }
 
         #endregion

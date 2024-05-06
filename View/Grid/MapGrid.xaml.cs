@@ -49,7 +49,7 @@ namespace View.Grid
             int unit = GridConverterFunctions.unit;
 
             //for optimisation purposes
-            int AmountOfCellsInOneBlock = GridConverterFunctions.AmountOfCellsInOneBlock(rowcount, columncount);
+            int AmountOfCellsInOneBlock = GridConverterFunctions.AmountOfCellsInOneTile(rowcount, columncount);
 
             if (AmountOfCellsInOneBlock > 1)
             {

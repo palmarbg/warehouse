@@ -16,6 +16,9 @@ namespace Model.Executors
             this.simulationData = simulationData;
             this.logger = logger;
 
+            errors = new List<OperationError>();
+
+
             Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnTaskAssigned(goal.Id, ((Robot)robot!).Id));
         }
 

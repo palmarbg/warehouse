@@ -43,6 +43,7 @@
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Hidden"
               HorizontalScrollBarVisibility="Hidden"
+              PreviewKeyDown="_ScrollViewer_PreviewKeyDown"
               Name="_ScrollViewer">
         <Viewbox Stretch="Uniform"
              StretchDirection="Both"
