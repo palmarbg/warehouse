@@ -14,7 +14,7 @@ namespace Model
 
         #endregion
 
-        #region Private Fields
+        #region Private Properties
         private IReplayMediator ReplayMediator
         {
             get
@@ -39,13 +39,14 @@ namespace Model
 
         #endregion
 
-
         #region Public Properties
 
         public SimulationData SimulationData => _mediator.SimulationData;
         public SimulationState SimulationState => _mediator.SimulationState;
         public int Interval => _mediator.Interval;
         public string MapFileName => _mediator.MapFileName;
+
+        public bool IsInSimulationMode => _mediator is ISimulationMediator;
 
         #endregion
 
@@ -98,7 +99,6 @@ namespace Model
         }
 
         #endregion
-
 
         #region Public StateChange methods
 
@@ -195,6 +195,10 @@ namespace Model
         public void SaveSimulation(string filepath)
         {
             SimulationMediator.SaveSimulation(filepath);
+        }
+        public void SetOptions(int interval, int lastStep)
+        {
+            SimulationMediator.SetOptions(interval, lastStep);
         }
 
         #endregion

@@ -55,7 +55,7 @@ namespace View
             _viewModel.LoadSimulation += new EventHandler((_, _) => ViewModel_LoadSimulation());
             _viewModel.LoadReplay += new EventHandler((_, _) => ViewModel_LoadReplay());
             _viewModel.SaveSimulation += new EventHandler((_, _) => ViewModel_SaveSimulation());
-            _viewModel.OpenReplaySettings += new EventHandler((_, _) => ViewModel_OpenReplaySettings());
+            _viewModel.OpenSettings += new EventHandler((_, _) => ViewModel_OpenReplaySettings());
 
             // create view
             _view = new MainWindow();
@@ -110,25 +110,52 @@ namespace View
 
         private void ViewModel_OpenReplaySettings()
         {
-            var window = new ReplayControlSettingsWindow()
+            if (_simulation.IsInSimulationMode)
             {
-                Step = _simulation.SimulationData.Step,
-                StepSpeed = 1000 / _simulation.Interval
-            };
+                //simulation mode
+                var window = new SimulationControlSettingsWindow()
+                {
+                    Step = 0,
+                    StepInterval = _simulation.Interval
+                };
 
-            window.Cancel += new EventHandler((_, _) =>
+                window.Cancel += new EventHandler((_, _) =>
+                {
+                    window.Close();
+                });
+
+                window.Save += new EventHandler((_, _) =>
+                {
+                    _simulation.SetOptions(window.StepInterval, window.Step);
+                    window.Close();
+                });
+
+                window.ShowDialog();
+
+            } else
             {
-                window.Close();
-            });
+                //replay mode
+                var window = new ReplayControlSettingsWindow()
+                {
+                    Step = _simulation.SimulationData.Step,
+                    StepSpeed = 1000 / _simulation.Interval
+                };
 
-            window.Save += new EventHandler((_, _) =>
-            {
-                _simulation.JumpToStep(window.Step);
-                _simulation.SetSpeed(window.StepSpeed);
-                window.Close();
-            });
+                window.Cancel += new EventHandler((_, _) =>
+                {
+                    window.Close();
+                });
 
-            window.ShowDialog();
+                window.Save += new EventHandler((_, _) =>
+                {
+                    _simulation.JumpToStep(window.Step);
+                    _simulation.SetSpeed(window.StepSpeed);
+                    window.Close();
+                });
+
+                window.ShowDialog();
+            }
+            
         }
 
         #endregion

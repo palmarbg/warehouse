@@ -35,14 +35,4 @@
 
     }
 
-    class SimulationStateException : Exception
-    {
-        public SimulationStateException()
-        {
-        }
-
-        public SimulationStateException(string? message) : base(message)
-        {
-        }
-    }
 }

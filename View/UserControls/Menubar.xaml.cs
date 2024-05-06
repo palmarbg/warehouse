@@ -32,7 +32,7 @@ namespace View.UserControls
             SetCommandBinding(_backButton, nameof(viewModel.PreviousStepCommand), viewModel);
             SetCommandBinding(_nextButton, nameof(viewModel.NextStepCommand), viewModel);
             SetCommandBinding(_endButton, nameof(viewModel.FinalPositionCommand), viewModel);
-            SetCommandBinding(_settingButton, nameof(viewModel.OpenReplaySettingsCommand), viewModel);
+            SetCommandBinding(_settingButton, nameof(viewModel.OpenSettingsCommand), viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, nameof(viewModel.LoadSimulationCommand), viewModel);
             SetCommandBinding(_loadReplayMenuItem, nameof(viewModel.LoadReplayCommand), viewModel);
@@ -78,6 +78,7 @@ namespace View.UserControls
             {
                 _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
                 _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+                _saveSimulationMenuItem.IsEnabled = true;
 
                 _playButton.IsEnabled = true;
                 _stopButton.IsEnabled = true;
@@ -85,11 +86,13 @@ namespace View.UserControls
                 _backButton.IsEnabled = false;
                 _nextButton.IsEnabled = false;
                 _endButton.IsEnabled = false;
-                _settingButton.IsEnabled = false;
+                _settingButton.IsEnabled = !simulationState.IsSimulationRunning;
                 return;
             }
             _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
             _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+
+            _saveSimulationMenuItem.IsEnabled = false;
 
             _playButton.IsEnabled = true;
             _stopButton.IsEnabled = true;

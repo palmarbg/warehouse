@@ -8,5 +8,7 @@ namespace Model.Mediators.ReplayMediatorUtils
         void CalculateBackward();
         RobotOperation[] SetPosition(int step);
         RobotOperation[] JumpToEnd();
+
+        int GetSimulationLength();
     }
 }

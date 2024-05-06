@@ -18,9 +18,9 @@ namespace View.Grid
     /// <summary>
     /// Interaction logic for MapLine.xaml
     /// </summary>
-    public partial class MapLine : Canvas
+    public partial class LinegridLayer : Canvas
     {
-        public MapLine()
+        public LinegridLayer()
         {
             InitializeComponent();
         }

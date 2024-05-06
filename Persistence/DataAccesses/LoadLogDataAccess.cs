@@ -8,7 +8,6 @@ namespace Persistence.DataAccesses
 {
     public class LoadLogDataAccess : ILoadLogDataAccess
     {
-        //do it just like ConfigDataAccess :)
 
         #region Private fields
 
@@ -17,9 +16,11 @@ namespace Persistence.DataAccesses
         private SimulationData simulationData;
         private Log log;
         private IDataAccess dataAccess;
+
         #endregion
 
         #region Constructor
+
         public LoadLogDataAccess(string path, IDataAccess dataAccess)
         {
             this.path = path;
@@ -45,6 +46,8 @@ namespace Persistence.DataAccesses
 
         public RobotOperation[] GetRobotOperations(int step)
         {
+            if(step < 0 || step >= log.MakeSpan)
+                throw new ArgumentOutOfRangeException();
             RobotOperation[] robotOperations = new RobotOperation[log.ActualPaths.Count];
             for (int i = 0; i < robotOperations.Length; i++)
                 robotOperations[i] = log.ActualPaths[i][step];
@@ -61,9 +64,9 @@ namespace Persistence.DataAccesses
             return taskEvents;
         }
 
-        public IDataAccess NewInstance(string filePath)
+        public int GetStepCount()
         {
-            return new LoadLogDataAccess(filePath, dataAccess);
+            return log.MakeSpan;
         }
 
         public Log LoadLog(string path) // TODO: remove unnecessary elements
@@ -195,6 +198,10 @@ namespace Persistence.DataAccesses
             return log;
         }
 
+        public IDataAccess NewInstance(string filePath)
+        {
+            return new LoadLogDataAccess(filePath, dataAccess);
+        }
 
         #endregion
 

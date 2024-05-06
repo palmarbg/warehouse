@@ -36,6 +36,11 @@ namespace Persistence.DataAccesses
             return robotOperations;
         }
 
+        public int GetStepCount()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<TaskEvent[]> GetTaskEvents()
         {
             List<TaskEvent[]> toreturn = new List<TaskEvent[]>();

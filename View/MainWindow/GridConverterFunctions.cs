@@ -5,50 +5,58 @@ namespace View.Grid
     public static class GridConverterFunctions
     {
         /// <summary>
-        /// The unit length of a cell displayed without zoom
+        /// The unit length of a tile displayed without zoom
         /// </summary>
         public static int unit = 30;
 
         /// <param name="zoom"></param>
         /// <returns>
-        /// Number of cells grouped together
+        /// Number of rows/columns grouped together
         /// into one label
         /// </returns>
-        public static double AmountOfNumbersInGroupedLabel(double zoom)
+        public static double AmountOfNumbersInLabelGroup(double zoom)
         {
             double fun = Math.Floor((2.4 / zoom)) - 1;
             var groupedAmountInOneBlock = (fun - 1 <= 0.5) ? 1.0 : (fun - 2 <= 0.5) ? 2.0 : (fun - 5 <= 0.5) ? 5.0 : 10.0;
             return groupedAmountInOneBlock;
         }
 
-        /// <param name="count"></param>
+        /// <param name="count">Row or column count</param>
         /// <param name="zoom"></param>
         /// <returns>
         /// Number of grouped labels needed to cover the whole map
         /// </returns>
-        public static int NumberOfGroupedLabels(int count, double zoom)
+        public static int NumberOfGroupedLabelsNeeded(int count, double zoom)
         {
-            return System.Convert.ToInt32(Math.Ceiling(count / AmountOfNumbersInGroupedLabel(zoom)));
+            return System.Convert.ToInt32(Math.Ceiling(count / AmountOfNumbersInLabelGroup(zoom)));
         }
 
+        /// <param name="zoom"></param>
+        /// <returns>Length of a label group</returns>
         public static double GroupedLabelLength(double zoom)
         {
-            return unit * zoom * AmountOfNumbersInGroupedLabel(zoom);
+            return unit * zoom * AmountOfNumbersInLabelGroup(zoom);
         }
 
-        public static int NumberOfLabelsOnScreen_Max(double zoom)
+        /// <param name="zoom"></param>
+        /// <returns>Amount of label groups that cover the whole screen both horizontally and vertically</returns>
+        public static int NumberOfLabelGroupsOnScreen_Max(double zoom)
         {
             double size = Math.Max(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
             return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
         }
 
-        public static int NumberOfLabelsOnScreen_Horizontal(double zoom)
+        /// <param name="zoom"></param>
+        /// <returns>Amount of label groups that cover the whole screen horizontally</returns>
+        public static int NumberOfLabelGroupsOnScreen_Horizontal(double zoom)
         {
             double size = SystemParameters.PrimaryScreenWidth;
             return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
         }
 
-        public static int NumberOfLabelsOnScreen_Vertical(double zoom)
+        /// <param name="zoom"></param>
+        /// <returns>Amount of label groups that cover the whole screen vertically</returns>
+        public static int NumberOfLabelGroupsOnScreen_Vertical(double zoom)
         {
             double size = SystemParameters.PrimaryScreenHeight;
             return (int)Math.Ceiling(size / GroupedLabelLength(zoom));
@@ -92,9 +100,6 @@ namespace View.Grid
         {
             return offset - (int)Math.Round(GridConverterFunctions.GroupedLabelLength(zoom) * GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom));
         }
-
-
-
 
         /// <param name="array"></param>
         /// <param name="length"></param>

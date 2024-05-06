@@ -18,7 +18,6 @@ namespace Model.Interfaces
 
         /// <summary>
         /// Sets the next operation for every robot.
-        /// Async method
         /// </summary>
         /// <param name="timeSpan">Time span to return the calculated operations</param>
         /// <returns>Returns the next RobotOperation for every Robot</returns>

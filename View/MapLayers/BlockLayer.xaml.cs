@@ -11,10 +11,10 @@ namespace View.Grid
     /// <summary>
     /// Interaction logic for MapBlock.xaml
     /// </summary>
-    public partial class MapBlock : Canvas
+    public partial class BlockLayer : Canvas
     {
 
-        public MapBlock()
+        public BlockLayer()
         {
             InitializeComponent();
         }

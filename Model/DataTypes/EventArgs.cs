@@ -13,5 +13,10 @@ namespace Model.DataTypes
     {
         public required TimeSpan TimeSpan { get; init; }
         public required RobotOperation[] RobotOperations { get; init; }
+
+        /// <summary>
+        /// If it's not a single step, but a jump.
+        /// </summary>
+        public required bool IsJumped { get; init; }
     }
 }

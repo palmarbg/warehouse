@@ -23,15 +23,15 @@ namespace View.Grid
                 labelTexts[i] = string.Empty;
 
             labelTexts.SuppressNotify = true;
-            while (GridConverterFunctions.NumberOfLabelsOnScreen_Max(zoom) > labelTexts.Count)
+            while (GridConverterFunctions.NumberOfLabelGroupsOnScreen_Max(zoom) > labelTexts.Count)
                 labelTexts.Add(string.Empty);
             labelTexts.SuppressNotify = false;
 
 
-            var groupedAmountInOneBlock = GridConverterFunctions.AmountOfNumbersInGroupedLabel(zoom);
+            var groupedAmountInOneBlock = GridConverterFunctions.AmountOfNumbersInLabelGroup(zoom);
 
             int start = GridConverterFunctions.NumberOfLabelsToOmit(offset, zoom);
-            int end = Math.Min(start + GridConverterFunctions.NumberOfLabelsOnScreen_Max(zoom), count);
+            int end = Math.Min(start + GridConverterFunctions.NumberOfLabelGroupsOnScreen_Max(zoom), count);
 
 
             if (groupedAmountInOneBlock == 1)
@@ -40,8 +40,8 @@ namespace View.Grid
                     labelTexts[i - 1 - start] = i.ToString();
                 return labelTexts;
             }
-            int numberOfBlocks = GridConverterFunctions.NumberOfGroupedLabels(count, zoom);
-            end = Math.Min(start + GridConverterFunctions.NumberOfLabelsOnScreen_Max(zoom), numberOfBlocks);
+            int numberOfBlocks = GridConverterFunctions.NumberOfGroupedLabelsNeeded(count, zoom);
+            end = Math.Min(start + GridConverterFunctions.NumberOfLabelGroupsOnScreen_Max(zoom), numberOfBlocks);
 
             for (int i = start; i < end; i++)
                 labelTexts[i - start] = ($"{groupedAmountInOneBlock * i + 1}:");//-{groupedAmountInOneBlock * (i + 1)}

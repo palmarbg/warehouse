@@ -7,31 +7,31 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Grid\MapBlock.xaml.cs">
+    <Compile Update="MapLayers\BlockLayer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\MapGoal.xaml.cs">
+    <Compile Update="MapLayers\GoalLayer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\MapGrid.xaml.cs">
+    <Compile Update="MainWindow\MapGrid.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\MapGridContainer.xaml.cs">
+    <Compile Update="MainWindow\MapGridContainer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\HorizontalNumberStrip.xaml.cs">
+    <Compile Update="MainWindow\HorizontalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\MapLine.xaml.cs">
+    <Compile Update="MapLayers\LinegridLayer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\MapRobot.xaml.cs">
+    <Compile Update="MapLayers\RobotLayer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\VerticalNumberStrip.xaml.cs">
+    <Compile Update="MainWindow\VerticalNumberStrip.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Grid\ZoomSlider.xaml.cs">
+    <Compile Update="MainWindow\ZoomSlider.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="MainWindow.xaml.cs">
@@ -46,33 +46,36 @@
     <Compile Update="Windows\ReplayControlSettingsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\SimulationControlSettingsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Grid\MapBlock.xaml">
+    <Page Update="MapLayers\BlockLayer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\MapGoal.xaml">
+    <Page Update="MapLayers\GoalLayer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\MapGrid.xaml">
+    <Page Update="MainWindow\MapGrid.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\MapGridContainer.xaml">
+    <Page Update="MainWindow\MapGridContainer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\HorizontalNumberStrip.xaml">
+    <Page Update="MainWindow\HorizontalNumberStrip.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\MapLine.xaml">
+    <Page Update="MapLayers\LinegridLayer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\MapRobot.xaml">
+    <Page Update="MapLayers\RobotLayer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\VerticalNumberStrip.xaml">
+    <Page Update="MainWindow\VerticalNumberStrip.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Grid\ZoomSlider.xaml">
+    <Page Update="MainWindow\ZoomSlider.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
@@ -85,6 +88,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Windows\ReplayControlSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\SimulationControlSettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

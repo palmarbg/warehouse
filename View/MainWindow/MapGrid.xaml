@@ -42,10 +42,10 @@
                  >
             <Grid Style="{StaticResource BindMe}">
                 
-                <local:MapLine x:Name="MapCanvas"/>
-                <local:MapBlock x:Name="BlockLayer"/>
-                <local:MapGoal x:Name="GoalLayer"/>
-                <local:MapRobot x:Name="RobotLayer"/>
+                <local:LinegridLayer x:Name="MapCanvas"/>
+                <local:BlockLayer x:Name="BlockLayer"/>
+                <local:GoalLayer x:Name="GoalLayer"/>
+                <local:RobotLayer x:Name="RobotLayer"/>
 
                 <Grid.LayoutTransform>
                     <TransformGroup>

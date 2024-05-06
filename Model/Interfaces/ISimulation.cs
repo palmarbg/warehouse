@@ -5,6 +5,8 @@ namespace Model.Interfaces
 {
     public interface ISimulation : IReplayMediator, ISimulationMediator
     {
+        public bool IsInSimulationMode { get; }
+
         #region Events
 
         /// <summary>
