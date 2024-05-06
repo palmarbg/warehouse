@@ -104,10 +104,20 @@ namespace Model.Executors
                             // TODO: Check if robot was blocking original robots NewPos
                             if (startingRobot.Id == blockingRobot.Id)
                             {
-                                robot.BlockedThisTurn = true;
-                                robot.MovedThisTurn = true;
-                                OnRobotCrash(robot.Id, blockingRobot.Id);
-                                return false;
+                                //robot.BlockedThisTurn = true;
+                                //robot.MovedThisTurn = true;
+                                //OnRobotCrash(robot.Id, blockingRobot.Id);
+
+                                robot.Position = blockingRobot.Position;
+                                robot.MovedThisTurn= true;
+                                if (robot.CurrentGoal!.Position.EqualsPosition(blockingRobot.Position))
+                                {
+                                    robot.CurrentGoal.IsAssigned = false;
+                                    OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
+                                    robot.CurrentGoal = null;
+                                }
+
+                                return true;
                             }
                             else
                             if (!blockingRobot.InspectedThisTurn && MoveRobot(blockingRobot, startingRobot))
