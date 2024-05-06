@@ -188,6 +188,12 @@ namespace Model.Executors
                 case RobotOperation.Wait:
                     // TODO: Prototype 2 : Logging
                     robot.MovedThisTurn = true;
+                    if(robot.CurrentGoal is not null && robot.Position.EqualsPosition(robot.CurrentGoal.Position))
+                    {
+                        robot.CurrentGoal.IsAssigned = false;
+                        OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
+                        robot.CurrentGoal = null;
+                    }
                     //robot.BlockedThisTurn = true;
                     return false;
                     break;
