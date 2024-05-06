@@ -9,11 +9,11 @@ namespace View.Grid
     /// <summary>
     /// Interaction logic for MapGoal.xaml
     /// </summary>
-    public partial class MapGoal : Canvas
+    public partial class GoalLayer : Canvas
     {
         private Dictionary<int, int> _robotIdToCanvasIndex = new();
         private SolidColorBrush _brush;
-        public MapGoal()
+        public GoalLayer()
         {
             InitializeComponent();
             _brush = new(Color.FromRgb(251, 171, 9));
@@ -58,6 +58,27 @@ namespace View.Grid
             if (goal == null || robot.CurrentGoal == null)
                 return;
 
+            var grid = GetWPFGrid(goal);
+
+            if (_robotIdToCanvasIndex.ContainsKey(robot.Id))
+            {
+                MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
+                MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], grid);
+            }
+            else
+            {
+                _robotIdToCanvasIndex[robot.Id] = MapCanvas.Children.Count;
+                MapCanvas.Children.Add(grid);
+            }
+
+        }
+
+        #endregion
+
+        #region WPF Goal
+
+        private System.Windows.Controls.Grid GetWPFGrid(Goal goal)
+        {
             System.Windows.Controls.Grid grid = new()
             {
                 Width = GridConverterFunctions.unit,
@@ -69,6 +90,7 @@ namespace View.Grid
                     0,
                     0)
             };
+            Canvas.SetZIndex(grid, 9999999 - goal.Id);
             ToolTipService.SetInitialShowDelay(grid, 0);
             ToolTipService.SetShowDuration(grid, 9999999);
             ToolTipService.SetBetweenShowDelay(grid, 0);
@@ -90,18 +112,9 @@ namespace View.Grid
             grid.Children.Add(rectangle);
             grid.Children.Add(textBlock);
 
-            if (_robotIdToCanvasIndex.ContainsKey(robot.Id))
-            {
-                MapCanvas.Children.RemoveAt(_robotIdToCanvasIndex[robot.Id]);
-                MapCanvas.Children.Insert(_robotIdToCanvasIndex[robot.Id], grid);
-            }
-            else
-            {
-                _robotIdToCanvasIndex[robot.Id] = MapCanvas.Children.Count;
-                MapCanvas.Children.Add(grid);
-            }
-
+            return grid;
         }
+
         #endregion
     }
 }

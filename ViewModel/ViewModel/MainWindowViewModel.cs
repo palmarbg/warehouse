@@ -119,7 +119,7 @@ namespace ViewModel.ViewModel
         /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
-        public event EventHandler? OpenReplaySettings;
+        public event EventHandler? OpenSettings;
         public event EventHandler? LoadSimulation;
         public event EventHandler? LoadReplay;
         public event EventHandler? SaveSimulation;
@@ -159,7 +159,7 @@ namespace ViewModel.ViewModel
         public DelegateCommand FinalPositionCommand { get; set; }
 
         /// <summary> Open window for setting simulation speed and position </summary>
-        public DelegateCommand OpenReplaySettingsCommand { get; set; }
+        public DelegateCommand OpenSettingsCommand { get; set; }
 
         /// <summary> Load a config file </summary>
         public DelegateCommand LoadSimulationCommand { get; set; }
@@ -201,7 +201,7 @@ namespace ViewModel.ViewModel
             NextStepCommand = new DelegateCommand(param => OnNextStep());
             FinalPositionCommand = new DelegateCommand(param => OnFinalPosition());
 
-            OpenReplaySettingsCommand = new DelegateCommand(param => OnOpenReplaySettings());
+            OpenSettingsCommand = new DelegateCommand(param => OnOpenReplaySettings());
             LoadSimulationCommand = new(param => OnLoadSimulation());
             LoadReplayCommand = new(param => OnLoadReplay());
             StartNewSimulationCommand = new DelegateCommand(param => OnStartNewSimulation());
@@ -311,7 +311,7 @@ namespace ViewModel.ViewModel
 
         private void OnOpenReplaySettings()
         {
-            OpenReplaySettings?.Invoke(null, new());
+            OpenSettings?.Invoke(null, new());
         }
 
         private void OnStartNewSimulation()

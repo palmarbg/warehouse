@@ -1,7 +1,9 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Model.Mediators.ReplayMediatorUtils
 {
@@ -23,16 +25,11 @@ namespace Model.Mediators.ReplayMediatorUtils
 
         public void CalculateOperations(TimeSpan timeSpan)
         {
+            if (simulationData.Step >= loadLogDataAccess.GetStepCount())
+                throw new StepOutOfRangeException();
+
             RobotOperation[] robotOperations;
-            try
-            {
-                robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
-            }
-            catch (Exception e)
-            {
-                //simulation ended
-                return;
-            }
+            robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
 
             for (int i = 0; i < taskEventIterator.Length; i++)
             {
@@ -110,19 +107,16 @@ namespace Model.Mediators.ReplayMediatorUtils
 
         public RobotOperation[] SetPosition(int step)
         {
+            //doesn't handle backward
+            if (step < simulationData.Step)
+                throw new StepOutOfRangeException();
+
+            step = Math.Min(step, loadLogDataAccess.GetStepCount());
+
             RobotOperation[] robotOperations = null!;
             while (simulationData.Step < step)
             {
-                try
-                {
-                    var temp = loadLogDataAccess.GetRobotOperations(simulationData.Step);
-                    robotOperations = temp;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    //simulation ended
-                    break;
-                }
+                robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
 
                 for (int i = 0; i < simulationData.Robots.Count; i++)
                 {
@@ -162,6 +156,11 @@ namespace Model.Mediators.ReplayMediatorUtils
         public RobotOperation[] JumpToEnd()
         {
             return SetPosition(Int32.MaxValue);
+        }
+
+        public int GetSimulationLength()
+        {
+            return loadLogDataAccess.GetStepCount();
         }
     }
 }

@@ -34,6 +34,7 @@ namespace Model.Mediators
             _simulationData = _dataAccess.GetInitialSimulationData();
 
             _controller = serviceLocator.GetReplayController((ILoadLogDataAccess)_dataAccess);
+            _lastStep = (_controller as IReplayController)!.GetSimulationLength();
 
             _executor = _serviceLocator.GetReplayExecutor(_simulationData);
 
@@ -47,6 +48,8 @@ namespace Model.Mediators
         {
             _dataAccess = _dataAccess.NewInstance(fileName);
             SetInitialPosition();
+            //handle in service locator if you get null ref error
+            _lastStep = (_controller as IReplayController)!.GetSimulationLength();
         }
 
         public void StepForward()
@@ -94,10 +97,13 @@ namespace Model.Mediators
             if (step == _simulationData.Step)
                 return;
             
+            InitSimulationIfNeeded();
+
             //handle in service locator if you get null ref error
             var robotOperations = (_controller as IReplayController)!.SetPosition(step);
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                IsJumped = true,
                 RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,
             });
@@ -108,10 +114,13 @@ namespace Model.Mediators
             if(_simulationState.IsSimulationRunning)
                 return;
 
+            InitSimulationIfNeeded();
+
             //handle in service locator if you get null ref error
             var robotOperations = (_controller as IReplayController)!.JumpToEnd();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                IsJumped = true,
                 RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,
             });
@@ -140,13 +149,22 @@ namespace Model.Mediators
         {
             Debug.WriteLine("--SIMULATION STEP--");
 
+            if (_simulationData.Step >= _lastStep)
+            {
+                PauseSimulation();
+                return;
+            }
+
             if (_simulationState.State == SimulationStates.ControllerWorking)
             {
                 OnTaskTimeout();
                 return;
             }
 
-            if (_simulationState.State != SimulationStates.Waiting)
+            if (!(
+                    _simulationState.State == SimulationStates.Waiting ||
+                    _simulationState.State == SimulationStates.SimulationPaused
+                ))
                 return;
 
             _simulationState.State = SimulationStates.ControllerWorking;
@@ -160,14 +178,6 @@ namespace Model.Mediators
 
         private void OnTaskTimeout()
         {
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
-            Debug.WriteLine("XXXX TIMEOUT XXXX");
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             _executor.Timeout();
         }

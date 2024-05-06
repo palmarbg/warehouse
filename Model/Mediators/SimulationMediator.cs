@@ -28,6 +28,14 @@ namespace Model.Mediators
 
         #region Public methods
 
+        public void SetOptions(int interval, int lastStep)
+        {
+            _interval = interval;
+            _lastStep = lastStep;
+
+            Timer.Interval = _interval;
+        }
+
         public void LoadConfig(string fileName)
         {
             MapFileName = fileName;
@@ -47,6 +55,11 @@ namespace Model.Mediators
         private void OnTimerInterval()
         {
             Debug.WriteLine("--SIMULATION STEP--");
+            if (_simulationData.Step >= _lastStep)
+            {
+                StopSimulation();
+                return;
+            }
 
             ///The state of the timer defines the state IsSimulationRunning
             ///The timer should be disabled

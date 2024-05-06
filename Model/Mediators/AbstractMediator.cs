@@ -26,6 +26,8 @@ namespace Model.Mediators
         protected IController _controller = null!;
         protected IExecutor _executor = null!;
 
+        protected int _lastStep;
+
         #endregion
 
         #region Properties
@@ -58,6 +60,8 @@ namespace Model.Mediators
                     (_, _) => simulation.OnSimulationStateChanged(_simulationState)
                 );
             MapFileName = mapFileName;
+
+            _lastStep = 10;
 
         }
 
@@ -142,6 +146,7 @@ namespace Model.Mediators
 
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                IsJumped = false,
                 RobotOperations = e.robotOperations,
                 TimeSpan = TimeSpan.FromMilliseconds(_interval)
             });
