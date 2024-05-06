@@ -84,6 +84,7 @@ namespace Model.Controllers
                         if (_taskDistributor.AllTasksAssigned)
                         {
                             // TODO ha taskon áll el lehet küldeni valahova máshova
+                            robotsFinished[i] = true;
                             result.Add(RobotOperation.Wait);
                             robot.NextOperation = RobotOperation.Wait;
                         }
@@ -91,20 +92,15 @@ namespace Model.Controllers
                         else
                         {
                             _taskDistributor.AssignNewTask(robot);
-                            //Goal.OnGoalsChanged();
                             _plannedOperations[i] = FindPath(robot);
                             if (_plannedOperations[i].Count == 0)
                             {
-                                robot.NextOperation = RobotOperation.Wait;
-                                previousOperations[i] = RobotOperation.Wait;
-                                result.Add(RobotOperation.Wait);
+                                AddOperation(result, robot, RobotOperation.Wait, i);
+                                blockedCount[robot.Id]++;
                             }
                             else
                             {
-                                var nextOp = _plannedOperations[i].Dequeue();
-                                robot.NextOperation = nextOp;
-                                previousOperations[i] = nextOp;
-                                result.Add(nextOp);
+                                AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
                             }
                         }
                     }
@@ -114,17 +110,12 @@ namespace Model.Controllers
                         _plannedOperations[i] = FindPath(robot, false);
                         if (_plannedOperations[i].Count == 0)
                         {
-                            robot.NextOperation = RobotOperation.Wait;
-                            previousOperations[i] = RobotOperation.Wait;
-                            result.Add(RobotOperation.Wait);
-
+                            AddOperation(result, robot, RobotOperation.Wait, i);
+                            blockedCount[robot.Id]++;
                         }
                         else
                         {
-                            var nextOp = _plannedOperations[i].Dequeue();
-                            robot.NextOperation = nextOp;
-                            previousOperations[i] = nextOp;
-                            result.Add(nextOp);
+                            AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
                         }
                     }
                 }
@@ -136,53 +127,47 @@ namespace Model.Controllers
                         blockedCount[i]++;
                         if (blockedCount[i] >= 3)
                         {
-                            _plannedOperations[i] = FindPath(robot, true);
+                            _plannedOperations[i] = FindPath(robot, false);
                             blockedCount[i] = 0;
-                            var nextOp = RobotOperation.Wait;
-                            robot.NextOperation = nextOp;
-                            result.Add(nextOp);
+                            //var nextOp = RobotOperation.Wait;
+                            //robot.NextOperation = nextOp;
+                            //result.Add(nextOp);
+                            if (_plannedOperations[i].Count == 0)
+                            {
+                                AddOperation(result, robot, RobotOperation.Wait, i);
+                                blockedCount[robot.Id]++;
+                            }
+                            else
+                            {
+                                AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+                            }
                         }
                         else
                         {
-                            var nextOp = previousOperations[i];
-                            robot.NextOperation = nextOp;
-                            result.Add(nextOp);
+                            AddOperation(result, robot, previousOperations[i], i);
                         }
                     }
                     else
                     {
-                        var nextOp = _plannedOperations[i].Dequeue();
-                        robot.NextOperation = nextOp;
-                        previousOperations[i] = nextOp;
-                        result.Add(nextOp);
+                        AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
                     }
                 }
             }
-            //var res = new Dictionary<Position, SortedList<int, Reserver>>();
-            //foreach (var item in Reservations!)
-            //{
-            //    var pos = item.Key;
 
-            //    res.Add(pos, []);
-            //    foreach (var ress in item.Value)
-            //    {
-            //        if (ress.Key >= CurrentTurn)
-            //        {
-            //            res[pos].Add(ress.Key, ress.Value);
-            //        }
-
-            //    }
-            //    if (res[pos].Count == 0) res.Remove(pos);
-            //}
-            //Reservations = res;
             CurrentTurn++;
             OnTaskFinished([.. result]);
         }
-
+        private void AddOperation(List<RobotOperation> result, Robot robot, RobotOperation nextOp, int index)
+        {
+            robot.NextOperation = nextOp;
+            previousOperations[index] = nextOp;
+            result.Add(nextOp);
+        }
         #endregion
         #region Private Methods
         private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
         {
+
             if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal!"); }
             if (Reservations is null) { throw new Exception("Initialize the controller before using it!"); }
             HashSet<Node> openSet = new HashSet<Node>();
@@ -225,13 +210,17 @@ namespace Model.Controllers
                 {
                     // ! : GetNeighbours csak olyan pozíciót ad, amire nem null
                     var directionOnNewNode = (Direction)current.Position.DirectionInPosition(neighbor.Position)!;
-                    int rotationCost = ((Direction)current.Direction).RotateTo((Direction)current.Position.DirectionInPosition(neighbor.Position)!).Count;
+                    int rotationCost = ((Direction)current.Direction).RotateTo(directionOnNewNode).Count;
 
                     int tentativeGScore = gScore[current] + 1 + rotationCost;
 
                     int freeTurns = AllowedRotationsOnPosition(neighbor.Position, current.Turn + 1 + rotationCost);
 
-                    if ((!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor]) && freeTurns >= 0 && current.AllowedRotations >= rotationCost)
+                    if ((!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor]) 
+                        && freeTurns >= 0 
+                        &&current.AllowedRotations >= rotationCost 
+                      //&&!IntercepsPath(current.Position, neighbor.Position, current.Turn, rotationCost) 
+                        &&!Collides(current.Position, neighbor.Position, current.Turn + rotationCost))
                     {
                         neighbor.parent = current;
                         neighbor.AllowedRotations = freeTurns;
@@ -250,31 +239,72 @@ namespace Model.Controllers
             return new Queue<RobotOperation>(); // No path found
         }
 
+        //private bool IntercepsPath(Position sourcePos, Position destPos, int turn, int rotationCost)
+        //{
+        //    //SortedList<int, Reserver> res1, res2;
+        //    //if(Reservations!.TryGetValue(sourcePos, out res1!) && Reservations!.TryGetValue(destPos, out res2!))
+        //    //{
+        //    //    if(res2.ContainsKey(turn+rotationCost)) {
+        //    //        return true;
+        //    //    }
+        //    //}
+
+        //    return false;
+        //}
+        private bool Collides(Position sourcePos, Position destPos, int turn)
+        {
+            if (FrontalCollides(sourcePos, destPos,turn))
+            {
+                return true;
+            }else if (SideCollides(sourcePos, destPos, turn))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool SideCollides(Position sourcePos, Position destPos, int turn)
+        {
+            return Reservations!.ContainsKey(destPos)
+                && Reservations[destPos].ContainsKey(turn + 1);
+        }
+
+        // [robot]-><-[robot]
+        private bool FrontalCollides(Position sourcePos, Position destPos, int turn)
+        {
+            return Reservations!.ContainsKey(destPos) &&
+                Reservations[destPos].ContainsKey(turn) &&
+                Reservations.ContainsKey(sourcePos) &&
+                Reservations[sourcePos].ContainsKey(turn + 1)
+                 && Reservations[sourcePos][turn + 1].Robot.Id == Reservations[destPos][turn].Robot.Id;
+        }
         private int AllowedRotationsOnPosition(Position pos, int turn)
         {
-            int r = 4;
             if (Reservations!.ContainsKey(pos))
             {
                 if (Reservations[pos].ContainsKey(turn) && Reservations[pos][turn] is not null)
                 {
-                    r = -1;
+                    return -1;
                 }
                 else if (Reservations[pos].ContainsKey(turn + 1) && Reservations[pos][turn + 1] is not null)
                 {
-                    r = 0;
+                    return 0;
 
                 }
                 else if (Reservations[pos].ContainsKey(turn + 2) && Reservations[pos][turn + 2] is not null)
                 {
-                    r = 1;
+                    return 1;
 
                 }
                 else if (Reservations[pos].ContainsKey(turn + 3) && Reservations[pos][turn + 3] is not null)
                 {
-                    r = 2;
+                    return 2;
                 }
             }
-            return r;
+            return 2;
         }
         private List<Node> GetNeighbors(Node node, bool robotBlock)
         {
@@ -290,7 +320,10 @@ namespace Model.Controllers
                     int checkX = node.Position.X + xOffset;
                     int checkY = node.Position.Y + yOffset;
 
-                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) && SimulationData.Map[checkX, checkY] is not Block && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot)))
+                    if (checkX >= 0 && checkX < SimulationData!.Map.GetLength(0) && checkY >= 0 && checkY < SimulationData!.Map.GetLength(1) 
+                        && SimulationData.Map[checkX, checkY] is not Block 
+                        && (SimulationData.Map[checkX, checkY] is EmptyTile || (robotBlock ? SimulationData.Map[checkX, checkY] is not Robot : SimulationData.Map[checkX, checkY] is Robot))
+                        && !(SimulationData.Map[checkX, checkY] is Robot robot && robotsFinished[robot.Id]))
                     {
                         neighbors.Add(new Node(new Position() { X = checkX, Y = checkY }));
                     }
@@ -337,6 +370,7 @@ namespace Model.Controllers
             var robot = (startTile as Robot)!;
             currentDirection = (robot).Rotation;
 
+
             var reserver = reservers!.Find(r1 => r1 is not null && r1.Robot.Id == robot.Id);
             //reserver = null;
             if (reserver is null)
@@ -345,7 +379,8 @@ namespace Model.Controllers
                 reservers.Add(reserver);
             }
             reserver.Offset = 0;
-            int turn = CurrentTurn;
+            DeleteReservation(reserver);
+            int turn = path[0].Turn;
             if (robot.Id == 18)
             {
 
@@ -389,6 +424,27 @@ namespace Model.Controllers
                 }
             }
             return Operations;
+        }
+
+        private void DeleteReservation(Reserver reserver)
+        {
+            var res = new Dictionary<Position, SortedList<int, Reserver>>();
+            foreach (var item in Reservations!)
+            {
+                var pos = item.Key;
+
+                res.Add(pos, []);
+                foreach (var ress in item.Value)
+                {
+                    if (ress.Value.Robot.Id != reserver.Robot.Id)
+                    {
+                        res[pos].Add(ress.Key, ress.Value);
+                    }
+
+                }
+                if (res[pos].Count == 0) res.Remove(pos);
+            }
+            Reservations = res;
         }
 
         private void Reserve(Position position, int turn, Reserver reserver)
