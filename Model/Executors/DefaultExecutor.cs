@@ -196,7 +196,7 @@ namespace Model.Executors
                     }
                     //robot.BlockedThisTurn = true;
                     return false;
-                    break;
+                    //break;
             }
             return false;
         }

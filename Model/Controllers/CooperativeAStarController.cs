@@ -139,28 +139,28 @@ namespace Model.Controllers
                             AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
                         }
                         continue;
-                        blockedCount[i]++;
-                        if (blockedCount[i] >= 3)
-                        {
-                            _plannedOperations[i] = FindPath(robot, false);
-                            blockedCount[i] = 0;
-                            //var nextOp = RobotOperation.Wait;
-                            //robot.NextOperation = nextOp;
-                            //result.Add(nextOp);
-                            if (_plannedOperations[i].Count == 0)
-                            {
-                                AddOperation(result, robot, RobotOperation.Wait, i);
-                                blockedCount[robot.Id]++;
-                            }
-                            else
-                            {
-                                AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
-                            }
-                        }
-                        else
-                        {
-                            AddOperation(result, robot, previousOperations[i], i);
-                        }
+                        //blockedCount[i]++;
+                        //if (blockedCount[i] >= 3)
+                        //{
+                        //    _plannedOperations[i] = FindPath(robot, false);
+                        //    blockedCount[i] = 0;
+                        //    //var nextOp = RobotOperation.Wait;
+                        //    //robot.NextOperation = nextOp;
+                        //    //result.Add(nextOp);
+                        //    if (_plannedOperations[i].Count == 0)
+                        //    {
+                        //        AddOperation(result, robot, RobotOperation.Wait, i);
+                        //        blockedCount[robot.Id]++;
+                        //    }
+                        //    else
+                        //    {
+                        //        AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    AddOperation(result, robot, previousOperations[i], i);
+                        //}
                     }
                     else
                     {
