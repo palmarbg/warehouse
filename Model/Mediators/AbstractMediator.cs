@@ -61,7 +61,7 @@ namespace Model.Mediators
                 );
             MapFileName = mapFileName;
 
-            _lastStep = 10;
+            _lastStep = 10000;
 
         }
 
@@ -86,6 +86,8 @@ namespace Model.Mediators
             Timer.Stop();
             _simulationState.State = SimulationStates.SimulationEnded;
 
+            (_controller as IDisposableController)?.Dispose();
+
             //TODO: escape running controller/executor
             _simulation.OnSimulationFinished();
             //SetInitialState();
@@ -107,6 +109,8 @@ namespace Model.Mediators
             _simulationData = _dataAccess.GetInitialSimulationData();
             _simulationData.ControllerName = _controller.Name;
 
+            (_controller as IDisposableController)?.Dispose();
+
             _controller = _controller.NewInstance();
             _executor = _executor.NewInstance(_simulationData);
 
@@ -115,6 +119,16 @@ namespace Model.Mediators
                 if (_controller != sender)
                     return;
                 OnTaskFinished(e);
+            });
+
+            _controller.InitializationFinished += new EventHandler((sender, e) =>
+            {
+                if (_controller != sender)
+                    return;
+                if (Timer.Enabled)
+                    _simulationState.State = SimulationStates.Waiting;
+                else
+                    _simulationState.State = SimulationStates.SimulationPaused;
             });
 
             _simulation.OnSimulationLoaded();
@@ -146,6 +160,7 @@ namespace Model.Mediators
 
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                SimulationStep = _simulationData.Step,
                 IsJumped = false,
                 RobotOperations = e.robotOperations,
                 TimeSpan = TimeSpan.FromMilliseconds(_interval)
@@ -154,7 +169,8 @@ namespace Model.Mediators
 
         private void ContinueSimulation()
         {
-            _simulationState.State = SimulationStates.Waiting;
+            if(_simulationState.State == SimulationStates.SimulationPaused)
+                _simulationState.State = SimulationStates.Waiting;
             Timer.Start();
         }
 
@@ -177,6 +193,7 @@ namespace Model.Mediators
             {
                 var taskDistributor = _serviceLocator.GetTaskDistributor(_simulationData);
 
+                _simulationState.State = SimulationStates.ControllerWorking;
                 _controller.InitializeController(_simulationData, TimeSpan.FromSeconds(6), taskDistributor);
             }
         }

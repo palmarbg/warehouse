@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Persistence.DataTypes;
 
 namespace Model.Controllers
@@ -6,18 +7,21 @@ namespace Model.Controllers
     internal class SimpleController : IController
     {
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
+
         private ITaskDistributor _taskDistributor = null!;
         private SimulationData? SimulationData;
 
         public string Name => "simple";
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             _taskDistributor = distributor;
             SimulationData = simulationData;
+            InitializationFinished?.Invoke(this, new());
         }
 
         // Does not care about Block, other robots or deadlocks
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
 
             if (SimulationData == null)

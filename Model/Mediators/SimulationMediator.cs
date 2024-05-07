@@ -68,7 +68,9 @@ namespace Model.Mediators
 
             if (_simulationState.State == SimulationStates.ControllerWorking)
             {
-                OnTaskTimeout();
+                //when its not initializing
+                if(SimulationData.Step > 0)
+                    OnTaskTimeout();
                 return;
             }
 

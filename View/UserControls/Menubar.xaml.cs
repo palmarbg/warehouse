@@ -68,11 +68,11 @@ namespace View.UserControls
         private void OnSimulationStateChanged(SimulationStateEventArgs arg)
         {
             var simulationState = arg.SimulationState;
-            //Debug.WriteLine($"The simstate is {simulationState.State}");
-
+            
             _playButton.IconSrc     = simulationState.IsSimulationRunning ? "Icons/pause.png" : "Icons/play.png" ;
             _playButton.LabelText   = simulationState.IsSimulationRunning ? "Pause" : "Start";
 
+            //canexecute should be in viewmodel and binded to buttons
 
             if(!arg.IsReplayMode)
             {
@@ -81,7 +81,7 @@ namespace View.UserControls
                 _saveSimulationMenuItem.IsEnabled = true;
 
                 _playButton.IsEnabled = true;
-                _stopButton.IsEnabled = true;
+                _stopButton.IsEnabled = simulationState.State != SimulationStates.SimulationEnded;
                 _startButton.IsEnabled = !simulationState.IsSimulationRunning;
                 _backButton.IsEnabled = false;
                 _nextButton.IsEnabled = false;
@@ -95,7 +95,7 @@ namespace View.UserControls
             _saveSimulationMenuItem.IsEnabled = false;
 
             _playButton.IsEnabled = true;
-            _stopButton.IsEnabled = true;
+            _stopButton.IsEnabled = simulationState.State != SimulationStates.SimulationEnded;
             _startButton.IsEnabled = true;
             _backButton.IsEnabled = !simulationState.IsSimulationRunning;
             _nextButton.IsEnabled = !simulationState.IsSimulationRunning;

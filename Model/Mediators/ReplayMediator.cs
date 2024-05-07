@@ -81,7 +81,6 @@ namespace Model.Mediators
             _simulationData.Step--;
             //handle in service locator if you get null ref error
             (_controller as IReplayController)!.CalculateBackward();
-            _simulationData.Step--;
         }
 
         public void JumpToStep(int step)
@@ -103,6 +102,7 @@ namespace Model.Mediators
             var robotOperations = (_controller as IReplayController)!.SetPosition(step);
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                SimulationStep = _simulationData.Step,
                 IsJumped = true,
                 RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,
@@ -120,6 +120,7 @@ namespace Model.Mediators
             var robotOperations = (_controller as IReplayController)!.JumpToEnd();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
+                SimulationStep = _simulationData.Step,
                 IsJumped = true,
                 RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,

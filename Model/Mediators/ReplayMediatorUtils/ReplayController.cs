@@ -16,6 +16,7 @@ namespace Model.Mediators.ReplayMediatorUtils
         public string Name => "ReplayController";
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
 
         public ReplayController(ILoadLogDataAccess loadLogDataAccess)
         {
@@ -23,7 +24,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             taskEvents = loadLogDataAccess.GetTaskEvents();
         }
 
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
             if (simulationData.Step >= loadLogDataAccess.GetStepCount())
                 throw new StepOutOfRangeException();
@@ -61,10 +62,11 @@ namespace Model.Mediators.ReplayMediatorUtils
             OnTaskFinished(robotOperations);
         }
 
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             this.simulationData = simulationData;
             taskEventIterator = Enumerable.Repeat(0, simulationData.Robots.Count).ToArray();
+            InitializationFinished?.Invoke(this, new());
         }
 
         public IController NewInstance()
@@ -101,7 +103,7 @@ namespace Model.Mediators.ReplayMediatorUtils
                     iter = --taskEventIterator[i] - 1;
                 }
             }
-
+            simulationData.Step--;
             OnTaskFinished(robotOperations);
         }
 

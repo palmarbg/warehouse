@@ -2,6 +2,7 @@
 using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
+using System.Diagnostics;
 
 namespace Model.Controllers
 {
@@ -16,9 +17,10 @@ namespace Model.Controllers
         private RobotOperation[] previousOperations = [];
         private int[] blockedCount = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
 
         #region Public Methods
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             _taskDistributor = distributor;
             SimulationData = simulationData;
@@ -40,19 +42,35 @@ namespace Model.Controllers
             });
 
             //Goal.OnGoalsChanged();
-            _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
+            _plannedOperations = new List<Queue<RobotOperation>>();
+            for (int i = 0; i < SimulationData.Robots.Count; i++ )
+            {
+                if(token != null && ((CancellationToken)token)!.IsCancellationRequested)
+                {
+                    return;
+                }
+                _plannedOperations.Add(FindPath(SimulationData.Robots[i]));
+            }
+
+            InitializationFinished?.Invoke(this, new());
         }
         public IController NewInstance()
         {
             return new AStarController();
         }
 
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             var result = new List<RobotOperation>();
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
+                if (token != null && ((CancellationToken)token)!.IsCancellationRequested)
+                {
+                    Debug.WriteLine("CANCEL");
+                    Debug.WriteLine("CANCEL");
+                    return;
+                }
                 var robot = SimulationData.Robots[i];
                 // nincs utasítás a robot számára
                 if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)

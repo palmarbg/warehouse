@@ -14,9 +14,16 @@ namespace Model.DataTypes
         public required TimeSpan TimeSpan { get; init; }
         public required RobotOperation[] RobotOperations { get; init; }
 
+        public required int SimulationStep { get; init; }
+
         /// <summary>
         /// If it's not a single step, but a jump.
         /// </summary>
         public required bool IsJumped { get; init; }
+    }
+
+    public class IControllerEventArgs(RobotOperation[] robotOperations) : EventArgs
+    {
+        public RobotOperation[] robotOperations { get; set; } = robotOperations;
     }
 }

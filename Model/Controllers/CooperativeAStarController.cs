@@ -5,6 +5,7 @@ using Persistence.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Model.Controllers
         private RobotOperation[] previousOperations = [];
         private int[] blockedCount = [];
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
 
         // Delete from reservers to delete all reservation of Robot
         private List<Reserver?>? reservers = null!;
@@ -30,7 +32,7 @@ namespace Model.Controllers
         private int CurrentTurn = 0;
 
         #region Public Methods
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             _taskDistributor = distributor;
             SimulationData = simulationData;
@@ -58,7 +60,16 @@ namespace Model.Controllers
             });
 
             //Goal.OnGoalsChanged();
-            _plannedOperations = SimulationData.Robots.Select(f => FindPath(f)).ToList();
+            _plannedOperations = new List<Queue<RobotOperation>>();
+            for (int i = 0; i < SimulationData.Robots.Count; i++)
+            {
+                if (token != null && ((CancellationToken)token)!.IsCancellationRequested)
+                {
+                    return;
+                }
+                _plannedOperations.Add(FindPath(SimulationData.Robots[i]));
+            }
+            InitializationFinished?.Invoke(this, new());
         }
         public IController NewInstance()
         {
@@ -66,7 +77,7 @@ namespace Model.Controllers
         }
 
         //TODO: Deadlock : refactor
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
             if (CurrentTurn == 500)
             {
@@ -75,6 +86,12 @@ namespace Model.Controllers
             var result = new List<RobotOperation>();
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
+                if (token != null && ((CancellationToken)token)!.IsCancellationRequested)
+                {
+                    Debug.WriteLine("CANCEL");
+                    Debug.WriteLine("CANCEL");
+                    return;
+                }
                 var robot = SimulationData.Robots[i];
                 // nincs utasítás a robot számára
                 if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
@@ -485,13 +502,13 @@ namespace Model.Controllers
             int dx = Math.Abs(a.Position.X - b.Position.X);
             int dy = Math.Abs(a.Position.Y - b.Position.Y);
             int turns = 0;
-            if (a.Position.X != b.Position.X && a.Position.Y != b.Position.Y)
+            if (a.Position.X != b.Position.X)
             {
-                turns = 2;
+                turns += 1;
             }
-            else if (a.Position.X != b.Position.X || a.Position.Y != b.Position.Y)
+            if (a.Position.Y != b.Position.Y)
             {
-                turns = 1;
+                turns += 1;
             }
             if (a.Position.DirectionInPosition(b.Position) != a.Direction)
             {
@@ -505,6 +522,9 @@ namespace Model.Controllers
             FinishedTask?.Invoke(this, new(result));
         }
         #endregion
+
+        public static int xxx = 0;
+
 
     }
     public class Reserver
@@ -522,4 +542,5 @@ namespace Model.Controllers
         }
 
     }
+
 }
