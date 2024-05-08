@@ -53,12 +53,10 @@ namespace View.Grid
 
             viewModel.RobotsMoved += new EventHandler<RobotsMovedEventArgs>(
                 (s, arg) => App.Current?.Dispatcher.Invoke((Action)delegate {
-                        Debug.WriteLine("here we goo");
                     if(s == null || _robots == null)
                         return;
                     if (arg.IsJumped)
                     {
-                        Debug.WriteLine("here we goo!!!");
                         FlushBuffer();
                     }
                     RefreshRobots(arg.TimeSpan);
@@ -96,11 +94,19 @@ namespace View.Grid
         {
             if (_isRefreshing)
             {
+                Debug.WriteLine("TOREFRESH");
                 _toRefresh = true;
                 return;
             }
 
             _isRefreshing = true;
+
+            Debug.WriteLine(timeSpan.Milliseconds);
+
+            if (timeSpan < TimeSpan.FromMilliseconds(100))
+            {
+                timeSpan = TimeSpan.Zero;
+            }
 
             _lastAnimationEnd = DateTime.Now + timeSpan;
 

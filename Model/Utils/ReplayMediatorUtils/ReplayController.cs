@@ -52,7 +52,6 @@ namespace Model.Utils.ReplayMediatorUtils
                     else
                         currentGoal = null;
 
-                    //Goal.OnGoalsChanged();
                     iter = ++taskEventIterator[i];
                 }
                 if (currentGoal != robot.CurrentGoal)
@@ -79,7 +78,7 @@ namespace Model.Utils.ReplayMediatorUtils
             FinishedTask?.Invoke(this, new(result));
         }
 
-        //Replay utils
+        #region Replay
 
         public void CalculateBackward()
         {
@@ -162,5 +161,7 @@ namespace Model.Utils.ReplayMediatorUtils
         {
             return loadLogDataAccess.GetStepCount();
         }
+
+        #endregion
     }
 }

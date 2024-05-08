@@ -82,16 +82,12 @@ namespace Model.Mediators
 
         public void StopSimulation()
         {
-            //TODO: which states can be escaped?
-
             Timer.Stop();
             _simulationState.State = SimulationStates.SimulationEnded;
 
             (_controller as IDisposableController)?.Dispose();
 
-            //TODO: escape running controller/executor
             _simulation.OnSimulationFinished();
-            //SetInitialState();
         }
 
         public void PauseSimulation()
