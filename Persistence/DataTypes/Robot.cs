@@ -11,9 +11,13 @@
         #region Static
 
         /// <summary>
-        /// Fired when a robots goal is changed
+        /// Occurs when a robot gets a new task assigned
         /// </summary>
         public static event EventHandler<Goal?>? TaskAssigned;
+
+        /// <summary>
+        /// Occurs when a robot finished it's task
+        /// </summary>
         public static event EventHandler<Goal?>? TaskFinished;
 
         private static void OnTaskAssigned(Robot robot, Goal? goal)
@@ -74,10 +78,5 @@
         public bool InspectedThisTurn { get; set; } = false;
         public bool BlockedThisTurn { get; set; } = false;
 
-        // For Debug
-        //public override string ToString()
-        //{
-        //    return Position.ToString();
-        //}
     }
 }

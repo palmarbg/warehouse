@@ -12,7 +12,6 @@ namespace Model.DataTypes
     public class RobotsMovedEventArgs : EventArgs
     {
         public required TimeSpan TimeSpan { get; init; }
-        public required RobotOperation[] RobotOperations { get; init; }
 
         public required int SimulationStep { get; init; }
 

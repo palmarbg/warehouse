@@ -24,7 +24,7 @@ namespace Model.Utils.ReplayMediatorUtils
             return robotOperations;
         }
 
-        public void SaveSimulation(string filepath)
+        public void SaveSimulationLog(string filepath)
         {
             throw new NotImplementedException();
         }

@@ -52,29 +52,14 @@ namespace Model
 
         #region Events
 
-        /// <summary>
-        /// Fire with <see cref="OnRobotsMoved"/>
-        /// </summary>
         public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
-        /// <summary>
-        /// Fire with <see cref="OnGoalChanged"/>
-        /// </summary>
         public event EventHandler<Goal?>? GoalChanged;
 
-        /// <summary>
-        /// Fire with <see cref="OnSimulationFinished"/>
-        /// </summary>
         public event EventHandler? SimulationFinished;
 
-        /// <summary>
-        /// Fire with <see cref="OnSimulationLoaded"/>
-        /// </summary>
         public event EventHandler? SimulationLoaded;
 
-        // <summary>
-        /// Fire with <see cref="OnSimulationStateChanged"/>
-        /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
         #endregion
@@ -205,6 +190,10 @@ namespace Model
 
         #region Dispose
 
+        /// <summary>
+        /// The cleanup after the simulation is not implemented, does not hold any special resource.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -214,9 +203,6 @@ namespace Model
 
         #region Mediator methods
 
-        /// <summary>
-        /// Call it when robots moved
-        /// </summary>
         public void OnRobotsMoved(RobotsMovedEventArgs args)
         {
             RobotsMoved?.Invoke(SimulationData.Robots, args);
@@ -227,17 +213,11 @@ namespace Model
             SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
-        /// <summary>
-        /// Call it when simulation ended
-        /// </summary>
         public void OnSimulationFinished()
         {
             SimulationFinished?.Invoke(null, new System.EventArgs());
         }
 
-        /// <summary>
-        /// Call it when new simulation data have been loaded
-        /// </summary>
         public void OnSimulationStateChanged(SimulationState simulationState)
         {
             SimulationStateChanged?.Invoke(

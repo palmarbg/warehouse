@@ -99,12 +99,11 @@ namespace Model.Mediators
             InitSimulationIfNeeded();
 
             //handle in service locator if you get null ref error
-            var robotOperations = (_controller as IReplayController)!.SetPosition(step);
+            (_controller as IReplayController)!.SetPosition(step);
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
                 SimulationStep = _simulationData.Step,
                 IsJumped = true,
-                RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,
             });
         }
@@ -117,12 +116,11 @@ namespace Model.Mediators
             InitSimulationIfNeeded();
 
             //handle in service locator if you get null ref error
-            var robotOperations = (_controller as IReplayController)!.JumpToEnd();
+            (_controller as IReplayController)!.JumpToEnd();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
                 SimulationStep = _simulationData.Step,
                 IsJumped = true,
-                RobotOperations = robotOperations,
                 TimeSpan = TimeSpan.Zero,
             });
         }

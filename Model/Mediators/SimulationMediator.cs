@@ -45,7 +45,7 @@ namespace Model.Mediators
 
         public void SaveSimulation(string filepath)
         {
-            _executor.SaveSimulation(filepath);
+            _executor.SaveSimulationLog(filepath);
         }
 
         #endregion

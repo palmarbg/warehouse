@@ -173,7 +173,6 @@ namespace Model.Mediators
             {
                 SimulationStep = _simulationData.Step,
                 IsJumped = false,
-                RobotOperations = e.robotOperations,
                 TimeSpan = TimeSpan.FromMilliseconds(_interval)
             });
         }

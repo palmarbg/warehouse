@@ -2,6 +2,9 @@
 
 namespace Persistence.Interfaces
 {
+    /// <summary>
+    /// File access for saving log
+    /// </summary>
     public interface ISaveLogDataAccess
     {
         /// <summary>
@@ -11,6 +14,9 @@ namespace Persistence.Interfaces
         /// <param name="log">content to save</param>
         void SaveLogData(string path, Log log);
 
+        /// <summary>
+        /// Returns a new instance of the same class.
+        /// </summary>
         ISaveLogDataAccess NewInstance();
     }
 }

@@ -3,35 +3,35 @@
     public interface IReplayMediator : IMediator
     {
         /// <summary>
-        /// Set the position to the next one.
+        /// Takes the simulation one step forward.
         /// </summary>
         public void StepForward();
 
         /// <summary>
-        /// Set the position to the previous one.
+        /// Takes the simulation one step backward.
         /// </summary>
         public void StepBackward();
 
         /// <summary>
-        /// Set the replay speed relative to <c>1move/sec</c>.
+        /// Sets the replay speed relative to <c>1move/sec</c>.
         /// </summary>
         public void SetSpeed(float speed);
 
         /// <summary>
-        /// Set the position to the n-th step.
+        /// Sets the position to the n-th step.
         /// </summary>
-        /// <param name="step">Index of the step</param>
+        /// <param name="step">Index of the step.</param>
         public void JumpToStep(int step);
 
         /// <summary>
-        /// Set the position to the last step.
+        /// Sets the position to the last step.
         /// </summary>
         public void JumpToEnd();
 
         /// <summary>
-        /// Load log file to replay.
+        /// Loads the log file to replay.
         /// </summary>
-        /// <param name="fileName">Absolute path for the log file</param>
+        /// <param name="fileName">Absolute path of the log file.</param>
         void LoadLog(string fileName);
 
     }

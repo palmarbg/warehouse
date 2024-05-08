@@ -3,12 +3,12 @@ using Persistence.DataTypes;
 
 namespace Model.Distributors
 {
-    public class DemoDistributor : ITaskDistributor
+    public class RoundRobinDistributor : ITaskDistributor
     {
         private SimulationData simulationData;
         private int iterator = 0;
 
-        public DemoDistributor(SimulationData simulationData)
+        public RoundRobinDistributor(SimulationData simulationData)
         {
             this.simulationData = simulationData;
         }
@@ -40,7 +40,7 @@ namespace Model.Distributors
 
         public ITaskDistributor NewInstance(SimulationData simulationData)
         {
-            return new DemoDistributor(simulationData);
+            return new RoundRobinDistributor(simulationData);
         }
     }
 }

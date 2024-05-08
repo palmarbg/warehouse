@@ -27,7 +27,7 @@ namespace Model.Utils.ReplayMediatorUtils
         public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
             if (simulationData.Step >= loadLogDataAccess.GetStepCount())
-                throw new StepOutOfRangeException();
+                throw new SimulationStepOutOfRangeException();
 
             RobotOperation[] robotOperations;
             robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
@@ -107,11 +107,11 @@ namespace Model.Utils.ReplayMediatorUtils
             OnTaskFinished(robotOperations);
         }
 
-        public RobotOperation[] SetPosition(int step)
+        public void SetPosition(int step)
         {
             //doesn't handle backward
             if (step < simulationData.Step)
-                throw new StepOutOfRangeException();
+                throw new SimulationStepOutOfRangeException();
 
             step = Math.Min(step, loadLogDataAccess.GetStepCount());
 
@@ -151,13 +151,11 @@ namespace Model.Utils.ReplayMediatorUtils
                 }
                 robot.CurrentGoal = currentGoal;
             }
-
-            return robotOperations;
         }
 
-        public RobotOperation[] JumpToEnd()
+        public void JumpToEnd()
         {
-            return SetPosition(int.MaxValue);
+            SetPosition(int.MaxValue);
         }
 
         public int GetSimulationLength()

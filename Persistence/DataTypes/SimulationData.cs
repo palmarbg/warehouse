@@ -1,5 +1,8 @@
 ﻿namespace Persistence.DataTypes
 {
+    /// <summary>
+    /// Represents the current state of the warehouse, including robots and goals.
+    /// </summary>
     public class SimulationData
     {
         public required ITile[,] Map;

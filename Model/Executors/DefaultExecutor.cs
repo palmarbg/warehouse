@@ -226,7 +226,7 @@ namespace Model.Executors
             OnTimeout();
         }
 
-        public void SaveSimulation(string filepath)
+        public void SaveSimulationLog(string filepath)
         {
             logger.SaveLog(filepath);
         }

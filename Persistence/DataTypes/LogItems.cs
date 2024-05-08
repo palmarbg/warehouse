@@ -1,18 +1,11 @@
 ﻿namespace Persistence.DataTypes
 {
-    public struct OperationError
+    public struct OperationError(int robotId1, int robotId2, int round, OperationErrorType errorType)
     {
-        public OperationError(int robotId1, int robotId2, int round, OperationErrorType errorType)
-        {
-            this.robotId1 = robotId1;
-            this.robotId2 = robotId2;
-            this.round = round;
-            this.errorType = errorType;
-        }
-        public int robotId1;
-        public int robotId2;
-        public int round;
-        public OperationErrorType errorType;
+        public int robotId1 = robotId1;
+        public int robotId2 = robotId2;
+        public int round = round;
+        public OperationErrorType errorType = errorType;
     }
 
     public enum OperationErrorType
@@ -32,16 +25,10 @@
         public Direction Rotation { get; set; }
     }
 
-    public struct TaskEvent
+    public struct TaskEvent(int taskId, int step, TaskEventType eventType)
     {
-        public TaskEvent(int taskId, int step, TaskEventType eventType)
-        {
-            this.taskId = taskId;
-            this.step = step;
-            this.eventType = eventType;
-        }
-        public int taskId;
-        public int step;
-        public TaskEventType eventType;
+        public int taskId = taskId;
+        public int step = step;
+        public TaskEventType eventType = eventType;
     }
 }

@@ -8,7 +8,7 @@ namespace Model.Interfaces
         #region Properties
 
         /// <summary>
-        /// The current state of the warehouse, robots and goals
+        /// Represents the current state of the warehouse, including robots and goals.
         /// </summary>
         public SimulationData SimulationData { get; }
 
@@ -18,7 +18,7 @@ namespace Model.Interfaces
         public SimulationState SimulationState { get; }
 
         /// <summary>
-        /// The timespan in milliseconds, the Controller has to calculate moves.
+        /// The time span in milliseconds, the Controller has to calculate moves.
         /// </summary>
         public int Interval { get; }
 
@@ -38,18 +38,23 @@ namespace Model.Interfaces
         void StartSimulation();
 
         /// <summary>
-        /// Stops the simulation, and marks it as ended.
+        /// Stops the simulation immediately, and marks it as ended.
         /// </summary>
         void StopSimulation();
 
         /// <summary>
-        /// Suspends the simulation, and marks it as paused.
+        /// Suspends the simulation.
         /// </summary>
+        /// <remarks>
+        /// If the <see cref="SimulationState"/> is <see cref="SimulationStates.ControllerWorking"/> or
+        /// <see cref="SimulationStates.ExecutingMoves"/>, then the simulation will be paused,
+        /// when the <see cref="IExecutor"/> finished executing.
+        /// </remarks>
         void PauseSimulation();
 
         /// <summary>
-        /// Stops the simulation.
-        /// Reloads the map, resets the Controller and Executor.
+        /// Stops the simulation immediately.
+        /// Reloads the map, creates new <see cref="IController"/> and <see cref="IExecutor"/>.
         /// </summary>
         void SetInitialPosition();
 

@@ -5,36 +5,41 @@ namespace Model.Interfaces
 {
     public interface ISimulation : IReplayMediator, ISimulationMediator
     {
+        /// <summary>
+        /// Indicates whether the simulation is simulated or replayed.
+        /// </summary>
         public bool IsInSimulationMode { get; }
 
         #region Events
 
         /// <summary>
-        /// When robots moved
+        /// Occurs when robots have moved.
         /// </summary>
         public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
-        /// When goals have been added or completed
+        /// Occurs when a goal have been assigned or completed.
         /// </summary>
         public event EventHandler<Goal?>? GoalChanged;
 
         /// <summary>
-        /// When simulation stops
+        /// Occurs when the simulation ended.
         /// </summary>
         public event EventHandler? SimulationFinished;
 
         /// <summary>
-        /// When map have been loaded
+        /// Occurs when <see cref="SimulationData"/> has been loaded for the simulation.
         /// </summary>
         public event EventHandler? SimulationLoaded;
 
-
+        /// <summary>
+        /// Occurs when <see cref="SimulationState"/> has changed.
+        /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
         #endregion
 
-        #region Methods
+        #region Event Methods
 
         void OnSimulationStateChanged(SimulationState simulationState);
 
@@ -44,13 +49,12 @@ namespace Model.Interfaces
 
         void OnSimulationFinished();
 
-        //void LoadConfig(string fileName);
-
-        //void LoadLog(string fileName);
-
-        void StartNewSimulation();
-
         #endregion
+
+        /// <summary>
+        /// Starts a new simulation in simulation mode with the current config file.
+        /// </summary>
+        void StartNewSimulation();
 
     }
 }

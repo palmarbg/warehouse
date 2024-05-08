@@ -3,6 +3,9 @@ using Persistence.Interfaces;
 
 namespace Model.Interfaces
 {
+    /// <summary>
+    /// Contains the current dependencies of the model.
+    /// </summary>
     public interface IServiceLocator
     {
         IDataAccess GetConfigDataAccess(string path);
@@ -12,7 +15,6 @@ namespace Model.Interfaces
         IController GetReplayController(ILoadLogDataAccess loadLogDataAccess);
         IExecutor GetReplayExecutor(SimulationData simulationData);
         IReplayMediator GetReplayMediator(Simulation simulation, string mapFileName, string logFileName);
-        ITaskDistributor GetReplayTaskDistributor(SimulationData simulationData);
         ISimulationMediator GetSimulationMediator(Simulation simulation, string mapFileName);
         ITaskDistributor GetTaskDistributor(SimulationData simulationData);
     }
