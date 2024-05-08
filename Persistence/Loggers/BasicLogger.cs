@@ -6,7 +6,6 @@ namespace Persistence.Loggers
 {
     public class BasicLogger : ILogger
     {
-        private bool flag = false;
         private ISaveLogDataAccess _saveLogDataAccess;
         private Log log = new Log();
         private SimulationData simulationData;
@@ -98,18 +97,7 @@ namespace Persistence.Loggers
         }
         public void LogEvent(TaskEvent taskEvent, int robotId)
         {
-            if (flag)
-                return;
-            try
-            {
             log.Events[robotId].Add(taskEvent);
-
-            }
-            catch (Exception)
-            {
-
-                
-            }
         }
 
         public void LogStep(
@@ -134,7 +122,6 @@ namespace Persistence.Loggers
 
         public ILogger NewInstance(SimulationData simulationData)
         {
-            flag = true;
             return new BasicLogger(simulationData, _saveLogDataAccess.NewInstance());
         }
     }

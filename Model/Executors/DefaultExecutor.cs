@@ -2,6 +2,7 @@ using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Model.Executors
 {
@@ -11,6 +12,8 @@ namespace Model.Executors
         private readonly ILogger logger;
         private List<OperationError> errors = null!;
 
+        private EventHandler<Goal> _robotTaskAssignedDelegate;
+
         public DefaultExecutor(SimulationData simulationData, ILogger logger)
         {
             this.simulationData = simulationData;
@@ -18,8 +21,9 @@ namespace Model.Executors
 
             errors = new List<OperationError>();
 
+            _robotTaskAssignedDelegate = (robot, goal) => OnTaskAssigned(goal.Id, ((Robot)robot!).Id);
 
-            Robot.TaskAssigned += new EventHandler<Goal>((robot, goal) => OnTaskAssigned(goal.Id, ((Robot)robot!).Id));
+            Robot.TaskAssigned += _robotTaskAssignedDelegate;
         }
 
         /// <summary>
@@ -28,7 +32,6 @@ namespace Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
-
             errors = new List<OperationError>();
             // Reset MovedThisTurn
             for (int i = 0; i < simulationData.Robots.Count; i++)
@@ -218,21 +221,24 @@ namespace Model.Executors
             robot.Position = newPosition;
         }
 
-        public IExecutor NewInstance(SimulationData simulationData)
-        {
-            return new DefaultExecutor(simulationData, logger.NewInstance(simulationData));
-        }
-
         public void Timeout()
         {
             OnTimeout();
         }
 
-
-
         public void SaveSimulation(string filepath)
         {
             logger.SaveLog(filepath);
+        }
+
+        public IExecutor NewInstance(SimulationData simulationData)
+        {
+            return new DefaultExecutor(simulationData, logger.NewInstance(simulationData));
+        }
+
+        public void Dispose()
+        {
+            Robot.TaskAssigned -= _robotTaskAssignedDelegate;
         }
 
         #region Private methods

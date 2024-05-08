@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Controllers
+namespace Model.Utils
 {
     public class DisposableController : IDisposableController
     {
@@ -57,8 +57,8 @@ namespace Model.Controllers
             var canceltoken = cancellationTokenSource.Token;
 
             _currentTask = Task.Run(() => _controller.CalculateOperations(timeSpan));
-            
-            if(_currentTask != null)
+
+            if (_currentTask != null)
             {
                 await _currentTask;
             }
@@ -78,7 +78,7 @@ namespace Model.Controllers
             cancellationTokenSource = new CancellationTokenSource();
             var canceltoken = cancellationTokenSource.Token;
 
-            _currentTask = Task.Run(() => _controller.InitializeController(simulationData, timeSpan, distributor, canceltoken) );
+            _currentTask = Task.Run(() => _controller.InitializeController(simulationData, timeSpan, distributor, canceltoken));
 
             if (_currentTask != null)
             {

@@ -5,7 +5,7 @@ namespace Model.Interfaces
     /// <summary>
     /// Constructor will get SimulationData reference
     /// </summary>
-    public interface IExecutor
+    public interface IExecutor : IDisposable
     {
         /// <summary>
         /// All robot will wait

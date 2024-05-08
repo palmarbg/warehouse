@@ -12,6 +12,11 @@ namespace Model.Executors
             this.simulationData = simulationData;
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         /// <summary>
         /// Doesn't handle deadlock, illegal moves.
         /// </summary>

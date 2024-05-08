@@ -5,7 +5,7 @@ using Persistence.Extensions;
 using Persistence.Interfaces;
 using System.Diagnostics;
 
-namespace Model.Mediators.ReplayMediatorUtils
+namespace Model.Utils.ReplayMediatorUtils
 {
     public class ReplayController : IReplayController
     {
@@ -35,7 +35,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             for (int i = 0; i < taskEventIterator.Length; i++)
             {
                 var robot = simulationData.Robots[i];
-                taskEventIterator[i] = (int)Math.Max(taskEventIterator[i], 0);
+                taskEventIterator[i] = Math.Max(taskEventIterator[i], 0);
                 var iter = taskEventIterator[i];
 
                 var currentGoal = robot.CurrentGoal;
@@ -134,7 +134,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             {
                 var robot = simulationData.Robots[i];
 
-                taskEventIterator[i] = (int)Math.Max(taskEventIterator[i], 0);
+                taskEventIterator[i] = Math.Max(taskEventIterator[i], 0);
                 var iter = taskEventIterator[i];
 
                 Goal? currentGoal = robot.CurrentGoal;
@@ -157,7 +157,7 @@ namespace Model.Mediators.ReplayMediatorUtils
 
         public RobotOperation[] JumpToEnd()
         {
-            return SetPosition(Int32.MaxValue);
+            return SetPosition(int.MaxValue);
         }
 
         public int GetSimulationLength()

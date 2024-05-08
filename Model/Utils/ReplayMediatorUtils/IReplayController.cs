@@ -1,7 +1,7 @@
 ﻿using Model.Interfaces;
 using Persistence.DataTypes;
 
-namespace Model.Mediators.ReplayMediatorUtils
+namespace Model.Utils.ReplayMediatorUtils
 {
     public interface IReplayController : IController
     {

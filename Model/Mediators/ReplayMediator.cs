@@ -1,12 +1,12 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
-using Model.Mediators.ReplayMediatorUtils;
+using Model.Utils.ReplayMediatorUtils;
 using Persistence.Interfaces;
 using System.Diagnostics;
 
 namespace Model.Mediators
 {
-    public class ReplayMediator : AbstractMediator, IReplayMediator
+    public class ReplayMediator : MediatorBase, IReplayMediator
     {
         #region Private Fields
 

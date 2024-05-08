@@ -109,6 +109,7 @@ namespace Model
                 _mediator.SetInitialPosition();
                 return;
             }
+            _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, _mediator.MapFileName);
         }
 
@@ -116,7 +117,7 @@ namespace Model
         {
             if (_mediator is not IReplayMediator)
             {
-                _mediator.SetInitialPosition(); //heggesztés
+                _mediator.Dispose();
                 _mediator = _serviceLocator.GetReplayMediator(this, _mediator.MapFileName, fileName);
                 return;
             }
@@ -130,8 +131,7 @@ namespace Model
                 simulationMediator.LoadConfig(fileName);
                 return;
             }
-
-            _mediator.SetInitialPosition(); // heggesztés
+            _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, fileName);
         }
 
@@ -199,6 +199,15 @@ namespace Model
         public void SetOptions(int interval, int lastStep)
         {
             SimulationMediator.SetOptions(interval, lastStep);
+        }
+
+        #endregion
+
+        #region Dispose
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

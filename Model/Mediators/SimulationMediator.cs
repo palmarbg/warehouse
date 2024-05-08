@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace Model.Mediators
 {
-    public class SimulationMediator : AbstractMediator, ISimulationMediator
+    public class SimulationMediator : MediatorBase, ISimulationMediator
     {
         #region Constructor
 

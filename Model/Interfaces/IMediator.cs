@@ -3,7 +3,7 @@ using Persistence.DataTypes;
 
 namespace Model.Interfaces
 {
-    public interface IMediator
+    public interface IMediator : IDisposable
     {
         #region Properties
 
