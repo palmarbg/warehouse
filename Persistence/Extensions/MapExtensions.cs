@@ -13,6 +13,15 @@ namespace Persistence.Extensions
             matrix[position.X, position.Y] = newItem;
         }
 
+        public static bool IsOnMap<T>(this T[,] matrix, Position position)
+        {
+            return
+                position.X >= 0 &&
+                position.Y >= 0 &&
+                position.X < matrix.GetWidth() &&
+                position.Y < matrix.GetHeight();
+        }
+
         public static int GetWidth<T>(this T[,] matrix)
         {
             return matrix.GetLength(0);

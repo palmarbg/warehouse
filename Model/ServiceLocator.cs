@@ -57,7 +57,7 @@ namespace Model
 
         public IExecutor GetExecutor(SimulationData simulationData)
         {
-            return new DefaultExecutor(simulationData, GetLogger(simulationData));
+            return new StrictExecutor(simulationData, GetLogger(simulationData));
         }
 
         #endregion

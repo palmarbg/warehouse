@@ -6,21 +6,13 @@ using System.Diagnostics;
 
 namespace Model.Executors
 {
-    public class DefaultExecutor : IExecutor
+    public class DefaultExecutor : ExecutorBase, IExecutor
     {
-        private readonly SimulationData simulationData;
-        private readonly ILogger logger;
-        private List<OperationError> errors = null!;
 
         private EventHandler<Goal> _robotTaskAssignedDelegate;
 
-        public DefaultExecutor(SimulationData simulationData, ILogger logger)
+        public DefaultExecutor(SimulationData simulationData, ILogger logger) : base(simulationData, logger)
         {
-            this.simulationData = simulationData;
-            this.logger = logger;
-
-            errors = new List<OperationError>();
-
             _robotTaskAssignedDelegate = (robot, goal) => OnTaskAssigned(goal.Id, ((Robot)robot!).Id);
 
             Robot.TaskAssigned += _robotTaskAssignedDelegate;
@@ -32,22 +24,23 @@ namespace Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
-            errors = new List<OperationError>();
+            throw new NotImplementedException();
+            _errors = new List<OperationError>();
             // Reset MovedThisTurn
-            for (int i = 0; i < simulationData.Robots.Count; i++)
+            for (int i = 0; i < _simulationData.Robots.Count; i++)
             {
-                simulationData.Robots[i].MovedThisTurn = false;
-                simulationData.Robots[i].InspectedThisTurn = false;
-                simulationData.Robots[i].BlockedThisTurn = false;
+                _simulationData.Robots[i].MovedThisTurn = false;
+                _simulationData.Robots[i].InspectedThisTurn = false;
+                _simulationData.Robots[i].BlockedThisTurn = false;
 
             }
 
             RobotOperation[] executedOperations = new RobotOperation[robotOperations.Length];
 
             //Execute operations
-            for (int i = 0; i < simulationData.Robots.Count; i++)
+            for (int i = 0; i < _simulationData.Robots.Count; i++)
             {
-                Robot robot = simulationData.Robots[i];
+                Robot robot = _simulationData.Robots[i];
                 MoveRobot(robot, robot);
                 if (robot.BlockedThisTurn)
                 {
@@ -59,7 +52,7 @@ namespace Model.Executors
                 }
             }
 
-            OnStepFinished(robotOperations, executedOperations, errors.ToArray(), timeSpan);
+            OnStepFinished(robotOperations, executedOperations, _errors.ToArray(), timeSpan);
             return robotOperations;
         }
 
@@ -80,7 +73,7 @@ namespace Model.Executors
             {
                 case RobotOperation.Forward:
                     var newPos = robot.Position.PositionInDirection(robot.Rotation);
-                    if (newPos.Y >= simulationData.Map.GetLength(1) || newPos.X >= simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X < 0)
+                    if (newPos.Y >= _simulationData.Map.GetLength(1) || newPos.X >= _simulationData.Map.GetLength(0) || newPos.Y < 0 || newPos.X < 0)
                     {
                         robot.MovedThisTurn = true;
                         robot.BlockedThisTurn = true;
@@ -88,7 +81,7 @@ namespace Model.Executors
                         return false;
                     }
                     // robot is blocked by Block
-                    if (simulationData.Map.GetAtPosition(newPos) is Block)
+                    if (_simulationData.Map.GetAtPosition(newPos) is Block)
                     {
                         robot.MovedThisTurn = true;
                         robot.BlockedThisTurn = true;
@@ -96,7 +89,7 @@ namespace Model.Executors
                         return false;
                     }
                     //newPos is blocked by another robot
-                    else if (simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
+                    else if (_simulationData.Map[newPos.X, newPos.Y] is Robot blockingRobot)
                     {
                         if (blockingRobot.MovedThisTurn)
                         {
@@ -166,7 +159,7 @@ namespace Model.Executors
 
                     }
                     // newPos is empty or another robots goal
-                    else if (simulationData.Map[newPos.X, newPos.Y].IsPassable)
+                    else if (_simulationData.Map[newPos.X, newPos.Y].IsPassable)
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
                         robot.MovedThisTurn = true;
@@ -214,7 +207,7 @@ namespace Model.Executors
         /// <param name="operaition"></param>
         private void MoveRobotToNewPosition(Robot robot, Position newPosition, RobotOperation operaition)
         {
-            var map = simulationData.Map;
+            var map = _simulationData.Map;
             var temp = map.GetAtPosition(newPosition);
             map.SetAtPosition(newPosition, robot);
             map.SetAtPosition(robot.Position, temp);
@@ -228,12 +221,12 @@ namespace Model.Executors
 
         public void SaveSimulationLog(string filepath)
         {
-            logger.SaveLog(filepath);
+            _logger.SaveLog(filepath);
         }
 
         public IExecutor NewInstance(SimulationData simulationData)
         {
-            return new DefaultExecutor(simulationData, logger.NewInstance(simulationData));
+            return new DefaultExecutor(simulationData, _logger.NewInstance(simulationData));
         }
 
         public void Dispose()
@@ -241,49 +234,5 @@ namespace Model.Executors
             Robot.TaskAssigned -= _robotTaskAssignedDelegate;
         }
 
-        #region Private methods
-
-        private void OnTaskFinished(int taskId, int robotId)
-        {
-            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.finished), robotId);
-        }
-
-        private void OnWallHit(int robotId)
-        {
-            errors.Add(new(robotId, -1, simulationData.Step, OperationErrorType.wallhit));
-        }
-
-        private void OnTimeout()
-        {
-            logger.LogTimeout();
-            errors.Add(new(-1, -1, simulationData.Step, OperationErrorType.timeout));
-        }
-
-        private void OnRobotCrash(int robotId1, int robotId2)
-        {
-            errors.Add(new(robotId1, robotId2, simulationData.Step, OperationErrorType.collision));
-        }
-
-        private void OnStepFinished(
-            RobotOperation[] controllerOperations,
-            RobotOperation[] robotOperations,
-            OperationError[] errors,
-            float timeElapsed
-        )
-        {
-            logger.LogStep(
-                controllerOperations,
-                robotOperations,
-                errors,
-                timeElapsed
-            );
-        }
-
-        private void OnTaskAssigned(int taskId, int robotId)
-        {
-            logger.LogEvent(new(taskId, simulationData.Step, TaskEventType.assigned), robotId);
-        }
-
-        #endregion
     }
 }
