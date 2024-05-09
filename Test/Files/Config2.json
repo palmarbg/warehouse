@@ -1,0 +1,8 @@
+{
+ "mapFile": "maps/5x5_obstacles.map",
+ "agentFile": "agents/zero.agents",
+ "teamSize": 0,
+ "taskFile": "tasks/zero.tasks",
+ "numTasksReveal": 1,
+ "taskAssignmentStrategy": "roundrobin"
+}

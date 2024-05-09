@@ -27,9 +27,9 @@
     <Folder Include="MockClasses\Distributors\" />
     <Folder Include="MockClasses\Mediators\" />
     <Folder Include="MockClasses\Simulations\" />
-    <Folder Include="ModelTests\ControllerTests\" />
-    <Folder Include="ModelTests\ExecutorTests\" />
     <Folder Include="ModelTests\MediatorTests\" />
+    <Folder Include="ModelTests\MediatorTests\" />
+    <Folder Include="ModelTests\SimulationTests\" />
     <Folder Include="ModelTests\SimulationTests\" />
   </ItemGroup>
 
