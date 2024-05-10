@@ -30,7 +30,7 @@ namespace Test.ModelTests.DistributorTests
                 Robots = null!,
                 DistributorName = "roundrobin"
             };
-            var distributor = new DemoDistributor(simulationData);
+            var distributor = new RoundRobinDistributor(simulationData);
             var robot = new Robot { Id = 1, Position = new Position { X = 1, Y = 1 }, Rotation = Direction.Up, NextOperation = RobotOperation.Forward, CurrentGoal = null };
             Assert.IsFalse(distributor.AllTasksAssigned);
             Assert.IsNull(robot.CurrentGoal);
@@ -58,7 +58,7 @@ namespace Test.ModelTests.DistributorTests
                 Robots = null!,
                 DistributorName = "roundrobin"
             };
-            var distributor = new DemoDistributor(simulationData);
+            var distributor = new RoundRobinDistributor(simulationData);
             var robot = new Robot { Id = 1, Position = new Position { X = 1, Y = 1 }, Rotation = Direction.Up, NextOperation = RobotOperation.Forward, CurrentGoal = null };
             Assert.IsNull(robot.CurrentGoal);
             distributor.AssignNewTask(robot);
@@ -78,7 +78,7 @@ namespace Test.ModelTests.DistributorTests
             };
             var robot = new Robot { Id = 1, Position = new Position { X = 1, Y = 1 }, Rotation = Direction.Up, NextOperation = RobotOperation.Forward, CurrentGoal = null };
             Assert.IsNull(robot.CurrentGoal);
-            var distributor = new DemoDistributor(simulationData);
+            var distributor = new RoundRobinDistributor(simulationData);
             distributor.AssignNewTask(robot);
             Assert.IsNull(robot.CurrentGoal);
             Assert.IsTrue(distributor.AllTasksAssigned);
