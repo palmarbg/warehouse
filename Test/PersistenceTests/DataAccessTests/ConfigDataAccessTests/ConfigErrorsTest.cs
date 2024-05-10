@@ -17,7 +17,6 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
         private DirectoryDataAccess _dirAccess = null!;
         private ConfigDataAccess _configDataAccess = null!;
         private string _files = null!;
-        SimulationData data = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -34,6 +33,9 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
             Assert.ThrowsException<InvalidMapDetailsException>(() => _configDataAccess.GetInitialSimulationData());
 
             _configDataAccess = new ConfigDataAccess(_files + "Config4.json", _dirAccess);
+            Assert.ThrowsException<InvalidMapDetailsException>(() => _configDataAccess.GetInitialSimulationData());
+
+            _configDataAccess = new ConfigDataAccess(_files + "Config5.json", _dirAccess);
             Assert.ThrowsException<InvalidMapDetailsException>(() => _configDataAccess.GetInitialSimulationData());
 
             _configDataAccess = new ConfigDataAccess(_files + "Config6.json", _dirAccess);
