@@ -1,6 +1,7 @@
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -46,10 +47,15 @@ namespace Persistence.DataAccesses
             string filePath = new Uri(baseUri, path).AbsolutePath;
 
             string[] mapData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
-            // map[0]: type octile nem tudjuk mit jelent, nem használjuk
-            int height = int.Parse(mapData[1].Split(' ')[1]);
-            int width = int.Parse(mapData[2].Split(' ')[1]);
-            ITile[,] map = new ITile[width, height];
+
+                int height = int.Parse(mapData[1].Split(' ')[1]);
+                int width = int.Parse(mapData[2].Split(' ')[1]);
+                if (width <= 0 || height <= 0)
+                    if (width <= 0 || height <= 0)
+                    {
+                        throw new InvalidMapDetailsException("Height or width is less than 1");
+                    }
+                ITile[,] map = new ITile[width, height];
             for (int y = 0; y < height; y++)
             {
                 string row = mapData[y + 4];
@@ -65,7 +71,10 @@ namespace Persistence.DataAccesses
                     }
                 }
             }
-            simulationData.Map = map;
+                simulationData.Map = map;
+            
+
+
         }
         private void SetRobots(string path)
         {
@@ -73,13 +82,20 @@ namespace Persistence.DataAccesses
 
             string[] robotData = _directoryDataAccess.LoadFromFile(filePath).Split('\n');
             int robotCount = int.Parse(robotData[0]);
+            if (robotData.Length - 1 < robotCount)
+            {
+                throw new InvalidArgumentException("Too few robots in file");
+            }
             for (int i = 1; i <= robotCount; i++)
             {
                 int intPos = int.Parse(robotData[i]);
 
-
                 int x = intPos % simulationData.Map.GetLength(0);
                 int y = intPos / simulationData.Map.GetLength(0);
+                if (simulationData.Map[x, y] is not EmptyTile)
+                {
+                    throw new InvalidRobotPositionException("Trying to place a robot to a non-empty tile while loading config");
+                }
 
                 Robot r = new Robot
                 {
@@ -111,7 +127,6 @@ namespace Persistence.DataAccesses
                 simulationData.Goals.Add(g);
             }
         }
-
         private void Load()
         {
             baseUri = new(path);

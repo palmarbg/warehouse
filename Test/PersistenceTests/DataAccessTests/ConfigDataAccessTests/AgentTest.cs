@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
 {
     [TestClass]
-    public class SimpleTest
+    public class AgentTest
     {
         private DirectoryDataAccess _dirAccess = null!;
         private ConfigDataAccess _configDataAccess = null!;
@@ -26,21 +26,30 @@ namespace Test.PersistenceTests.DataAccessTests.ConfigDataAccessTests
             string path2 = System.IO.Directory.GetCurrentDirectory().Split("\\bin")[0] + "/Files/";
             _files = path1.Length < path2.Length ? path1 : path2;
         }
-        [TestMethod]
-        public void SimpleTests()
+        public void SetRobotsTests()
         {
-            _configDataAccess = new ConfigDataAccess(_files + "Config1.json", _dirAccess);
+            _configDataAccess = new ConfigDataAccess(_files + "Config11.json", _dirAccess);
             data = _configDataAccess.GetInitialSimulationData();
-            Assert.IsNotNull(data);
-            Assert.AreEqual(data.Map.GetLength(0), 10);
-            Assert.AreEqual(data.Map.GetLength(1), 10);
-            Assert.AreEqual(data.Robots.Count, 0);
-            Assert.AreEqual(data.DistributorName, "roundrobin");
-            Assert.AreEqual(data.RevealedTaskCount, 1);
-            Assert.AreEqual(data.Goals.Count, 0);
 
-            _configDataAccess = new ConfigDataAccess(_files + "Config1.json", _dirAccess);
-            data = _configDataAccess.GetInitialSimulationData();
+            Assert.IsNotNull(data);
+            Assert.AreEqual(data.Robots.Count, 20);
+
+            Assert.IsTrue(data.Map[0, 0] is Robot);
+            Assert.IsTrue(data.Map[9, 9] is Robot);
+            Assert.IsTrue(data.Map[4, 8] is Robot);
+            Assert.IsTrue(data.Map[5, 1] is Robot);
+            Assert.IsTrue(data.Map[0, 1] is Robot);
+            Assert.IsTrue(data.Map[4, 6] is Robot);
+            Assert.IsTrue(data.Map[4, 7] is Robot);
+            Assert.IsTrue(data.Map[9, 5] is Robot);
+            Assert.IsTrue(data.Map[0, 4] is Robot);
+            Assert.IsTrue(data.Map[5, 0] is Robot);
+
+            Assert.IsTrue(data.Map[7, 4] is not Robot);
+            Assert.IsTrue(data.Map[0, 5] is not Robot);
+            Assert.IsTrue(data.Map[3, 1] is not Robot);
+            Assert.IsTrue(data.Map[9, 8] is not Robot);
+            Assert.IsTrue(data.Map[5, 9] is not Robot);
         }
     }
 }
