@@ -8,7 +8,7 @@ namespace Persistence.Loggers
     {
         private bool flag = false;
         private ISaveLogDataAccess _saveLogDataAccess;
-        private Log log = new Log();
+        protected Log log = new Log();
         private SimulationData simulationData;
         public BasicLogger(SimulationData simulationData, ISaveLogDataAccess saveLogDataAccess)
         {
@@ -59,6 +59,11 @@ namespace Persistence.Loggers
         }
         public void SaveLog(string path)
         {
+            FinalizeLog();
+            _saveLogDataAccess.SaveLogData(path, log);
+        }
+        public void FinalizeLog()
+        {
             log.Tasks = simulationData.Goals;
             log.AllValid = !log.Errors.All(e => e.errorType != OperationErrorType.timeout) ? "Yes" : "No";
             log.NumTaskFinished = 0;
@@ -72,7 +77,10 @@ namespace Persistence.Loggers
             }
             log.MakeSpan = log.ActualPaths[0].Count;
             log.SumOfCost = log.ActualPaths.Count * log.ActualPaths[0].Count;
-            _saveLogDataAccess.SaveLogData(path, log);
+        }
+        public Log GetLog()
+        {
+            return log;
         }
         public void LogTimeout()
         {
