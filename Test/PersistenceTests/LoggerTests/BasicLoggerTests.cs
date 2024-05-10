@@ -29,11 +29,6 @@ namespace Test.PersistenceTests.LoggerTests
             logger = new BasicLogger(data, _saveLogDataAccess);
         }
         [TestMethod]
-        public void LogStepTests()
-        {
-
-        }
-        [TestMethod]
         public void LogTimeOutTests()
         {
             Log l = logger.GetLog();
