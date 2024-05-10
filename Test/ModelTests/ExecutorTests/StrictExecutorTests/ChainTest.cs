@@ -33,6 +33,12 @@ namespace Test.ModelTests.ExecutorTests.StrictExecutorTests
             _executor = new StrictExecutor(_simulationData, _logger);
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            _executor.Dispose();
+        }
+
         [TestMethod]
         public void TestOneStep()
         {
