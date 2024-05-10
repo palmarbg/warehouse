@@ -79,28 +79,39 @@ namespace Test.ModelTests.ExecutorTests
         [TestMethod]
         public void ExecuteOperationsCollisionDetectTests()
         {
+            var g1 = new Goal() { Id = 1, Position = new Position { X = 0, Y = 5 } };
+            var g2 = new Goal() { Id = 2, Position = new Position { X = 5, Y = 0 } };
 
             // Create two robots, where the second robot blocks the movement of the first
-            var robot1 = new Robot { Id = 1, Position = new Position { X = 0, Y = 0 }, Rotation = Direction.Down, NextOperation = RobotOperation.Forward };
-            var robot2 = new Robot { Id = 2, Position = new Position { X = 0, Y = 1 }, Rotation = Direction.Up, NextOperation = RobotOperation.Forward };
-
+            var robot1 = new Robot { Id = 1, Position = new Position { X = 0, Y = 0 }, Rotation = Direction.Down, NextOperation = RobotOperation.Forward,CurrentGoal = g1 };
+            var robot2 = new Robot { Id = 2, Position = new Position { X = 0, Y = 1 }, Rotation = Direction.Up, NextOperation = RobotOperation.Forward,CurrentGoal = g2 };
+            var robot3 = new Robot { Id = 3, Position = new Position { X = 3, Y = 3 }, Rotation = Direction.Up, NextOperation = RobotOperation.Wait };
 
             _simulationData.Robots[0] = robot1;
             _simulationData.Robots[1] = robot2;
-            _simulationData.Robots[2] = robot2;
+            _simulationData.Robots[2] = robot3;
             _simulationData.Map[0, 0] = robot1;
             _simulationData.Map[0, 1] = robot2;
+            _simulationData.Map[3, 3] = robot3;
+
             // Arrange
             var executor = new DefaultExecutor(_simulationData, _logger);
             
             // Both robots have forward operation planned
             var robotOperations = new RobotOperation[] { RobotOperation.Forward, RobotOperation.Forward, RobotOperation.Forward };
             executor.ExecuteOperations(robotOperations,1.0f);
-            // Assert
-            Assert.AreEqual(true, robot1.MovedThisTurn);
-            Assert.AreEqual(true, robot2.MovedThisTurn);
-            Assert.AreEqual(true, robot1.BlockedThisTurn);
-            Assert.AreEqual(true, robot1.BlockedThisTurn);
+
+            Assert.AreEqual(false, robot1.MovedThisTurn);
+            Assert.AreEqual(false, robot1.BlockedThisTurn);
+            Assert.AreEqual(true, robot1.InspectedThisTurn);
+
+            Assert.AreEqual(true,  robot2.MovedThisTurn);
+            Assert.AreEqual(false, robot2.BlockedThisTurn);
+            Assert.AreEqual(true, robot2.InspectedThisTurn);
+
+            Assert.AreEqual(true, robot3.MovedThisTurn);
+            Assert.AreEqual(false, robot3.BlockedThisTurn);
+            Assert.AreEqual(true, robot3.InspectedThisTurn);
         }
     }
 }
