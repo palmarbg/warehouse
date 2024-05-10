@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace Model.Controllers
 {
     //WORK IN PROGRESS
+    [ExcludeFromCodeCoverage]
     public class CooperativeAStarController : IController
     {
         public string Name => "CoopAStarController";
@@ -527,6 +529,7 @@ namespace Model.Controllers
 
 
     }
+    [ExcludeFromCodeCoverage]
     public class Reserver
     {
         public Robot Robot;

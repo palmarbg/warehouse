@@ -20,7 +20,7 @@ namespace Test.ModelTests.ExecutorTests
         private SaveLogDataAccess _saveLogDataAccess = new SaveLogDataAccess();
 
         [TestInitialize]
-        public void Setup()
+        public void Initialize()
         {
 
             _simulationData = new SimulationData

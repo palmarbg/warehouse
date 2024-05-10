@@ -1,9 +1,11 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
 using Persistence.DataTypes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Controllers
 {
+    [ExcludeFromCodeCoverage]
     public class DemoController : IController
     {
         private SimulationData? SimulationData;

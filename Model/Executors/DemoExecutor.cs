@@ -1,9 +1,11 @@
 ﻿using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Executors
 {
+    [ExcludeFromCodeCoverage]
     public class DemoExecutor : IExecutor
     {
         private readonly SimulationData simulationData;
