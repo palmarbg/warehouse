@@ -16,5 +16,11 @@ namespace Persistence.Interfaces
         /// </summary>
         /// <returns>Task events of each robot</returns>
         List<TaskEvent[]> GetTaskEvents();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>The total number of steps in the replay.</returns>
+        int GetStepCount();
     }
 }

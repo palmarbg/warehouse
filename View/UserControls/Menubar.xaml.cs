@@ -21,7 +21,10 @@ namespace View.UserControls
         {
             this.DataContext = viewModel;
 
-            viewModel.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_,arg) => OnSimulationStateChanged(arg));
+            viewModel.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_,arg) =>
+                this.Dispatcher.Invoke(() =>
+                    OnSimulationStateChanged(arg)
+                ));
 
             SetCommandBinding(_playButton, nameof(viewModel.ToggleSimulationCommand), viewModel);
             SetCommandBinding(_stopButton, nameof(viewModel.StopSimulationCommand), viewModel);
@@ -29,7 +32,7 @@ namespace View.UserControls
             SetCommandBinding(_backButton, nameof(viewModel.PreviousStepCommand), viewModel);
             SetCommandBinding(_nextButton, nameof(viewModel.NextStepCommand), viewModel);
             SetCommandBinding(_endButton, nameof(viewModel.FinalPositionCommand), viewModel);
-            SetCommandBinding(_settingButton, nameof(viewModel.OpenReplaySettingsCommand), viewModel);
+            SetCommandBinding(_settingButton, nameof(viewModel.OpenSettingsCommand), viewModel);
 
             SetCommandBinding(_loadSimulationMenuItem, nameof(viewModel.LoadSimulationCommand), viewModel);
             SetCommandBinding(_loadReplayMenuItem, nameof(viewModel.LoadReplayCommand), viewModel);
@@ -65,32 +68,36 @@ namespace View.UserControls
         private void OnSimulationStateChanged(SimulationStateEventArgs arg)
         {
             var simulationState = arg.SimulationState;
+            
+            _playButton.IconSrc     = simulationState.IsSimulationRunning ? "Icons/pause.png" : "Icons/play.png" ;
+            _playButton.LabelText   = simulationState.IsSimulationRunning ? "Pause" : "Start";
 
-            _playButton.IconSrc = !simulationState.IsSimulationRunning ? "Icons/play.png" : "Icons/pause.png";
-            _playButton.LabelText = !simulationState.IsSimulationRunning ? "Start" : "Pause";
-
+            //canexecute should be in viewmodel and binded to buttons
 
             if(!arg.IsReplayMode)
             {
                 _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
                 _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
+                _saveSimulationMenuItem.IsEnabled = true;
 
                 _playButton.IsEnabled = true;
-                _stopButton.IsEnabled = simulationState.IsSimulationRunning;
-                _startButton.IsEnabled = simulationState.IsSimulationStarted;
+                _stopButton.IsEnabled = simulationState.State != SimulationStates.SimulationEnded;
+                _startButton.IsEnabled = !simulationState.IsSimulationRunning;
                 _backButton.IsEnabled = false;
                 _nextButton.IsEnabled = false;
                 _endButton.IsEnabled = false;
-                _settingButton.IsEnabled = false;
+                _settingButton.IsEnabled = !simulationState.IsSimulationRunning;
                 return;
             }
             _fileMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
             _simulationMenuItem.IsEnabled = !simulationState.IsSimulationRunning;
 
+            _saveSimulationMenuItem.IsEnabled = false;
+
             _playButton.IsEnabled = true;
-            _stopButton.IsEnabled = simulationState.IsSimulationStarted;
-            _startButton.IsEnabled = simulationState.IsSimulationStarted;
-            _backButton.IsEnabled = simulationState.IsSimulationStarted && !simulationState.IsSimulationRunning;
+            _stopButton.IsEnabled = simulationState.State != SimulationStates.SimulationEnded;
+            _startButton.IsEnabled = true;
+            _backButton.IsEnabled = !simulationState.IsSimulationRunning;
             _nextButton.IsEnabled = !simulationState.IsSimulationRunning;
             _endButton.IsEnabled = !simulationState.IsSimulationRunning;
             _settingButton.IsEnabled = !simulationState.IsSimulationRunning;

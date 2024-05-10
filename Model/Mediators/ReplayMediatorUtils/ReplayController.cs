@@ -1,7 +1,9 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace Model.Mediators.ReplayMediatorUtils
 {
@@ -14,6 +16,7 @@ namespace Model.Mediators.ReplayMediatorUtils
         public string Name => "ReplayController";
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
 
         public ReplayController(ILoadLogDataAccess loadLogDataAccess)
         {
@@ -21,18 +24,13 @@ namespace Model.Mediators.ReplayMediatorUtils
             taskEvents = loadLogDataAccess.GetTaskEvents();
         }
 
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
+            if (simulationData.Step >= loadLogDataAccess.GetStepCount())
+                throw new StepOutOfRangeException();
+
             RobotOperation[] robotOperations;
-            try
-            {
-                robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                //simulation ended
-                return;
-            }
+            robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
 
             for (int i = 0; i < taskEventIterator.Length; i++)
             {
@@ -64,10 +62,11 @@ namespace Model.Mediators.ReplayMediatorUtils
             OnTaskFinished(robotOperations);
         }
 
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             this.simulationData = simulationData;
             taskEventIterator = Enumerable.Repeat(0, simulationData.Robots.Count).ToArray();
+            InitializationFinished?.Invoke(this, new());
         }
 
         public IController NewInstance()
@@ -104,24 +103,22 @@ namespace Model.Mediators.ReplayMediatorUtils
                     iter = --taskEventIterator[i] - 1;
                 }
             }
-
+            simulationData.Step--;
             OnTaskFinished(robotOperations);
         }
 
-        public void SetPosition(int step)
+        public RobotOperation[] SetPosition(int step)
         {
+            //doesn't handle backward
+            if (step < simulationData.Step)
+                throw new StepOutOfRangeException();
+
+            step = Math.Min(step, loadLogDataAccess.GetStepCount());
+
+            RobotOperation[] robotOperations = null!;
             while (simulationData.Step < step)
             {
-                RobotOperation[] robotOperations;
-                try
-                {
-                    robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    //simulation ended
-                    break;
-                }
+                robotOperations = loadLogDataAccess.GetRobotOperations(simulationData.Step);
 
                 for (int i = 0; i < simulationData.Robots.Count; i++)
                 {
@@ -154,11 +151,18 @@ namespace Model.Mediators.ReplayMediatorUtils
                 }
                 robot.CurrentGoal = currentGoal;
             }
+
+            return robotOperations;
         }
 
-        public void JumpToEnd()
+        public RobotOperation[] JumpToEnd()
         {
-            SetPosition(Int32.MaxValue);
+            return SetPosition(Int32.MaxValue);
+        }
+
+        public int GetSimulationLength()
+        {
+            return loadLogDataAccess.GetStepCount();
         }
     }
 }

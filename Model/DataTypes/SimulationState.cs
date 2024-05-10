@@ -1,50 +1,38 @@
 ﻿namespace Model.DataTypes
 {
+    public enum SimulationStates{
+        ControllerWorking,
+        ExecutingMoves,
+        Waiting,
+        SimulationEnded,
+        SimulationPaused,
+    }
 
     public class SimulationState
     {
+        private SimulationStates _simulationState = SimulationStates.SimulationEnded;
+
         public event EventHandler<SimulationState>? SimulationStateChanged;
         private void OnSimulationStateChanged()
         {
             SimulationStateChanged?.Invoke(this, this);
         }
 
-        public void Reset()
+        public SimulationStates State
         {
-            _isSimulationRunning = false;
-            _isSimulationEnded = true;
-            IsLastTaskFinished = true;
-            IsExecutingMoves = false;
-            OnSimulationStateChanged();
-        }
-
-        private bool _isSimulationRunning = false;
-        private bool _isSimulationEnded = true;
-
-        public bool IsSimulationRunning
-        {
-            get => _isSimulationRunning;
+            get => _simulationState;
             set
             {
-                _isSimulationRunning = value;
+                _simulationState = value;
                 OnSimulationStateChanged();
             }
         }
 
-        public bool IsSimulationEnded
-        {
-            get => _isSimulationEnded;
-            set
-            {
-                _isSimulationEnded = value;
-                OnSimulationStateChanged();
-            }
-        }
+        public bool IsSimulationRunning =>
+            _simulationState == SimulationStates.ControllerWorking ||
+            _simulationState == SimulationStates.ExecutingMoves ||
+            _simulationState == SimulationStates.Waiting;
 
-        public bool IsLastTaskFinished { get; set; } = true;
-        public bool IsExecutingMoves { get; set; } = false;
-        public bool IsSimulationPaused => !IsSimulationRunning && !IsSimulationEnded;
-        public bool IsSimulationStarted => IsSimulationRunning || !IsSimulationEnded;
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using Persistence.DataTypes;
 
 namespace Model.Controllers
@@ -8,6 +9,8 @@ namespace Model.Controllers
         private SimulationData? SimulationData;
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler? InitializationFinished;
+
         public string Name => "demo";
 
         public DemoController() { }
@@ -19,7 +22,7 @@ namespace Model.Controllers
         /// <param name="timeSpan"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public void CalculateOperations(TimeSpan timeSpan)
+        public void CalculateOperations(TimeSpan timeSpan, CancellationToken? token = null)
         {
             if (SimulationData == null)
             {
@@ -36,9 +39,10 @@ namespace Model.Controllers
             OnTaskFinished(result);
         }
 
-        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor)
+        public void InitializeController(SimulationData simulationData, TimeSpan timeSpan, ITaskDistributor distributor, CancellationToken? token = null)
         {
             SimulationData = simulationData;
+            InitializationFinished?.Invoke(this, new());
         }
 
         private void OnTaskFinished(RobotOperation[] result)

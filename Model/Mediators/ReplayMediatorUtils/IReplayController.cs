@@ -1,11 +1,14 @@
 ﻿using Model.Interfaces;
+using Persistence.DataTypes;
 
 namespace Model.Mediators.ReplayMediatorUtils
 {
     public interface IReplayController : IController
     {
         void CalculateBackward();
-        void SetPosition(int step);
-        void JumpToEnd();
+        RobotOperation[] SetPosition(int step);
+        RobotOperation[] JumpToEnd();
+
+        int GetSimulationLength();
     }
 }

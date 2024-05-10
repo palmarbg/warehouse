@@ -30,6 +30,7 @@ namespace ViewModel.ViewModel
                 if (_zoom != value)
                 {
                     _zoom = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -69,6 +70,7 @@ namespace ViewModel.ViewModel
                 if (_xoffset != value)
                 {
                     _xoffset = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -82,6 +84,7 @@ namespace ViewModel.ViewModel
                 if (_yoffset != value)
                 {
                     _yoffset = value;
+                    OnWindowChanged();
                     OnPropertyChanged();
                 }
             }
@@ -99,7 +102,7 @@ namespace ViewModel.ViewModel
         /// <summary>
         /// Fire with <see cref="Model_RobotsMoved" />
         /// </summary>
-        public event EventHandler<TimeSpan>? RobotsMoved;
+        public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
         /// <summary>
         /// Fire with <see cref="Model_GoalChanged"/>
@@ -116,10 +119,12 @@ namespace ViewModel.ViewModel
         /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
-        public event EventHandler? OpenReplaySettings;
+        public event EventHandler? OpenSettings;
         public event EventHandler? LoadSimulation;
         public event EventHandler? LoadReplay;
         public event EventHandler? SaveSimulation;
+
+        public event EventHandler<MainWindowViewModel>? WindowChanged;
 
         #endregion
 
@@ -154,7 +159,7 @@ namespace ViewModel.ViewModel
         public DelegateCommand FinalPositionCommand { get; set; }
 
         /// <summary> Open window for setting simulation speed and position </summary>
-        public DelegateCommand OpenReplaySettingsCommand { get; set; }
+        public DelegateCommand OpenSettingsCommand { get; set; }
 
         /// <summary> Load a config file </summary>
         public DelegateCommand LoadSimulationCommand { get; set; }
@@ -183,7 +188,7 @@ namespace ViewModel.ViewModel
             Robots = [];
             Goals = [];
 
-            simulation.RobotsMoved += new EventHandler<TimeSpan>((_, t) => Model_RobotsMoved(t));
+            simulation.RobotsMoved += new EventHandler<RobotsMovedEventArgs>((_, t) => Model_RobotsMoved(t));
             simulation.GoalChanged += new EventHandler<Goal?>((r, goal) => Model_GoalChanged((Robot)r!, goal));
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
             simulation.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_, arg) => Model_SimulationStateChanged(arg));
@@ -196,7 +201,7 @@ namespace ViewModel.ViewModel
             NextStepCommand = new DelegateCommand(param => OnNextStep());
             FinalPositionCommand = new DelegateCommand(param => OnFinalPosition());
 
-            OpenReplaySettingsCommand = new DelegateCommand(param => OnOpenReplaySettings());
+            OpenSettingsCommand = new DelegateCommand(param => OnOpenReplaySettings());
             LoadSimulationCommand = new(param => OnLoadSimulation());
             LoadReplayCommand = new(param => OnLoadReplay());
             StartNewSimulationCommand = new DelegateCommand(param => OnStartNewSimulation());
@@ -214,7 +219,7 @@ namespace ViewModel.ViewModel
         /// </summary>
         private void Model_RobotsChanged()
         {
-            RobotsChanged?.Invoke(Robots, new EventArgs());
+            RobotsChanged?.Invoke(Robots, new System.EventArgs());
         }
 
         /// <summary>
@@ -222,9 +227,9 @@ namespace ViewModel.ViewModel
         /// <para />
         /// If the collection changed call <see cref="Model_RobotsChanged"/>
         /// </summary>
-        private void Model_RobotsMoved(TimeSpan timeSpan)
+        private void Model_RobotsMoved(RobotsMovedEventArgs args)
         {
-            RobotsMoved?.Invoke(Robots, timeSpan);
+            RobotsMoved?.Invoke(Robots, args);
         }
 
         /// <summary>
@@ -240,7 +245,7 @@ namespace ViewModel.ViewModel
         /// </summary>
         private void Model_MapLoaded()
         {
-            MapLoaded?.Invoke(_simulation.SimulationData.Map, new EventArgs());
+            MapLoaded?.Invoke(_simulation.SimulationData.Map, new System.EventArgs());
         }
 
         private void Model_SimulationStateChanged(SimulationStateEventArgs arg)
@@ -267,76 +272,46 @@ namespace ViewModel.ViewModel
 
         #region ViewModel Event methods
 
-        /// <summary>
-        /// View calls when datacontext have been set
-        /// </summary>
-        public void OnSetDataContext()
-        {
-            Model_RobotsChanged();
-            Model_MapLoaded();
-            _simulation.OnSimulationStateChanged(_simulation.State);
-        }
-
         private void OnToggleSimulation()
         {
-            Debug.WriteLine("simulation start");
-            if (_simulation.State.IsSimulationRunning)
-                _simulation.Mediator.PauseSimulation();
+            if (_simulation.SimulationState.IsSimulationRunning)
+                _simulation.PauseSimulation();
             else
-                _simulation.Mediator.StartSimulation();
+                _simulation.StartSimulation();
         }
 
         private void OnSimulationStop()
         {
-            Debug.WriteLine("simulation stop");
-            _simulation.Mediator.StopSimulation();
+            _simulation.StopSimulation();
         }
 
         private void OnSimulationPause()
         {
-            Debug.WriteLine("simulation pause");
+            _simulation.PauseSimulation();
         }
         private void OnInitialPosition()
         {
-            Debug.WriteLine("first step");
-            _simulation.Mediator.SetInitialState();
+            _simulation.SetInitialPosition();
         }
 
         private void OnPreviousStep()
         {
-            Debug.WriteLine("prev step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.StepBackward();
-            }
+            _simulation.StepBackward();
         }
 
         private void OnNextStep()
         {
-            Debug.WriteLine("next step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.StepForward();
-            }
+            _simulation.StepForward();
         }
 
         private void OnFinalPosition()
         {
-            Debug.WriteLine("last step");
-            if (_simulation.Mediator is IReplayMediator mediator)
-            {
-                mediator.JumpToEnd();
-            }
+            _simulation.JumpToEnd();
         }
 
         private void OnOpenReplaySettings()
         {
-            Debug.WriteLine("replay control settings");
-            if (_simulation.Mediator is IReplayMediator mediator && !_simulation.State.IsSimulationRunning)
-            {
-                OpenReplaySettings?.Invoke(null, new());
-            }
-
+            OpenSettings?.Invoke(null, new());
         }
 
         private void OnStartNewSimulation()
@@ -347,13 +322,13 @@ namespace ViewModel.ViewModel
         private void OnLoadSimulation()
         {
             LoadSimulation?.Invoke(null, new());
-            _simulation.OnSimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
         }
 
         private void OnLoadReplay()
         {
             LoadReplay?.Invoke(null, new());
-            _simulation.OnSimulationStateChanged(_simulation.State);
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
         }
 
         private void OnSaveSimulation()
@@ -363,6 +338,23 @@ namespace ViewModel.ViewModel
 
         #endregion
 
+        #region View Event methods
 
+        /// <summary>
+        /// View calls it when datacontext have been set
+        /// </summary>
+        public void OnSetDataContext()
+        {
+            Model_RobotsChanged();
+            Model_MapLoaded();
+            _simulation.OnSimulationStateChanged(_simulation.SimulationState);
+        }
+
+        public void OnWindowChanged()
+        {
+            WindowChanged?.Invoke(this, this);
+        }
+
+        #endregion
     }
 }

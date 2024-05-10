@@ -12,11 +12,11 @@ namespace Persistence.Loggers
         private SimulationData simulationData;
         public BasicLogger(SimulationData simulationData, ISaveLogDataAccess saveLogDataAccess)
         {
-            Debug.WriteLine(simulationData.Robots.Count);
-            Debug.WriteLine(simulationData.Robots.Count);
-            Debug.WriteLine(simulationData.Robots.Count);
-            Debug.WriteLine(simulationData.Robots.Count);
-            Debug.WriteLine(simulationData.Robots.Count);
+            //Debug.WriteLine(simulationData.Robots.Count);
+            //Debug.WriteLine(simulationData.Robots.Count);
+            //Debug.WriteLine(simulationData.Robots.Count);
+            //Debug.WriteLine(simulationData.Robots.Count);
+            //Debug.WriteLine(simulationData.Robots.Count);
 
 
             _saveLogDataAccess = saveLogDataAccess;

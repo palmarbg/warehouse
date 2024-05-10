@@ -46,7 +46,7 @@ namespace Model
 
         public IController GetController()
         {
-            return new AStarController();
+            return new DisposableController(new CooperativeAStarController());
         }
 
         public ITaskDistributor GetTaskDistributor(SimulationData simulationData)

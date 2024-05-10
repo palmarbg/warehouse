@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.DataTypes;
+using Model.Interfaces;
 using System.Diagnostics;
 using System.Timers;
 
@@ -11,15 +12,15 @@ namespace Model.Mediators
         public SimulationMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName) : base(simulation, serviceLocator, mapFileName)
         {
 
-            Timer.Elapsed += (_, _) => StepSimulation();
+            Timer.Elapsed += (_, _) => OnTimerInterval();
 
-            dataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
+            _dataAccess = serviceLocator.GetConfigDataAccess(mapFileName);
 
-            simulationData = dataAccess.GetInitialSimulationData();
+            _simulationData = _dataAccess.GetInitialSimulationData();
 
-            controller = serviceLocator.GetController();
+            _controller = serviceLocator.GetController();
 
-            executor = _serviceLocator.GetExecutor(simulationData);
+            _executor = _serviceLocator.GetExecutor(_simulationData);
 
         }
 
@@ -27,46 +28,66 @@ namespace Model.Mediators
 
         #region Public methods
 
+        public void SetOptions(int interval, int lastStep)
+        {
+            _interval = interval;
+            _lastStep = lastStep;
+
+            Timer.Interval = _interval;
+        }
+
         public void LoadConfig(string fileName)
         {
             MapFileName = fileName;
-            dataAccess = dataAccess.NewInstance(fileName);
-            SetInitialState();
+            _dataAccess = _dataAccess.NewInstance(fileName);
+            SetInitialPosition();
         }
 
         public void SaveSimulation(string filepath)
         {
-            executor.SaveSimulation(filepath);
+            _executor.SaveSimulation(filepath);
         }
 
         #endregion
 
         #region Private methods
 
-        private void StepSimulation()
+        private void OnTimerInterval()
         {
             Debug.WriteLine("--SIMULATION STEP--");
-
-            if (simulationState.IsExecutingMoves)
-                return;
-
-            if (!simulationState.IsLastTaskFinished)
+            if (_simulationData.Step >= _lastStep)
             {
-                OnTaskTimeout();
+                StopSimulation();
                 return;
             }
 
-            simulationState.IsLastTaskFinished = false;
-            time = DateTime.Now;
-            controller.CalculateOperations(TimeSpan.FromMilliseconds(interval));
+            ///The state of the timer defines the state IsSimulationRunning
+            ///The timer should be disabled
+            if (!_simulationState.IsSimulationRunning)
+                throw new SimulationStateException();
+
+            if (_simulationState.State == SimulationStates.ControllerWorking)
+            {
+                //when its not initializing
+                if(SimulationData.Step > 0)
+                    OnTaskTimeout();
+                return;
+            }
+
+            if (_simulationState.State != SimulationStates.Waiting)
+                return;
+
+            _simulationState.State = SimulationStates.ControllerWorking;
+            _timeBeforeController = DateTime.Now;
+            _controller.CalculateOperations(TimeSpan.FromMilliseconds(_interval));
 
         }
 
         private void OnTaskTimeout()
         {
             Debug.WriteLine("XXXX TIMEOUT XXXX");
-            executor.Timeout();
-            simulationData.Step++;
+            _executor.Timeout();
+            _simulationData.Step++;
         }
 
         #endregion
