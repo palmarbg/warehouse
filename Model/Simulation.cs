@@ -52,29 +52,14 @@ namespace Model
 
         #region Events
 
-        /// <summary>
-        /// Fire with <see cref="OnRobotsMoved"/>
-        /// </summary>
         public event EventHandler<RobotsMovedEventArgs>? RobotsMoved;
 
-        /// <summary>
-        /// Fire with <see cref="OnGoalChanged"/>
-        /// </summary>
         public event EventHandler<Goal?>? GoalChanged;
 
-        /// <summary>
-        /// Fire with <see cref="OnSimulationFinished"/>
-        /// </summary>
         public event EventHandler? SimulationFinished;
 
-        /// <summary>
-        /// Fire with <see cref="OnSimulationLoaded"/>
-        /// </summary>
         public event EventHandler? SimulationLoaded;
 
-        // <summary>
-        /// Fire with <see cref="OnSimulationStateChanged"/>
-        /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
         #endregion
@@ -109,6 +94,7 @@ namespace Model
                 _mediator.SetInitialPosition();
                 return;
             }
+            _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, _mediator.MapFileName);
         }
 
@@ -116,7 +102,7 @@ namespace Model
         {
             if (_mediator is not IReplayMediator)
             {
-                _mediator.SetInitialPosition(); //heggesztés
+                _mediator.Dispose();
                 _mediator = _serviceLocator.GetReplayMediator(this, _mediator.MapFileName, fileName);
                 return;
             }
@@ -130,8 +116,7 @@ namespace Model
                 simulationMediator.LoadConfig(fileName);
                 return;
             }
-
-            _mediator.SetInitialPosition(); // heggesztés
+            _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, fileName);
         }
 
@@ -203,11 +188,21 @@ namespace Model
 
         #endregion
 
-        #region Mediator methods
+        #region Dispose
 
         /// <summary>
-        /// Call it when robots moved
+        /// The cleanup after the simulation is not implemented, does not hold any special resource.
         /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Mediator methods
+
         public void OnRobotsMoved(RobotsMovedEventArgs args)
         {
             RobotsMoved?.Invoke(SimulationData.Robots, args);
@@ -218,17 +213,11 @@ namespace Model
             SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
-        /// <summary>
-        /// Call it when simulation ended
-        /// </summary>
         public void OnSimulationFinished()
         {
             SimulationFinished?.Invoke(null, new System.EventArgs());
         }
 
-        /// <summary>
-        /// Call it when new simulation data have been loaded
-        /// </summary>
         public void OnSimulationStateChanged(SimulationState simulationState)
         {
             SimulationStateChanged?.Invoke(

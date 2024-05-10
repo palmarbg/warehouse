@@ -2,7 +2,7 @@
 using Persistence.DataTypes;
 using Persistence.Extensions;
 
-namespace Model.Mediators.ReplayMediatorUtils
+namespace Model.Utils.ReplayMediatorUtils
 {
     public class ReplayExecutor : IExecutor
     {
@@ -24,12 +24,7 @@ namespace Model.Mediators.ReplayMediatorUtils
             return robotOperations;
         }
 
-        public IExecutor NewInstance(SimulationData simulationData)
-        {
-            return new ReplayExecutor(simulationData);
-        }
-
-        public void SaveSimulation(string filepath)
+        public void SaveSimulationLog(string filepath)
         {
             throw new NotImplementedException();
         }
@@ -37,6 +32,16 @@ namespace Model.Mediators.ReplayMediatorUtils
         public void Timeout()
         {
 
+        }
+
+        public IExecutor NewInstance(SimulationData simulationData)
+        {
+            return new ReplayExecutor(simulationData);
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

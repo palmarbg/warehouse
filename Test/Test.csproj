@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -22,11 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MockClasses\Executors\" />
     <Folder Include="MockClasses\Controllers\" />
     <Folder Include="MockClasses\Distributors\" />
-    <Folder Include="MockClasses\Mediators\" />
-    <Folder Include="MockClasses\Simulations\" />
     <Folder Include="ModelTests\MediatorTests\" />
     <Folder Include="ModelTests\MediatorTests\" />
     <Folder Include="ModelTests\SimulationTests\" />

@@ -13,9 +13,9 @@ namespace Model.DataTypes
         }
     }
 
-    class StepOutOfRangeException : Exception
+    class SimulationStepOutOfRangeException : Exception
     {
-        public StepOutOfRangeException()
+        public SimulationStepOutOfRangeException()
         {
         }
     }

@@ -1,12 +1,13 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
+using Model.Utils;
 using Persistence.DataTypes;
 using Persistence.Interfaces;
 using System.Diagnostics;
 
 namespace Model.Mediators
 {
-    public abstract class AbstractMediator : IMediator
+    public abstract class MediatorBase : IMediator
     {
 
         #region Protected Fields
@@ -41,7 +42,7 @@ namespace Model.Mediators
 
         #region Constructor
 
-        public AbstractMediator(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName)
+        public MediatorBase(ISimulation simulation, IServiceLocator serviceLocator, string mapFileName)
         {
             _serviceLocator = serviceLocator;
 
@@ -81,16 +82,12 @@ namespace Model.Mediators
 
         public void StopSimulation()
         {
-            //TODO: which states can be escaped?
-
             Timer.Stop();
             _simulationState.State = SimulationStates.SimulationEnded;
 
             (_controller as IDisposableController)?.Dispose();
 
-            //TODO: escape running controller/executor
             _simulation.OnSimulationFinished();
-            //SetInitialState();
         }
 
         public void PauseSimulation()
@@ -110,9 +107,11 @@ namespace Model.Mediators
             _simulationData.ControllerName = _controller.Name;
 
             (_controller as IDisposableController)?.Dispose();
-
             _controller = _controller.NewInstance();
-            _executor = _executor.NewInstance(_simulationData);
+
+            var newExecutor = _executor.NewInstance(_simulationData);
+            _executor.Dispose();
+            _executor = newExecutor;
 
             _controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
             {
@@ -133,6 +132,14 @@ namespace Model.Mediators
 
             _simulation.OnSimulationLoaded();
 
+        }
+
+        public void Dispose()
+        {
+            Debug.WriteLine("DISPOSE MEDIATOR");
+            (_controller as IDisposableController)?.Dispose();
+
+            _executor.Dispose();
         }
 
         #endregion
@@ -162,7 +169,6 @@ namespace Model.Mediators
             {
                 SimulationStep = _simulationData.Step,
                 IsJumped = false,
-                RobotOperations = e.robotOperations,
                 TimeSpan = TimeSpan.FromMilliseconds(_interval)
             });
         }

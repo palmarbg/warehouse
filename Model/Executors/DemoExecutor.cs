@@ -12,6 +12,11 @@ namespace Model.Executors
             this.simulationData = simulationData;
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         /// <summary>
         /// Doesn't handle deadlock, illegal moves.
         /// </summary>
@@ -32,7 +37,7 @@ namespace Model.Executors
             return new DemoExecutor(simulationData);
         }
 
-        public void SaveSimulation(string filepath)
+        public void SaveSimulationLog(string filepath)
         {
             throw new NotImplementedException();
         }

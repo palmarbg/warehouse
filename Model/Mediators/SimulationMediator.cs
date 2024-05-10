@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace Model.Mediators
 {
-    public class SimulationMediator : AbstractMediator, ISimulationMediator
+    public class SimulationMediator : MediatorBase, ISimulationMediator
     {
         #region Constructor
 
@@ -45,7 +45,7 @@ namespace Model.Mediators
 
         public void SaveSimulation(string filepath)
         {
-            _executor.SaveSimulation(filepath);
+            _executor.SaveSimulationLog(filepath);
         }
 
         #endregion

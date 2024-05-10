@@ -13,7 +13,7 @@ namespace Test.ModelTests.DistributorTests
     class DistributorTests
     {
         private SimulationData _simulationData = null!;
-        private DemoDistributor distributor = null!;
+        private RoundRobinDistributor distributor = null!;
         private Mock<ConfigDataAccess> _mock = null!;
         [TestMethod]
         public void TestMoq()

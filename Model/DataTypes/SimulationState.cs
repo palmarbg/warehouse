@@ -1,5 +1,8 @@
 ﻿namespace Model.DataTypes
 {
+    /// <summary>
+    /// The possible states of the simulation, mediator.
+    /// </summary>
     public enum SimulationStates{
         ControllerWorking,
         ExecutingMoves,
@@ -8,6 +11,9 @@
         SimulationPaused,
     }
 
+    /// <summary>
+    /// Represents the current state of the simulation, mediator
+    /// </summary>
     public class SimulationState
     {
         private SimulationStates _simulationState = SimulationStates.SimulationEnded;

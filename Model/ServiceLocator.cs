@@ -3,7 +3,8 @@ using Model.Distributors;
 using Model.Executors;
 using Model.Interfaces;
 using Model.Mediators;
-using Model.Mediators.ReplayMediatorUtils;
+using Model.Utils.ReplayMediatorUtils;
+using Model.Utils;
 using Persistence.DataAccesses;
 using Persistence.DataTypes;
 using Persistence.Interfaces;
@@ -51,12 +52,12 @@ namespace Model
 
         public ITaskDistributor GetTaskDistributor(SimulationData simulationData)
         {
-            return new DemoDistributor(simulationData);
+            return new RoundRobinDistributor(simulationData);
         }
 
         public IExecutor GetExecutor(SimulationData simulationData)
         {
-            return new DefaultExecutor(simulationData, GetLogger(simulationData));
+            return new StrictExecutor(simulationData, GetLogger(simulationData));
         }
 
         #endregion
@@ -66,11 +67,6 @@ namespace Model
         public IController GetReplayController(ILoadLogDataAccess loadLogDataAccess)
         {
             return new ReplayController(loadLogDataAccess);
-        }
-
-        public ITaskDistributor GetReplayTaskDistributor(SimulationData simulationData)
-        {
-            return new DemoDistributor(simulationData);
         }
 
         public IExecutor GetReplayExecutor(SimulationData simulationData)

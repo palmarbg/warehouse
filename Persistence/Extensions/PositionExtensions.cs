@@ -53,6 +53,23 @@ namespace Persistence.Extensions
             }
             return null;
         }
+
+        public static Position PositionAfterOperation(this Position start, Direction direction, RobotOperation robotOperation)
+        {
+            switch (robotOperation)
+            {
+                case RobotOperation.Forward:
+                    return start.PositionInDirection(direction);
+                case RobotOperation.Backward:
+                    return start.PositionInDirection(direction.Opposite());
+                case RobotOperation.Clockwise:
+                case RobotOperation.CounterClockwise:
+                case RobotOperation.Timeout:
+                case RobotOperation.Wait:
+                default:
+                    return start;
+            }
+        }
     }
 
 }

@@ -2,13 +2,16 @@
 
 namespace Persistence.Interfaces
 {
+    /// <summary>
+    /// File access for loading log
+    /// </summary>
     public interface ILoadLogDataAccess : IDataAccess
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="step">Index of step</param>
-        /// <returns>The actual operations executed</returns>
+        /// <returns>The actual operations executed in the <paramref name="step"/>-th step.</returns>
         RobotOperation[] GetRobotOperations(int step);
 
         /// <summary>

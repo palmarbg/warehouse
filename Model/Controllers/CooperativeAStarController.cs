@@ -523,8 +523,6 @@ namespace Model.Controllers
         }
         #endregion
 
-        public static int xxx = 0;
-
 
     }
     public class Reserver
