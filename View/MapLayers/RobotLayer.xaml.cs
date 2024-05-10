@@ -48,17 +48,21 @@ namespace View.Grid
             this.DataContext = viewModel;
 
             viewModel.RobotsChanged += new EventHandler(
-                (s, e) => App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); })
-                );
+                (s, e) => {
+                    App.Current?.Dispatcher.Invoke((Action)delegate { AddRobots(s, e); });
+                });
 
             viewModel.RobotsMoved += new EventHandler<RobotsMovedEventArgs>(
                 (s, arg) => App.Current?.Dispatcher.Invoke((Action)delegate {
                     if(s == null || _robots == null)
                         return;
+
                     if (arg.IsJumped)
                     {
                         FlushBuffer();
+                        return;
                     }
+
                     RefreshRobots(arg.TimeSpan);
                 })
                 );
@@ -101,12 +105,7 @@ namespace View.Grid
 
             _isRefreshing = true;
 
-            Debug.WriteLine(timeSpan.Milliseconds);
-
-            if (timeSpan < TimeSpan.FromMilliseconds(100))
-            {
-                timeSpan = TimeSpan.Zero;
-            }
+            Debug.WriteLine("ANIMATION {0}", timeSpan.Milliseconds);
 
             _lastAnimationEnd = DateTime.Now + timeSpan;
 
@@ -117,6 +116,7 @@ namespace View.Grid
 
             if (timeSpan > TimeSpan.FromMilliseconds(500))
                 timeSpan = TimeSpan.FromMilliseconds(500);
+
 
             for (int i = 0; i < MapCanvas.Children.Count; i++)
             {
@@ -144,6 +144,7 @@ namespace View.Grid
 
                 }
             }
+            
 
             _isRefreshing = false;
 
@@ -182,7 +183,7 @@ namespace View.Grid
             if (_lastAnimationEnd == null)
                 return;
 
-            RefreshBuffer();
+            FlushBuffer();
 
             TimeSpan timeSpan = (TimeSpan)(_lastAnimationEnd - DateTime.Now);
             if (_lastAnimationEnd < DateTime.Now)
@@ -220,6 +221,7 @@ namespace View.Grid
             }
 
             _isRefreshingBuffer = true;
+            _roundsToRefreshBuffer = ROUND_INTERVAL;
 
             for (int i = 0; i < _robots.Count; i++)
             {
@@ -268,8 +270,7 @@ namespace View.Grid
                 _toRefreshBuffer = false;
                 RefreshBuffer();
             }
-
-            _roundsToRefreshBuffer = ROUND_INTERVAL;
+            
         }
 
         private void FlushBuffer(int? robotCount = null)
@@ -375,5 +376,6 @@ namespace View.Grid
         }
 
         #endregion
+
     }
 }

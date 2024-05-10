@@ -24,7 +24,6 @@ namespace Model.Executors
         /// <param name="robotOperations"></param>
         public RobotOperation[] ExecuteOperations(RobotOperation[] robotOperations, float timeSpan)
         {
-            throw new NotImplementedException();
             _errors = new List<OperationError>();
             // Reset MovedThisTurn
             for (int i = 0; i < _simulationData.Robots.Count; i++)

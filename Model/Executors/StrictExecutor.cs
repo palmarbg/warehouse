@@ -49,11 +49,9 @@ namespace Model.Executors
                 AddRobotNode(robot);
                 if(_lastLoopEndNode != null)
                 {
-                    Debug.WriteLine(_lastLoopEndNode);
-                    Debug.WriteLine(_lastLoopEndNode.Robot);
                     Debug.WriteLine(_lastLoopEndNode.Robot.Id);
 
-                    throw new NotImplementedException("Its a bug");
+                    throw new NotImplementedException("Its a bug1");
                 }
             }
 
@@ -67,7 +65,7 @@ namespace Model.Executors
                 var robot = _simulationData.Robots[i];
 
                 if (!robot.MovedThisTurn)
-                    throw new NotImplementedException("Its a bug");
+                    throw new NotImplementedException("Its a bug2");
 
                 if(_simulationData.Map.GetAtPosition(robot.Position) is Robot robotOnMap)
                 if(robotOnMap.Id == robot.Id)
@@ -148,7 +146,21 @@ namespace Model.Executors
                 return;
             }
 
-            //if wants to step to a place that was already visited
+            //if wants to step to an empty tile that was already visited
+            if (_headNodes.Contains(new Node { Position = node.NextPosition}))
+            {
+                Node? parent;
+                _headNodes.TryGetValue(new Node { Position = node.NextPosition }, out parent);
+
+                if(parent == null)
+                    throw new NotImplementedException("Its a bug 4");
+
+                parent.ChildNodes.Add(node);
+                _nodes.Add(node.Position, node);
+                return;
+            }
+
+            //if wants to step on a robot that was already visited
             if (_nodes.ContainsKey(node.NextPosition))
             {
                 var parent = _nodes[node.NextPosition];
@@ -162,7 +174,7 @@ namespace Model.Executors
             if (_simulationData.Map.GetAtPosition(nextPosition) is EmptyTile)
             {
                 _nodes.Add(node.Position, node);
-                var headNode = new HeadNode
+                var headNode = new Node
                 {
                     Position = nextPosition
                 };
@@ -189,7 +201,7 @@ namespace Model.Executors
                 _nodes.Add(node.Position, node);
 
                 //if its a head of a loop
-                if (_headNodes.Contains(node as Node))
+                if (_headNodes.Contains(node))
                 {
                     node.ChildNodes.Add(_lastLoopEndNode);
                     _lastLoopEndNode = null!;
@@ -209,10 +221,10 @@ namespace Model.Executors
                     }
 
                     if (_lastLoopEndNode != null)
-                        throw new NotImplementedException("Its a bug");
+                        throw new NotImplementedException("Its a bug3");
 
                     _lastLoopEndNode = node;
-                    var headNode = new HeadNode
+                    var headNode = new Node
                     {
                         Position = nextPosition
                     };
@@ -234,20 +246,17 @@ namespace Model.Executors
             //Debug.WriteLine("ExecuteNode");
             if(head.ChildNodes.Count > 1)
             {
+                LogMultipleCollision(head.ChildNodes);
                 while (head.ChildNodes.Count > 0)
                 {
                     var child = head.ChildNodes[head.ChildNodes.Count - 1];
                     head.ChildNodes.RemoveAt(head.ChildNodes.Count - 1);
                     DisableNode(child);
                 }
+                return;
             }
 
             var node = head.ChildNodes.First();
-            if (!ValidateNode(node))
-            {
-                DisableNode(node);
-                return;
-            }
 
             var robot = node.Robot;
 
@@ -259,9 +268,31 @@ namespace Model.Executors
 
                 if (node.ChildNodes.Count == 0)
                     return;
+
+                if(node.ChildNodes.Count > 1)
+                {
+                    LogMultipleCollision(node.ChildNodes);
+                    while (node.ChildNodes.Count > 0)
+                    {
+                        var child = node.ChildNodes[node.ChildNodes.Count - 1];
+                        node.ChildNodes.RemoveAt(node.ChildNodes.Count - 1);
+                        DisableNode(child);
+                    }
+                    return;
+                }
+
                 node = node.ChildNodes[0];
                 robot = node.Robot;
             };
+        }
+
+        private void LogMultipleCollision(List<RobotNode> childNodes)
+        {
+            for(int i = 0; i < childNodes.Count; i++)
+            for(int j = i+1; j < childNodes.Count; j++)
+                {
+                    OnRobotCrash(childNodes[i].Robot.Id, childNodes[j].Robot.Id);
+                }
         }
 
         private void DisableNode(RobotNode node)
@@ -277,25 +308,6 @@ namespace Model.Executors
                 node.ChildNodes.RemoveAt(node.ChildNodes.Count - 1);
                 DisableNode(child);
             }
-        }
-
-        private bool ValidateNode(RobotNode node)
-        {
-            if (node.IsVisited)
-                return true;
-            node.IsVisited = true;
-
-            if (node.ChildNodes.Count == 0)
-                return true;
-            if(node.ChildNodes.Count > 1)
-            {
-                foreach(var child in node.ChildNodes)
-                {
-                    OnRobotCrash(child.Robot.Id, node.Robot.Id);
-                }
-                return false;
-            }
-            return ValidateNode(node.ChildNodes[0]);
         }
 
         public void Timeout()
@@ -318,11 +330,6 @@ namespace Model.Executors
             Robot.TaskAssigned -= _robotTaskAssignedDelegate;
         }
 
-
-        private class HeadNode : Node
-        {
-
-        }
 
         private class RobotNode : Node
         {
