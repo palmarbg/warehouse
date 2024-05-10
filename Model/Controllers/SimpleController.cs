@@ -1,9 +1,11 @@
 ﻿using Model.DataTypes;
 using Model.Interfaces;
 using Persistence.DataTypes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Controllers
 {
+    [ExcludeFromCodeCoverage]
     internal class SimpleController : IController
     {
         public event EventHandler<IControllerEventArgs>? FinishedTask;

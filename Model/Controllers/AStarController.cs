@@ -3,9 +3,11 @@ using Model.Interfaces;
 using Persistence.DataTypes;
 using Persistence.Extensions;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Controllers
 {
+    [ExcludeFromCodeCoverage]
     public class AStarController : IController
     {
         public string Name => "AStarController";
