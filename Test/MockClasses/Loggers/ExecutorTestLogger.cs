@@ -15,7 +15,7 @@ namespace Test.MockClasses.Loggers
 
         public void LogEvent(TaskEvent taskEvent, int robotId)
         {
-            throw new InvalidOperationException();
+            //throw new InvalidOperationException();
         }
 
         public void LogStep(RobotOperation[] controllerOperations, RobotOperation[] robotOperations, OperationError[] errors, float timeElapsed)
@@ -25,17 +25,18 @@ namespace Test.MockClasses.Loggers
 
         public void LogTimeout()
         {
-            throw new InvalidOperationException();
+            //throw new InvalidOperationException();
         }
 
         public ILogger NewInstance(SimulationData simulationData)
         {
-            throw new InvalidOperationException(); 
+            //throw new InvalidOperationException(); 
+            return this;
         }
 
         public void SaveLog(string path)
         {
-            throw new InvalidOperationException();
+            //throw new InvalidOperationException();
         }
 
         public void SaveToFile(string filePath)
