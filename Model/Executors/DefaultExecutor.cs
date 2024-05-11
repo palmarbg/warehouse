@@ -61,8 +61,6 @@ namespace Model.Executors
         /// </summary>
         /// <param name="robot"></param>
         /// <returns>did the robot move</returns>
-        //TODO aktuális mozgások logolása
-        //TODO Robotok körbe akarnak menni, akkor beakadnak
         private bool MoveRobot(Robot robot, Robot startingRobot)
         {
             robot.InspectedThisTurn = true;
@@ -99,12 +97,8 @@ namespace Model.Executors
                         }
                         else
                         {
-                            // TODO: Check if robot was blocking original robots NewPos
                             if (startingRobot.Id == blockingRobot.Id)
                             {
-                                //robot.BlockedThisTurn = true;
-                                //robot.MovedThisTurn = true;
-                                //OnRobotCrash(robot.Id, blockingRobot.Id);
 
                                 robot.Position = blockingRobot.Position;
                                 robot.MovedThisTurn= true;
@@ -124,8 +118,6 @@ namespace Model.Executors
 
                                 if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                                 {
-                                    //MoveRobotToNewPosition(robot, newPos, operation);
-                                    //simulationData.Goals.Remove(robot.CurrentGoal);
                                     robot.CurrentGoal.IsAssigned = false;
                                     OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                                     robot.CurrentGoal = null;
@@ -149,7 +141,6 @@ namespace Model.Executors
                     else if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
-                        //simulationData.Goals.Remove(robot.CurrentGoal);
                         robot.CurrentGoal.IsAssigned = false;
                         OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                         robot.CurrentGoal = null;
@@ -167,9 +158,6 @@ namespace Model.Executors
                     else
                     {
                         throw new Exception();
-                        //robot.BlockedThisTurn = true;
-                        //robot.MovedThisTurn = true;
-                        //return false;
                     }
                 //break;
                 case RobotOperation.Clockwise:
@@ -181,10 +169,8 @@ namespace Model.Executors
                     robot.MovedThisTurn = true;
                     break;
                 case RobotOperation.Backward:
-                    // TODO: Prototype 2
                     break;
                 case RobotOperation.Wait:
-                    // TODO: Prototype 2 : Logging
                     robot.MovedThisTurn = true;
                     if(robot.CurrentGoal is not null && robot.Position.EqualsPosition(robot.CurrentGoal.Position))
                     {
@@ -192,12 +178,11 @@ namespace Model.Executors
                         OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                         robot.CurrentGoal = null;
                     }
-                    //robot.BlockedThisTurn = true;
                     return false;
-                    //break;
             }
             return false;
         }
+
         /// <summary>
         /// Moves robot to new position without checking the legality of the move
         /// </summary>
