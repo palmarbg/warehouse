@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,11 +23,14 @@ namespace Model.Controllers
         private List<Queue<RobotOperation>> _plannedOperations = new List<Queue<RobotOperation>>();
 
         private bool[] _robotsFinished = [];
+        private bool[] _robotsblocking = [];
+        private bool[] _robotsprioritized = [];
         private RobotOperation[] _previousOperations = [];
         private int[] _blockedCount = [];
         private List<Reserver?>? _reservers = null!;
         private Dictionary<Position, SortedList<int, Reserver>>? _reservations = null!;
         private int _currentTurn = 0;
+        private Goal _fakeGoal = null!;
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
@@ -37,6 +41,8 @@ namespace Model.Controllers
             _taskDistributor = distributor;
             SimulationData = simulationData;
             _robotsFinished = new bool[simulationData.Robots.Count];
+            _robotsblocking = new bool[simulationData.Robots.Count];
+            _robotsprioritized = new bool[simulationData.Robots.Count];
             _previousOperations = new RobotOperation[simulationData.Robots.Count];
             _blockedCount = new int[simulationData.Robots.Count];
 
@@ -66,7 +72,11 @@ namespace Model.Controllers
                 {
                     return;
                 }
-                _plannedOperations.Add(FindPath(SimulationData.Robots[i]));
+                if (!_robotsFinished[i])
+                {
+                    _plannedOperations.Add(new Queue<RobotOperation>());
+                    _plannedOperations[i] = FindPath(SimulationData.Robots[i], SimulationData.Robots[i].CurrentGoal!.Position);
+                }
             }
             InitializationFinished?.Invoke(this, new());
         }
@@ -83,6 +93,13 @@ namespace Model.Controllers
             }
             if (SimulationData is null) { throw new Exception("initialize the controller first"); }
             var result = new List<RobotOperation>();
+            for (int i = 0; i < SimulationData.Robots.Count; i++)
+            {
+                if (SimulationData.Robots[i].BlockedThisTurn)
+                {
+                    DeleteReservation(_reservers![SimulationData!.Robots[i].Id]!);
+                }
+            }
             for (int i = 0; i < _plannedOperations.Count; i++)
             {
                 if (token != null && ((CancellationToken)token)!.IsCancellationRequested)
@@ -92,38 +109,21 @@ namespace Model.Controllers
                     return;
                 }
                 var robot = SimulationData.Robots[i];
-                // nincs utasítás a robot számára
-                if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
+
+                if (_robotsFinished[i])
                 {
+                    CalculateFinished(result, i, robot);
+                }
+                else if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
+                {
+                    _robotsprioritized[i] = false;
                     if (robot.CurrentGoal is null)
                     {
-                        if (_taskDistributor.AllTasksAssigned)
-                        {
-                            // TODO ha taskon áll el lehet küldeni valahova máshova
-                            _robotsFinished[i] = true;
-                            result.Add(RobotOperation.Wait);
-                            robot.NextOperation = RobotOperation.Wait;
-                        }
-                        // Új task
-                        else
-                        {
-                            _taskDistributor.AssignNewTask(robot);
-                            _plannedOperations[i] = FindPath(robot);
-                            if (_plannedOperations[i].Count == 0)
-                            {
-                                AddOperation(result, robot, RobotOperation.Wait, i);
-                                _blockedCount[robot.Id]++;
-                            }
-                            else
-                            {
-                                AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
-                            }
-                        }
+                        CalculateNoGoal(result, i, robot);
                     }
-                    //Van task de nincs út
                     else
                     {
-                        _plannedOperations[i] = FindPath(robot, false);
+                        _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position, false);
                         if (_plannedOperations[i].Count == 0)
                         {
                             AddOperation(result, robot, RobotOperation.Wait, i);
@@ -137,21 +137,9 @@ namespace Model.Controllers
                 }
                 else
                 {
-                    //TODO : szebb deadlock
                     if (robot.BlockedThisTurn)
                     {
-                        _plannedOperations[i] = FindPath(robot, false);
-                        _blockedCount[i] = 0;
-                        if (_plannedOperations[i].Count == 0)
-                        {
-                            AddOperation(result, robot, RobotOperation.Wait, i);
-                            _blockedCount[robot.Id]++;
-                        }
-                        else
-                        {
-                            AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
-                        }
-                        continue;
+                        CalculateBlocked(result, i, robot);
                     }
                     else
                     {
@@ -163,6 +151,134 @@ namespace Model.Controllers
             _currentTurn++;
             OnTaskFinished([.. result]);
         }
+
+        private void CalculateFinished(List<RobotOperation> result, int i, Robot robot)
+        {
+            if (_plannedOperations[i].Count != 0 && _robotsprioritized[i] && robot.BlockedThisTurn)
+            {
+                var blockpos = robot.Position.PositionInDirection(robot.Rotation);
+                if (blockpos.X > 0 && blockpos.Y > 0 && blockpos.Y < SimulationData!.Map.GetHeight() && blockpos.X < SimulationData!.Map.GetWidth())
+                {
+                    var tile = SimulationData!.Map.GetAtPosition(blockpos);
+                    if (tile is Robot blockingRobot)
+                    {
+                        var deroutePos = FindEmptyPosition();
+                        _robotsprioritized[blockingRobot.Id] = true;
+                        _plannedOperations[blockingRobot.Id] = FindPath(blockingRobot, deroutePos, false);
+                        AddOperation(result, robot, _previousOperations[i], i);
+                    }
+                    else
+                    AddOperation(result, robot, RobotOperation.Wait, i);
+                }
+                else
+                    AddOperation(result, robot, RobotOperation.Wait, i);
+
+
+            }
+            else
+            if (_plannedOperations[i].Count == 0)
+            {
+                _robotsprioritized[i] = false;
+                if (SimulationData!.Robots.Any(r => r.CurrentGoal is not null && r.CurrentGoal.Position.EqualsPosition(robot.Position)))
+                {
+                    Position emptyPos = FindEmptyPosition();
+
+                    _plannedOperations[robot.Id] = FindPath(robot, (Position)emptyPos, false);
+                    _robotsprioritized[i] = true;
+                    if (_plannedOperations[robot.Id].Count == 0) AddOperation(result, robot, RobotOperation.Wait, i);
+                    else AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+                }
+                else
+                {
+                    AddOperation(result, robot, RobotOperation.Wait, i);
+                }
+            }
+            else
+            {
+                if (robot.BlockedThisTurn)
+                {
+                    AddOperation(result, robot, _previousOperations[i], i);
+                }
+                else
+                    AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+            }
+        }
+
+        private void CalculateNoGoal(List<RobotOperation> result, int i, Robot robot)
+        {
+            if (_taskDistributor.AllTasksAssigned)
+            {
+                _robotsFinished[i] = true;
+                AddOperation(result, robot, RobotOperation.Wait, i);
+            }
+            else
+            {
+                _taskDistributor.AssignNewTask(robot);
+                _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position);
+                if (_plannedOperations[i].Count == 0)
+                {
+                    AddOperation(result, robot, RobotOperation.Wait, i);
+                    _blockedCount[robot.Id]++;
+                }
+                else
+                {
+                    AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+                }
+            }
+        }
+
+        private void CalculateBlocked(List<RobotOperation> result, int i, Robot robot)
+        {
+            if (_taskDistributor.AllTasksAssigned)
+            {
+                _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position, true);
+            }
+            else
+            {
+                _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position, false);
+            }
+
+            var tempPos = robot.Position.PositionInDirection(robot.Rotation);
+            if (!(tempPos.X < 0 || tempPos.X >= SimulationData!.Map.GetWidth() || tempPos.Y < 0 || tempPos.Y >= SimulationData!.Map.GetHeight()))
+            {
+                var tempTile = SimulationData.Map.GetAtPosition(tempPos);
+                if (tempTile is Robot blocking && _robotsFinished[blocking.Id])
+                {
+                    Position emptyPos = FindEmptyPosition();
+
+                        _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
+                        //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
+                        //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
+                    
+                }
+            }
+
+            _blockedCount[i] = 0;
+            if (_plannedOperations[i].Count == 0)
+            {
+                AddOperation(result, robot, RobotOperation.Wait, i);
+                _blockedCount[robot.Id]++;
+            }
+            else
+            {
+                AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+            }
+        }
+
+        private Position FindEmptyPosition()
+        {
+            var rnd = new Random();
+            int x;
+            int y;
+            do
+            {
+                x = rnd.Next(0, SimulationData!.Map.GetWidth());
+                y = rnd.Next(0, SimulationData!.Map.GetHeight());
+            }
+            while (SimulationData!.Map[x, y] is Block);
+            return new Position() { X = x, Y = y };
+        }
+
         private void AddOperation(List<RobotOperation> result, Robot robot, RobotOperation nextOp, int index)
         {
             robot.NextOperation = nextOp;
@@ -171,9 +287,9 @@ namespace Model.Controllers
         }
         #endregion
         #region Private Methods
-        private Queue<RobotOperation> FindPath(Robot robot, bool robotBlock = false)
+        private Queue<RobotOperation> FindPath(Robot robot, Position endPos, bool robotBlock = false)
         {
-            if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal!"); }
+            //if (robot.CurrentGoal is null) { throw new Exception("Robot does not have a goal!"); }
             if (_reservations is null) { throw new Exception("Initialize the controller before using it!"); }
             DeleteReservation(_reservers![robot.Id]!);
             HashSet<Node> openSet = new HashSet<Node>();
@@ -182,7 +298,8 @@ namespace Model.Controllers
             Dictionary<Node, int> fScore = new Dictionary<Node, int>();
             var start = new Node(robot.Position);
             start.Direction = robot.Rotation;
-            var goal = new Node(robot.CurrentGoal.Position);
+            var goal = new Node(endPos);
+            //var goal = new Node(robot.CurrentGoal.Position);
             openSet.Add(start);
             start.Turn = _currentTurn;
             start.AllowedRotations = AllowedRotationsOnPosition(start.Position, start.Turn);
@@ -225,7 +342,7 @@ namespace Model.Controllers
                         && freeTurns >= 0
                         && current.AllowedRotations >= rotationCost
                         && !Collides(current.Position, neighbor.Position, current.Turn + rotationCost)
-                        && (!goal.Position.EqualsPosition(neighbor.Position) || freeTurns == 2)
+                        && ((!goal.Position.EqualsPosition(neighbor.Position) || freeTurns == 2) || _taskDistributor.AllTasksAssigned)
                         )
                     {
                         neighbor.parent = current;
@@ -241,7 +358,6 @@ namespace Model.Controllers
                     }
                 }
             }
-
             return new Queue<RobotOperation>(); // No path found
         }
 
@@ -366,11 +482,7 @@ namespace Model.Controllers
             var reserver = _reservers![robot.Id]!;
             int turn = path[0].Turn;
 
-            if (robot.Id == 18)
-            {
-
-            }
-            if(path.Count < 2)
+            if (path.Count < 2)
             {
                 Operations.Enqueue(RobotOperation.Wait);
                 return Operations;
@@ -411,7 +523,7 @@ namespace Model.Controllers
                 }
 
             }
-            if (path.Count > 1)
+            if (path.Count > 1 && !_taskDistributor.AllTasksAssigned)
             {
                 turn++;
                 Reserve(path.Last().Position, turn, reserver);
