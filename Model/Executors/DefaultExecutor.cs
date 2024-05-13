@@ -102,7 +102,7 @@ namespace Model.Executors
 
                                 robot.Position = blockingRobot.Position;
                                 robot.MovedThisTurn= true;
-                                if (robot.CurrentGoal!.Position.EqualsPosition(blockingRobot.Position))
+                                if (robot.CurrentGoal is not null && robot.CurrentGoal.Position.EqualsPosition(blockingRobot.Position))
                                 {
                                     robot.CurrentGoal.IsAssigned = false;
                                     OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
@@ -115,13 +115,13 @@ namespace Model.Executors
                             if (!blockingRobot.InspectedThisTurn && MoveRobot(blockingRobot, startingRobot))
                             {
                                 MoveRobotToNewPosition(robot, newPos, operation);
+                                    robot.MovedThisTurn = true;
 
-                                if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                                if (robot.CurrentGoal is not null && newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                                 {
                                     robot.CurrentGoal.IsAssigned = false;
                                     OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
                                     robot.CurrentGoal = null;
-                                    robot.MovedThisTurn = true;
                                     return true;
 
                                 }
@@ -138,7 +138,7 @@ namespace Model.Executors
                         }
                     }
                     // newPos is robots goal
-                    else if (newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                    else if (robot.CurrentGoal is not null &&newPos.X == robot.CurrentGoal.Position.X && newPos.Y == robot.CurrentGoal.Position.Y)
                     {
                         MoveRobotToNewPosition(robot, newPos, operation);
                         robot.CurrentGoal.IsAssigned = false;
