@@ -116,13 +116,13 @@ namespace Model.Controllers
                 }
                 else if (_plannedOperations[i].Count == 0 || robot.CurrentGoal is null)
                 {
-                    _robotsprioritized[i] = false;
                     if (robot.CurrentGoal is null)
                     {
                         CalculateNoGoal(result, i, robot);
                     }
                     else
                     {
+                        _robotsprioritized[i] = false;
                         _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position, false);
                         if (_plannedOperations[i].Count == 0)
                         {
@@ -168,7 +168,7 @@ namespace Model.Controllers
                         AddOperation(result, robot, _previousOperations[i], i);
                     }
                     else
-                    AddOperation(result, robot, RobotOperation.Wait, i);
+                        AddOperation(result, robot, RobotOperation.Wait, i);
                 }
                 else
                     AddOperation(result, robot, RobotOperation.Wait, i);
@@ -229,6 +229,25 @@ namespace Model.Controllers
 
         private void CalculateBlocked(List<RobotOperation> result, int i, Robot robot)
         {
+            if (_robotsprioritized[robot.Id])
+            {
+                var tempBlockingPos = robot.Position.PositionInDirection(robot.Rotation);
+                if (!(tempBlockingPos.X < 0 || tempBlockingPos.X >= SimulationData!.Map.GetWidth() || tempBlockingPos.Y < 0 || tempBlockingPos.Y >= SimulationData!.Map.GetHeight()))
+                {
+                    var tempTile = SimulationData.Map.GetAtPosition(tempBlockingPos);
+                    if (tempTile is Robot blocking)
+                    {
+                        Position emptyPos = FindEmptyPosition();
+                        _robotsprioritized[blocking.Id] = true;
+                        _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
+                        //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
+                        //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
+                        AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
+                        return;
+                    }
+                }
+            }
+
             if (_taskDistributor.AllTasksAssigned)
             {
                 _plannedOperations[i] = FindPath(robot, robot.CurrentGoal!.Position, true);
