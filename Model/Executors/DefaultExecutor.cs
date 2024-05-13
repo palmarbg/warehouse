@@ -63,8 +63,8 @@ namespace Model.Executors
         /// <returns>did the robot move</returns>
         private bool MoveRobot(Robot robot, Robot startingRobot)
         {
+            if (robot.InspectedThisTurn) return false;
             robot.InspectedThisTurn = true;
-            if (robot.MovedThisTurn) return false;
             var operation = robot.NextOperation;
             switch (operation)
             {
@@ -97,12 +97,12 @@ namespace Model.Executors
                         }
                         else
                         {
-                            if (startingRobot.Id == blockingRobot.Id)
+                            if (startingRobot.Id == blockingRobot.Id && blockingRobot.Rotation.Opposite() != robot.Rotation )
                             {
 
                                 robot.Position = blockingRobot.Position;
                                 robot.MovedThisTurn= true;
-                                if (robot.CurrentGoal is not null && robot.CurrentGoal.Position.EqualsPosition(blockingRobot.Position))
+                                if (robot.CurrentGoal !=null && robot.CurrentGoal.Position.EqualsPosition(blockingRobot.Position))
                                 {
                                     robot.CurrentGoal.IsAssigned = false;
                                     OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
@@ -117,7 +117,7 @@ namespace Model.Executors
                                 MoveRobotToNewPosition(robot, newPos, operation);
                                     robot.MovedThisTurn = true;
 
-                                if (robot.CurrentGoal is not null && newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
+                                if (robot.CurrentGoal != null && newPos.X == robot.CurrentGoal?.Position.X && newPos.Y == robot.CurrentGoal?.Position.Y)
                                 {
                                     robot.CurrentGoal.IsAssigned = false;
                                     OnTaskFinished(robot.CurrentGoal.Id, robot.Id);
@@ -131,7 +131,7 @@ namespace Model.Executors
                             else
                             {
                                 robot.BlockedThisTurn = true;
-                                robot.MovedThisTurn = true;
+                                robot.MovedThisTurn = false;
                                 OnRobotCrash(robot.Id, blockingRobot.Id);
                                 return false;
                             }

@@ -245,11 +245,11 @@ namespace Model.Controllers
                 if (tempTile is Robot blocking && _robotsFinished[blocking.Id])
                 {
                     Position emptyPos = FindEmptyPosition();
+                    _robotsprioritized[blocking.Id] = true;
+                    _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
+                    //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
+                    //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
 
-                        _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
-                        //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
-                        //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
-                    
                 }
             }
 
