@@ -59,7 +59,7 @@ namespace Model
 
         public event EventHandler<Goal?>? GoalChanged;
 
-        public event EventHandler? SimulationFinished;
+        public event EventHandler<SimulationStepEventArgs>? SimulationStep;
 
         public event EventHandler? SimulationLoaded;
 
@@ -219,9 +219,9 @@ namespace Model
             SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
-        public void OnSimulationFinished()
+        public void OnSimulationStep()
         {
-            SimulationFinished?.Invoke(null, new System.EventArgs());
+            SimulationStep?.Invoke(null, new(SimulationData.Step));
         }
 
         public void OnSimulationStateChanged(SimulationState simulationState)

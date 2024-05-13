@@ -87,8 +87,6 @@ namespace Model.Mediators
             _simulationState.State = SimulationStates.SimulationEnded;
 
             (_controller as IDisposableController)?.Dispose();
-
-            _simulation.OnSimulationFinished();
         }
 
         public void PauseSimulation()
@@ -114,7 +112,7 @@ namespace Model.Mediators
             _executor.Dispose();
             _executor = newExecutor;
 
-            _controller.FinishedTask += new EventHandler<IControllerEventArgs>((sender, e) =>
+            _controller.FinishedTask += new EventHandler<ControllerEventArgs>((sender, e) =>
             {
                 if (_controller != sender)
                     return;
@@ -151,7 +149,7 @@ namespace Model.Mediators
         /// Called when the Controller finishes the calculations
         /// </summary>
         /// <param name="e">Contains the calculated operations</param>
-        private void OnTaskFinished(IControllerEventArgs e)
+        private void OnTaskFinished(ControllerEventArgs e)
         {
             Debug.WriteLine("TASK FINISHED");
 
@@ -166,9 +164,9 @@ namespace Model.Mediators
             else
                 _simulationState.State = SimulationStates.SimulationPaused;
 
+            _simulation.OnSimulationStep();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
-                SimulationStep = _simulationData.Step,
                 IsJumped = false,
                 TimeSpan = TimeSpan.FromMilliseconds(_interval)
             });

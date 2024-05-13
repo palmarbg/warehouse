@@ -16,7 +16,7 @@ namespace Model.Utils
     {
         private IController _controller;
 
-        private EventHandler<IControllerEventArgs> _finishedTaskDelegate = null!;
+        private EventHandler<ControllerEventArgs> _finishedTaskDelegate = null!;
         private EventHandler _finishedInitializationDelegate = null!;
 
         CancellationTokenSource? cancellationTokenSource;
@@ -25,7 +25,7 @@ namespace Model.Utils
 
         public string Name => "[Disposble]" + _controller.Name;
 
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         public DisposableController(IController controller)
@@ -100,7 +100,7 @@ namespace Model.Utils
 
             foreach (Delegate d in FinishedTask?.GetInvocationList() ?? [])
             {
-                FinishedTask -= d as EventHandler<IControllerEventArgs>;
+                FinishedTask -= d as EventHandler<ControllerEventArgs>;
             }
 
             foreach (Delegate d in InitializationFinished?.GetInvocationList() ?? [])

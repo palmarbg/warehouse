@@ -21,6 +21,10 @@ namespace Model.Interfaces
         /// The time span in milliseconds, the Controller has to calculate moves.
         /// </summary>
         public int Interval { get; }
+
+        /// <summary>
+        /// The length of the simulation.
+        /// </summary>
         public int SimulationStepLimit { get; }
 
         /// <summary>

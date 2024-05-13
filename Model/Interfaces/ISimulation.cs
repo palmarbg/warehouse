@@ -25,7 +25,7 @@ namespace Model.Interfaces
         /// <summary>
         /// Occurs when the simulation ended.
         /// </summary>
-        public event EventHandler? SimulationFinished;
+        public event EventHandler<SimulationStepEventArgs>? SimulationStep;
 
         /// <summary>
         /// Occurs when <see cref="SimulationData"/> has been loaded for the simulation.
@@ -47,7 +47,7 @@ namespace Model.Interfaces
 
         void OnRobotsMoved(RobotsMovedEventArgs args);
 
-        void OnSimulationFinished();
+        void OnSimulationStep();
 
         #endregion
 

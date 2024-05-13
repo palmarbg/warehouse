@@ -24,7 +24,7 @@ namespace View
             viewModel.OnSetDataContext();
 
             viewModel.RobotsChanged += new EventHandler((_, _) => RefreshSimulationStepCounter(0));
-            viewModel.RobotsMoved += new EventHandler<RobotsMovedEventArgs>((_, arg) => RefreshSimulationStepCounter(arg.SimulationStep));
+            viewModel.SimulationStep += new EventHandler<SimulationStepEventArgs>((_, arg) => RefreshSimulationStepCounter(arg.Step));
         }
 
         private void RefreshSimulationStepCounter(int step)

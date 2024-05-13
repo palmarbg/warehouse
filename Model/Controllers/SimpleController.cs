@@ -8,7 +8,7 @@ namespace Model.Controllers
     [ExcludeFromCodeCoverage]
     internal class SimpleController : IController
     {
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         private ITaskDistributor _taskDistributor = null!;

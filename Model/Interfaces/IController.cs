@@ -16,7 +16,7 @@ namespace Model.Interfaces
         /// <summary>
         /// It will be invoked when the controller finishes the task.
         /// </summary>
-        public event EventHandler<IControllerEventArgs> FinishedTask;
+        public event EventHandler<ControllerEventArgs> FinishedTask;
 
         /// <summary>
         /// It will be invoked when the controller finishes the initialization.

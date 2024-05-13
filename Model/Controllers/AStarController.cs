@@ -19,7 +19,7 @@ namespace Model.Controllers
         private RobotOperation[] _previousOperations = [];
         private int[] _blockedCount = [];
 
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         #region Public Methods

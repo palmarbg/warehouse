@@ -31,7 +31,7 @@ namespace Model.Controllers
         private Dictionary<Position, SortedList<int, Reserver>>? _reservations = null!;
         private int _currentTurn = 0;
 
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         #region Public Methods
