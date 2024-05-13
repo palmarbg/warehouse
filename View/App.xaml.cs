@@ -115,7 +115,7 @@ namespace View
                 //simulation mode
                 var window = new SimulationControlSettingsWindow()
                 {
-                    Step = 0,
+                    Step = _simulation.SimulationStepLimit,
                     StepInterval = _simulation.Interval
                 };
 

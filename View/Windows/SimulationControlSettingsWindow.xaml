@@ -16,6 +16,7 @@
             <TextBox
             Width="80"
             Text="{Binding Step}"
+            MaxLength="9"
             TextChanged="TextBox_TextChanged"/>
         </StackPanel>
 
@@ -26,6 +27,7 @@
             <TextBox
                 Width="80"
                 Text="{Binding StepInterval}"
+                MaxLength="9"
                 TextChanged="TextBox_TextChanged"/>
         </StackPanel>
 

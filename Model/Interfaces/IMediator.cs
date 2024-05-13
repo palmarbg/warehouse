@@ -21,11 +21,13 @@ namespace Model.Interfaces
         /// The time span in milliseconds, the Controller has to calculate moves.
         /// </summary>
         public int Interval { get; }
+        public int SimulationStepLimit { get; }
 
         /// <summary>
         /// The name of the currently loaded config file.
         /// </summary>
         public string MapFileName { get; }
+
 
         #endregion
 

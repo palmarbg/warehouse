@@ -37,6 +37,8 @@ namespace Model.Mediators
         public SimulationState SimulationState => _simulationState;
         public virtual int Interval => _interval;
         public string MapFileName {  get; protected set; }
+        public int SimulationStepLimit => _lastStep;
+
 
         #endregion
 
@@ -63,7 +65,6 @@ namespace Model.Mediators
             MapFileName = mapFileName;
 
             _lastStep = 10000;
-
         }
 
         #endregion

@@ -30,7 +30,6 @@ namespace Model.Controllers
         private List<Reserver?>? _reservers = null!;
         private Dictionary<Position, SortedList<int, Reserver>>? _reservations = null!;
         private int _currentTurn = 0;
-        private Goal _fakeGoal = null!;
 
         public event EventHandler<IControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
@@ -240,8 +239,6 @@ namespace Model.Controllers
                         Position emptyPos = FindEmptyPosition();
                         _robotsprioritized[blocking.Id] = true;
                         _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
-                        //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
-                        //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
                         AddOperation(result, robot, _plannedOperations[i].Dequeue(), i);
                         return;
                     }
@@ -266,8 +263,6 @@ namespace Model.Controllers
                     Position emptyPos = FindEmptyPosition();
                     _robotsprioritized[blocking.Id] = true;
                     _plannedOperations[blocking.Id] = FindPath(blocking, (Position)emptyPos, true);
-                    //if (_plannedOperations[blocking.Id].Count == 0) AddOperation(result, blocking, RobotOperation.Wait, i);
-                    //else AddOperation(result, blocking, _plannedOperations[i].Dequeue(), i);
 
                 }
             }
