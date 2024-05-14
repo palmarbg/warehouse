@@ -88,6 +88,7 @@ namespace Model.Mediators
             Debug.WriteLine("XXXX TIMEOUT XXXX");
             _executor.Timeout();
             _simulationData.Step++;
+            _simulation.OnSimulationStep();
         }
 
         #endregion

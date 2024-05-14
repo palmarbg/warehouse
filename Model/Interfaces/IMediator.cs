@@ -23,9 +23,15 @@ namespace Model.Interfaces
         public int Interval { get; }
 
         /// <summary>
+        /// The length of the simulation.
+        /// </summary>
+        public int SimulationStepLimit { get; }
+
+        /// <summary>
         /// The name of the currently loaded config file.
         /// </summary>
         public string MapFileName { get; }
+
 
         #endregion
 

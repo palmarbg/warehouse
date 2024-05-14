@@ -102,11 +102,11 @@ namespace Test.ModelTests.ExecutorTests
             executor.ExecuteOperations(robotOperations,1.0f);
 
             Assert.AreEqual(false, robot1.MovedThisTurn);
-            Assert.AreEqual(false, robot1.BlockedThisTurn);
+            Assert.AreEqual(true, robot1.BlockedThisTurn);
             Assert.AreEqual(true, robot1.InspectedThisTurn);
 
-            Assert.AreEqual(true,  robot2.MovedThisTurn);
-            Assert.AreEqual(false, robot2.BlockedThisTurn);
+            Assert.AreEqual(false,  robot2.MovedThisTurn);
+            Assert.AreEqual(true, robot2.BlockedThisTurn);
             Assert.AreEqual(true, robot2.InspectedThisTurn);
 
             Assert.AreEqual(true, robot3.MovedThisTurn);

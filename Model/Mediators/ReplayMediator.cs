@@ -38,6 +38,7 @@ namespace Model.Mediators
 
             _executor = _serviceLocator.GetReplayExecutor(_simulationData);
 
+
         }
 
         #endregion
@@ -100,9 +101,10 @@ namespace Model.Mediators
 
             //handle in service locator if you get null ref error
             (_controller as IReplayController)!.SetPosition(step);
+
+            _simulation.OnSimulationStep();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
-                SimulationStep = _simulationData.Step,
                 IsJumped = true,
                 TimeSpan = TimeSpan.Zero,
             });
@@ -117,9 +119,10 @@ namespace Model.Mediators
 
             //handle in service locator if you get null ref error
             (_controller as IReplayController)!.JumpToEnd();
+
+            _simulation.OnSimulationStep();
             _simulation.OnRobotsMoved(new RobotsMovedEventArgs()
             {
-                SimulationStep = _simulationData.Step,
                 IsJumped = true,
                 TimeSpan = TimeSpan.Zero,
             });

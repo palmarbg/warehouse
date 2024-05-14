@@ -14,11 +14,12 @@ namespace Model.Controllers
         private SimulationData? SimulationData = null!;
         private ITaskDistributor _taskDistributor = null!;
         private List<Queue<RobotOperation>> _plannedOperations = new List<Queue<RobotOperation>>();
-        // true if robot finished its task and no more tasks are available, false otherwise
-        private bool[] robotsFinished = [];
-        private RobotOperation[] previousOperations = [];
-        private int[] blockedCount = [];
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+
+        private bool[] _robotsFinished = [];
+        private RobotOperation[] _previousOperations = [];
+        private int[] _blockedCount = [];
+
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         #region Public Methods
@@ -26,15 +27,15 @@ namespace Model.Controllers
         {
             _taskDistributor = distributor;
             SimulationData = simulationData;
-            robotsFinished = new bool[simulationData.Robots.Count];
-            previousOperations = new RobotOperation[simulationData.Robots.Count];
-            blockedCount = new int[simulationData.Robots.Count];
+            _robotsFinished = new bool[simulationData.Robots.Count];
+            _previousOperations = new RobotOperation[simulationData.Robots.Count];
+            _blockedCount = new int[simulationData.Robots.Count];
 
             for (int i = 0; i < simulationData.Robots.Count; i++)
             {
                 if (simulationData.Robots[i].CurrentGoal is null) _taskDistributor.AssignNewTask(simulationData.Robots[i]);
-                if (simulationData.Robots[i].CurrentGoal is null) robotsFinished[i] = true;
-                else robotsFinished[i] = false;
+                if (simulationData.Robots[i].CurrentGoal is null) _robotsFinished[i] = true;
+                else _robotsFinished[i] = false;
             }
 
             simulationData.Robots.ForEach(robot =>
@@ -43,7 +44,6 @@ namespace Model.Controllers
 
             });
 
-            //Goal.OnGoalsChanged();
             _plannedOperations = new List<Queue<RobotOperation>>();
             for (int i = 0; i < SimulationData.Robots.Count; i++ )
             {
@@ -94,14 +94,14 @@ namespace Model.Controllers
                             if (_plannedOperations[i].Count == 0)
                             {
                                 robot.NextOperation = RobotOperation.Wait;
-                                previousOperations[i] = RobotOperation.Wait;
+                                _previousOperations[i] = RobotOperation.Wait;
                                 result.Add(RobotOperation.Wait);
                             }
                             else
                             {
                                 var nextOp = _plannedOperations[i].Dequeue();
                                 robot.NextOperation = nextOp;
-                                previousOperations[i] = nextOp;
+                                _previousOperations[i] = nextOp;
                                 result.Add(nextOp);
                             }
 
@@ -114,7 +114,7 @@ namespace Model.Controllers
                         if (_plannedOperations[i].Count == 0)
                         {
                             robot.NextOperation = RobotOperation.Wait;
-                            previousOperations[i] = RobotOperation.Wait;
+                            _previousOperations[i] = RobotOperation.Wait;
                             result.Add(RobotOperation.Wait);
 
                         }
@@ -122,7 +122,7 @@ namespace Model.Controllers
                         {
                             var nextOp = _plannedOperations[i].Dequeue();
                             robot.NextOperation = nextOp;
-                            previousOperations[i] = nextOp;
+                            _previousOperations[i] = nextOp;
                             result.Add(nextOp);
                         }
                     }
@@ -132,18 +132,18 @@ namespace Model.Controllers
                     //TODO : szebb deadlock
                     if (robot.BlockedThisTurn)
                     {
-                        blockedCount[i]++;
-                        if (blockedCount[i] >= 3)
+                        _blockedCount[i]++;
+                        if (_blockedCount[i] >= 3)
                         {
                             _plannedOperations[i] = FindPath(robot, true);
-                            blockedCount[i] = 0;
+                            _blockedCount[i] = 0;
                             var nextOp = RobotOperation.Wait;
                             robot.NextOperation = nextOp;
                             result.Add(nextOp);
                         }
                         else
                         {
-                            var nextOp = previousOperations[i];
+                            var nextOp = _previousOperations[i];
                             robot.NextOperation = nextOp;
                             result.Add(nextOp);
                         }
@@ -154,7 +154,7 @@ namespace Model.Controllers
                     {
                         var nextOp = _plannedOperations[i].Dequeue();
                         robot.NextOperation = nextOp;
-                        previousOperations[i] = nextOp;
+                        _previousOperations[i] = nextOp;
                         result.Add(nextOp);
                     }
                 }

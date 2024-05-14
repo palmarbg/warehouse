@@ -15,7 +15,7 @@ namespace Model.Utils.ReplayMediatorUtils
         private int[] taskEventIterator = null!;
         public string Name => "ReplayController";
 
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         public ReplayController(ILoadLogDataAccess loadLogDataAccess)

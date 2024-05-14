@@ -10,7 +10,7 @@ namespace Model
         #region Private Fields
 
         private IServiceLocator _serviceLocator;
-        private IMediator _mediator;      
+        private IMediator _mediator;
 
         #endregion
 
@@ -48,6 +48,9 @@ namespace Model
 
         public bool IsInSimulationMode => _mediator is ISimulationMediator;
 
+        public int SimulationStepLimit => _mediator.SimulationStepLimit;
+
+
         #endregion
 
         #region Events
@@ -56,7 +59,7 @@ namespace Model
 
         public event EventHandler<Goal?>? GoalChanged;
 
-        public event EventHandler? SimulationFinished;
+        public event EventHandler<SimulationStepEventArgs>? SimulationStep;
 
         public event EventHandler? SimulationLoaded;
 
@@ -79,7 +82,7 @@ namespace Model
             _mediator = serviceLocator.GetSimulationMediator(
                 this,
                 path + "sample_files\\random_20_config.json"//warehouse_100_config
-                //, path + "sample_files\\random_20_log.json"//warehouse_100_log
+                                                            //, path + "sample_files\\random_20_log.json"//warehouse_100_log
                 );
         }
 
@@ -96,6 +99,7 @@ namespace Model
             }
             _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, _mediator.MapFileName);
+            OnSimulationLoaded();
         }
 
         public void LoadLog(string fileName)
@@ -104,6 +108,7 @@ namespace Model
             {
                 _mediator.Dispose();
                 _mediator = _serviceLocator.GetReplayMediator(this, _mediator.MapFileName, fileName);
+                OnSimulationLoaded();
                 return;
             }
             ReplayMediator.LoadLog(fileName);
@@ -118,6 +123,7 @@ namespace Model
             }
             _mediator.Dispose();
             _mediator = _serviceLocator.GetSimulationMediator(this, fileName);
+            OnSimulationLoaded();
         }
 
         #endregion
@@ -213,9 +219,9 @@ namespace Model
             SimulationLoaded?.Invoke(null, new System.EventArgs());
         }
 
-        public void OnSimulationFinished()
+        public void OnSimulationStep()
         {
-            SimulationFinished?.Invoke(null, new System.EventArgs());
+            SimulationStep?.Invoke(null, new(SimulationData.Step));
         }
 
         public void OnSimulationStateChanged(SimulationState simulationState)

@@ -119,6 +119,8 @@ namespace ViewModel.ViewModel
         /// </summary>
         public event EventHandler<SimulationStateEventArgs>? SimulationStateChanged;
 
+        public event EventHandler<SimulationStepEventArgs>? SimulationStep;
+
         public event EventHandler? OpenSettings;
         public event EventHandler? LoadSimulation;
         public event EventHandler? LoadReplay;
@@ -192,6 +194,7 @@ namespace ViewModel.ViewModel
             simulation.GoalChanged += new EventHandler<Goal?>((r, goal) => Model_GoalChanged((Robot)r!, goal));
             simulation.SimulationLoaded += new EventHandler((_, _) => Model_SimulationLoaded());
             simulation.SimulationStateChanged += new EventHandler<SimulationStateEventArgs>((_, arg) => Model_SimulationStateChanged(arg));
+            simulation.SimulationStep += new EventHandler<SimulationStepEventArgs>((_, arg) => Model_SimulationStep(arg));
 
             ToggleSimulationCommand = new DelegateCommand(param => OnToggleSimulation());
             StopSimulationCommand = new DelegateCommand(param => OnSimulationStop());
@@ -266,6 +269,11 @@ namespace ViewModel.ViewModel
 
             Model_MapLoaded();
             Model_RobotsChanged();
+        }
+
+        private void Model_SimulationStep(SimulationStepEventArgs arg)
+        {
+            SimulationStep?.Invoke(null, arg);
         }
 
         #endregion

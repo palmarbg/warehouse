@@ -10,7 +10,7 @@ namespace Model.Controllers
     {
         private SimulationData? SimulationData;
 
-        public event EventHandler<IControllerEventArgs>? FinishedTask;
+        public event EventHandler<ControllerEventArgs>? FinishedTask;
         public event EventHandler? InitializationFinished;
 
         public string Name => "demo";
