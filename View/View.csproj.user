@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="MapLayers\BlockLayer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MapLayers\GoalLayer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\MapGrid.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\MapGridContainer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\HorizontalNumberStrip.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MapLayers\LinegridLayer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MapLayers\RobotLayer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\VerticalNumberStrip.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\ZoomSlider.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControls\Menubar.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControls\MenuIcon.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\ReplayControlSettingsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\SimulationControlSettingsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MapLayers\BlockLayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MapLayers\GoalLayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow\MapGrid.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow\MapGridContainer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow\HorizontalNumberStrip.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MapLayers\LinegridLayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MapLayers\RobotLayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow\VerticalNumberStrip.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow\ZoomSlider.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Menubar.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\MenuIcon.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\ReplayControlSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\SimulationControlSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

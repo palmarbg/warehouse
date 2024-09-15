@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Model\**" />
+    <Compile Remove="Persistence\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <EmbeddedResource Remove="Persistence\**" />
+    <None Remove="Model\**" />
+    <None Remove="Persistence\**" />
+    <Page Remove="Model\**" />
+    <Page Remove="Persistence\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="UserControls\Icons\back.png" />
+    <None Remove="UserControls\Icons\end.png" />
+    <None Remove="UserControls\Icons\menu.png" />
+    <None Remove="UserControls\Icons\next.png" />
+    <None Remove="UserControls\Icons\pause.png" />
+    <None Remove="UserControls\Icons\play-button.png" />
+    <None Remove="UserControls\Icons\play.png" />
+    <None Remove="UserControls\Icons\setting.png" />
+    <None Remove="UserControls\Icons\start.png" />
+    <None Remove="UserControls\Icons\stop.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="UserControls\Icons\back.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\end.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\menu.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\next.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\pause.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\play.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\setting.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\start.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserControls\Icons\stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
+  </ItemGroup>
+
+</Project>
